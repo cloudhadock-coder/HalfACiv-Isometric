@@ -1,0 +1,719 @@
+[
+  {
+    "file": "AgD6Fo.gif",
+    "size": [
+      512,
+      444
+    ],
+    "mode": "P",
+    "frames": 9,
+    "sha256": "b69f8ac871333fdd3816dbffda10784088b9d9f513b13eedb5073bd6242213f5",
+    "durations_ms": [
+      80,
+      80,
+      80,
+      80,
+      80,
+      80,
+      80,
+      80,
+      80
+    ]
+  },
+  {
+    "file": "GandalfHardcore\\Character skin colors\\Female Skin1.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "23bf2fbe62bbe7a4801f203c164afa0e2cea933a6111eb6db0a4854869d83df9"
+  },
+  {
+    "file": "GandalfHardcore\\Character skin colors\\Female Skin2.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "b586498a861962c442b2c1334ddc56c7e2b5a3d847ce47b845988242ae007e79"
+  },
+  {
+    "file": "GandalfHardcore\\Character skin colors\\Female Skin3.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "79e133201d43b34ae5126d39d3c72bbcce3d0a16890487b6a7bbec2d32ef7e04"
+  },
+  {
+    "file": "GandalfHardcore\\Character skin colors\\Female Skin4.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "229ee8e5e4eda32963a839cace32b881de7309f1a906f456e9c74a3cd67c5e3e"
+  },
+  {
+    "file": "GandalfHardcore\\Character skin colors\\Female Skin5.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "3e838448c656fb1ce66396d32425c6e90044c3a29240e1cd68cb9046429e54e6"
+  },
+  {
+    "file": "GandalfHardcore\\Character skin colors\\Male Skin1.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "5a3c9a2cf0fd18a679f8ab3118122b928a797f7ba06865bc836b4dbf6a0365d4"
+  },
+  {
+    "file": "GandalfHardcore\\Character skin colors\\Male Skin2.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "e9943c5bde8e5e92f9dc529af0cadebfb669654fd24e124ace901c50141d7ee3"
+  },
+  {
+    "file": "GandalfHardcore\\Character skin colors\\Male Skin3.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "73eeeddb21cb3c1b0d2cd051a3dec490a5923870a51ef8df3fc0df5be6835307"
+  },
+  {
+    "file": "GandalfHardcore\\Character skin colors\\Male Skin4.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "94c6ffec07d392e9ab82e4a6a491730a1ba7193ccaa2668c12dfce42753f13bd"
+  },
+  {
+    "file": "GandalfHardcore\\Character skin colors\\Male Skin5.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "9b19ead91b569124a3cfb46c485431d1c85ecd1066a31026bb9cd2539e2854f1"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Blue Corset v2.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "51ce38aa0a4e7c5fdba2210808c920371216be0b14e1908688708bd3d18e8dbb"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Blue Corset.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "0555687a8829c14b8b18772f5e84bb8fcbffc2efc523d8364779bc0fb73b8dff"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Blue Panties and Bra.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "92ff44fee5832e2b3a9f59b7dd9bfe1078924fcd5ad49d216aaeaf123fc022c4"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Boots.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "e3b269a8be19139ec5a7ddf9daa55df90451a9da7cbc0ed1b08a8c886c257d92"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Corset v2.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "c9d55722b863e18f428dca8c6646ac7604b0b9e21ca7d05b694fbc375e054284"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Corset.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "75583c0362178ce732731c984e5c1052492752dcd0c955e7d3c6d8bfcc15efb3"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Green Corset v2.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "db242a822c25c4efdc722f1b0dc2b6683b7fdee799ef89fcf6208e0a34e388ee"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Green Corset.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "bf381e0d42a8f3112a0e088e72e21e6d9f01c130f245a06fbae8425f9358321b"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Green Panties and Bra.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "53fbfe985163a4af42a8daae417282f8902d695775a8bb637125a402f88e7972"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Green Socks.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "c276318e71c3eefa404bedf0cb595fb4b31c58c970d73edba464cf911864d7e2"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Orange Corset v2.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "63fe3e9c800bf3b06ce5f9bcccfc6010504799d4da1381f40aa88b97be065b21"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Orange Corset.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "317a01b7347f2146ef16941d7cdf35920502e93a4fbdaa52abc230573a64c1fd"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Orange Panties and Bra.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "01b0096dbaf23d9bffb7a46f739b1873cc07e22bc23c558a17c91cbd93a7add6"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Orange Socks.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "71db1af2604bbd143d8875ea021fea64adfe3f52efd719eff80ab0aa68ef2a64"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Purple Corset v2.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "2ea2117d125f6c615cc99e4410073d3c1dd13f70945b9066366645ba66a11a92"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Purple Corset.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "199642decd0c2ec24fbbbb08d3e4e6923c2dab1cbd280a7816a1a358853b0d79"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Purple Panties and Bra.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "7451bde8eb655670459c93676dc93d07b21ca6f1e523721dac894dbe999a2827"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Purple Socks.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "abaf51fd20043c5eceb97ff1d4fa3798ac72e67f73dd0d225fa5564d2af423db"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Red Panties and Bra.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "160d2d3157e5684f54599726c146b09201f06c703dbc9f91a36f70f18abc2c5d"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Red Socks.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "8aaa6ca091b91d769c88c7c96c7879e1d13e5697fc3f03d889734b8fcd0ccb3a"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Skirt.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "dcb193338aabebfbcca83b5484d14f3d97b75763f1a3133aaa0c3c893b49f8b4"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Skyblue Panties and Bra.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "5e86ffc6f40a2a6cd10121c4d1e04a1c7e11adf935f785de4ffc4dd2f8a74784"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Skyblue Socks.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "9977391734253cca714ebe652485977623c39be3f21720387fc26b66cbe3892d"
+  },
+  {
+    "file": "GandalfHardcore\\Female Clothing\\Socks.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "ece6d9224a1b4a4f79fd66dbefffacd600168c0e88a21620f543a28e3d16793d"
+  },
+  {
+    "file": "GandalfHardcore\\Female Hair\\Female Hair1.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "53dd53e94e32c523eda9a79ab81bb62b497ab8dfc54b1f0acf31b6b8d5cc72a2"
+  },
+  {
+    "file": "GandalfHardcore\\Female Hair\\Female Hair2.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "d2c7b276bbe65711c1fa828e2eb364aef8adf26687a826f6fa2fb09fe639121d"
+  },
+  {
+    "file": "GandalfHardcore\\Female Hair\\Female Hair3.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "1dd191f9100813b21f77a8eecd3c3a3db3938989208cd9b6d6bff16892e1ba30"
+  },
+  {
+    "file": "GandalfHardcore\\Female Hair\\Female Hair4.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "ed8da00469856dff32557b273119d23e4fe75605be436ac969d1186c58125f6c"
+  },
+  {
+    "file": "GandalfHardcore\\Female Hair\\Female Hair5.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "29f08ecc1afff3a92f71e2688c6b6f2037d1735921697c0f16cae0c057ad0f85"
+  },
+  {
+    "file": "GandalfHardcore\\Female Hand\\Female Sword.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "6f6c17037bf4ee07c76e05e0286d5221a51a761b57021d611b22b27de465e741"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Blue Pants.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "8ee4d1d561ebdeb8ad526281aa2e3a3c68dedaf6dfe0da2921589d81b7e2c142"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Blue Shirt v2.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "33f76d5096c3d0ea627f45d411b5867463c1b57ebe42ed462eb5b4194f227f8e"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Boots.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "12d6051b8fd339e29d06b4f298675a292e91b0adfffdafa613c189533feab046"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Green Pants.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "6e3ca8f23da858705e378661379d78d7c330f42abfd45072a35eab0d23fa390f"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Green Shirt v2.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "c00a364bd12321e796316adab1a8c50436848b7afa56c99c25bea9e947c9ac0d"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Green Underwear.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "c67a82fd5b886a619d9a8ee5c7e48915e8ed95065223a6b3be70ecf84dd0dea6"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Orange Pants.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "685bcb271e5635054938df66807c301243e28e004b8e981214717cd95694697c"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\orange Shirt v2.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "20aa695fedbbeb5959c10680468ec5833ca340a8a235e32a9da14bd781623d03"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Orange Underwear.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "202ca07ab055978e8211edeb16b96d0db8ac2e444e20577f2b5a82b2cfe0a9c8"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Pants.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "de047029130b36db4232f6c96da464b2856adf23f6481556de2da6b2daf9c2fc"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Purple Pants.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "891e17300ad12ce15b8e53ce03a44bf6c7f5eeb8eb371b6af05ef95ae6ccb174"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Purple Shirt v2.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "ed12e7275d63e52bfbaa68fb3af3170c1105d106d384df4fc0ed1c922f1c68f7"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Purple Underwear.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "1903c140bcde0519599024dfeb006147e734ff2d88503f5e0415cc8e1fb7fcbc"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Red Underwear.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "3fa4dd5c16e5d39d3f1861969f8d7e2bd93a7e07112fc3324c4ca2a7518f981f"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Shirt v2.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "20aa695fedbbeb5959c10680468ec5833ca340a8a235e32a9da14bd781623d03"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Shirt.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "25b6d66dd638f0abb13d328687b5132de0640e1f440520029f128537f1c821f6"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Shoes.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "d35fce8394a1fa2e7a39b7fab16c68f53940affdfa7f77de0c32b3b6c406e65d"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Skyblue Underwear.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "0bf285b5ebb1779644c21a0f5976fb9772c8fbe450e7f81f00df16fa429e6abb"
+  },
+  {
+    "file": "GandalfHardcore\\Male Clothing\\Underwear.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "d39ad355cdeceb125abecf2cdaf794f35dfa09e9595b4c20b00895b826fee6ea"
+  },
+  {
+    "file": "GandalfHardcore\\Male Hair\\Male Hair1.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "a760b4ae826a3a8483f61c1f63a35aad7f8c57748de80c1791d6bff1f4bd09d3"
+  },
+  {
+    "file": "GandalfHardcore\\Male Hair\\Male Hair2.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "80ab96b357538fd513050b26d15e166b742c5233ba3cd6cba499f652b1ad70e3"
+  },
+  {
+    "file": "GandalfHardcore\\Male Hair\\Male Hair3.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "3d11de54e3eaa82b78656c991d8e620df6e71384f89a64927aa12f438ebfa5a4"
+  },
+  {
+    "file": "GandalfHardcore\\Male Hair\\Male Hair4.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "06a54760658ce0baf68577c37f7ea7ab4bce587ab0d8b8d4af485f8f94558a70"
+  },
+  {
+    "file": "GandalfHardcore\\Male Hair\\Male Hair5.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "9fdb2ca2e16cd34447f96a5145d641ad63baff375cbf6c053a30e26bd7fae076"
+  },
+  {
+    "file": "GandalfHardcore\\Male Hand\\Male Sword.png",
+    "size": [
+      800,
+      448
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "a7c0795e77ad571ddfc22a3faae9e057103af345a5d48b1ed09692ef565d2321"
+  },
+  {
+    "file": "sprite-Sheet.png",
+    "size": [
+      1024,
+      1280
+    ],
+    "mode": "RGBA",
+    "frames": 1,
+    "sha256": "a6af0235f3538458ae65e46d1ed0b515cf1ece6881cd0a3b5d8979b20a0fd31f"
+  },
+  {
+    "file": "tpqMGd.gif",
+    "size": [
+      512,
+      444
+    ],
+    "mode": "P",
+    "frames": 6,
+    "sha256": "e417e58514904b819789fb5825a9fcb1a604b632f33f165e3a6657a6f1b87000",
+    "durations_ms": [
+      80,
+      80,
+      80,
+      80,
+      80,
+      80
+    ]
+  },
+  {
+    "file": "vR4Nwp.gif",
+    "size": [
+      512,
+      444
+    ],
+    "mode": "P",
+    "frames": 6,
+    "sha256": "67d3429cf108123f0eca8a4092c8a1c61fc1ca1f64f9ae0b693451a2070c5632",
+    "durations_ms": [
+      80,
+      80,
+      80,
+      80,
+      80,
+      80
+    ]
+  }
+]

@@ -1,0 +1,2 @@
+# Controles
+WASD move a camera; roda faz zoom; botao do meio arrasta. Clique esquerdo seleciona pessoa ou construcao. Escolha uma construcao e clique em terreno livre para iniciar obra. Vermelho indica obstaculo/custo insuficiente. Esc cancela ferramenta ou abre/fecha pausa. F5 salva. Carregar recupera campanha e calcula ate duas horas offline. Novo dominio reinicia em memoria; save permanece ate salvar/autosave. Autosave a cada 60 segundos de jogo ativo.

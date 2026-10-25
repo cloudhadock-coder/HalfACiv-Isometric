@@ -1,0 +1,11 @@
+.godot/
+assets/original/
+assets/characters/
+assets/animations/
+tools/python_libs/
+tools/godot/
+dist/
+__pycache__/
+
+tests/*-save.json*
+tests/realm-test.json*

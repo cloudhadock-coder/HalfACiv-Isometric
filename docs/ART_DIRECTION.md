@@ -1,0 +1,2 @@
+# Direcao artistica
+Fantasia medieval, tons terrosos, tecidos azuis/verdes/vinho, contorno escuro, luz superior esquerda, pixels sem suavizacao. Diamantes 64x32 e personagens 30x35 na tela. O conjunto arquitetonico e lateral dos personagens exige futura harmonizacao artistica. Nao converter direcoes com rotacao de 45 graus. Cavalaria final deve separar corpo, equipamento, cavaleiro, arma e estandarte. Retratos atuais sao estudos originais de busto, identificados como provisorios.
