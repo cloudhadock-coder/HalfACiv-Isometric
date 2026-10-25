@@ -6,6 +6,7 @@ const Citizen=preload("res://src/entities/citizen.gd")
 const Professions=preload("res://src/entities/professions.gd")
 const Navigation=preload("res://src/world/navigation.gd")
 const PortraitKit=preload("res://src/ui/portrait_kit.gd")
+const WorldGen=preload("res://src/world/world_gen.gd")
 const STEP=0.1
 const DAY_SECONDS=240.0
 var resources: Dictionary={"food":160.0,"wood":180.0,"stone":120.0,"gold":90.0,"influence":10.0}
@@ -21,7 +22,14 @@ var offline_seconds: int=0
 var revision: int=0
 var nav=Navigation.new()
 var jobs: Dictionary={}
-func _init() -> void:
+# Seeded world settings (see world_gen.gd); empty for the classic map.
+var world: Dictionary={}
+func _init(settings: Dictionary={}) -> void:
+ if not settings.is_empty():
+  var made=WorldGen.generate(settings);world=made.world;terrain=made.terrain
+  for entry in made.buildings:buildings.append(Catalog.make(entry[0],Vector2i(entry[1],entry[2])))
+  for key in ["food","wood","stone","gold"]:resources[key]=round(resources[key]*WorldGen.BOUNTY_FACTOR[world.bounty])
+  populate(made.horse);return
  for x in range(32):
   for y in range(32):
    var t="grass"
@@ -32,12 +40,16 @@ func _init() -> void:
    terrain[Vector2i(x,y)]=t
  var entries=[["house",11,12],["house",13,12],["house",17,12],["house",19,12],["house",11,17],["farm",12,18],["farm",13,18],["lumber",7,17],["quarry",20,18],["market",16,14],["warehouse",16,16],["mill",12,14],["bakery",13,16],["forge",18,16],["workshop",20,16],["fishery",24,13],["herbalist",18,10],["tavern",18,14],["chapel",13,10],["stable",10,20],["pasture",12,20],["tower",21,14]]
  for entry in entries:buildings.append(Catalog.make(entry[0],Vector2i(entry[1],entry[2])))
+ populate(Vector2i(11,20))
+func populate(horse_cell: Vector2i) -> void:
  nav.rebuild(self)
  for i in range(24):
   var cell=Vector2i(15,6+i%18)
   people.append(Citizen.new(i,cell))
- var horse=Citizen.new(0,Vector2i(11,20));horse.horse_only=true;horse.citizen_name="Castanha";people.append(horse)
+ var horse=Citizen.new(0,horse_cell);horse.horse_only=true;horse.citizen_name="Castanha";people.append(horse)
  reassign_jobs()
+func realm_name() -> String:
+ return world.get("name","Vale da Aurora")
 func valid(cell: Vector2i) -> bool:
  return cell.x>=0 and cell.y>=0 and cell.x<32 and cell.y<32
 func building_at(cell: Vector2i) -> int:

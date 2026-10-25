@@ -141,4 +141,26 @@ class Assets(unittest.TestCase):
   for row in range(2):
    frames=[im.crop((f*64,row*64,f*64+64,row*64+64)).tobytes() for f in range(8)]
    self.assertGreater(len(set(frames)),3)
+ def test_ui_chrome(self):
+  # HUD chrome: fixed sizes (the 9-slice margins in src/ui/ui_theme.gd depend on them) and a deterministic build.
+  import importlib.util,tempfile
+  sizes={'panel':(32,32),'bar':(16,16),'title':(16,16),'grabber':(8,16),'button_normal':(16,16),'button_hover':(16,16),'button_pressed':(16,16),'button_disabled':(16,16),'button_field':(16,16)}
+  for name in ['food','wood','stone','gold','influence','people']:sizes['icon_'+name]=(12,12)
+  before={}
+  for name,size in sizes.items():
+   path=ROOT/f'assets/ui/{name}.png';self.assertEqual(Image.open(path).size,size,name)
+   before[name]=hashlib.sha256(path.read_bytes()).hexdigest()
+  spec=importlib.util.spec_from_file_location('build_ui',ROOT/'tools/ui_pipeline/build_ui.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+  with tempfile.TemporaryDirectory() as tmp:
+   module.OUT=Path(tmp);module.main()
+   for name in sizes:self.assertEqual(Image.open(Path(tmp)/f'{name}.png').tobytes(),Image.open(ROOT/f'assets/ui/{name}.png').tobytes(),name+' is reproducible')
+ def test_game_icon(self):
+  # Every ICO frame is a whole-number enlargement of a hand-drawn master (16 or 32), pixel for pixel.
+  import importlib.util
+  spec=importlib.util.spec_from_file_location('build_icon',ROOT/'tools/ui_pipeline/build_icon.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+  expected=module.frames()
+  self.assertEqual(Image.open(ROOT/'assets/icon/icon.png').convert('RGBA').tobytes(),expected[256].tobytes(),'icon.png matches the 32px master at 8x')
+  ico=Image.open(ROOT/'assets/icon/halfaciv.ico');self.assertEqual(sorted(ico.info['sizes']),[(s,s) for s in sorted(expected)])
+  for size,img in expected.items():
+   self.assertEqual(ico.ico.getimage((size,size)).convert('RGBA').tobytes(),img.tobytes(),f'{size}px frame is exact')
 if __name__=='__main__':unittest.main()

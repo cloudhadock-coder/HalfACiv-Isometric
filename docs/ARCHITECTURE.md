@@ -31,6 +31,10 @@ A superfície nativa é centrada em (32,40), não (32,48). `visual_patch.py` ger
 
 A posição simulada não é mais arredondada por construção/troca de ofício/load; o pathfinder continua a usar células. Nenhum custo, receita, turno, imigração ou regra de progressão mudou. Save continua no esquema 2. `window/stretch/aspect=expand` foi validado por captura real 1600×720, e HUD/rig trabalham no viewport efetivo. Regressões geométricas e oclusão GPU fazem parte do build.
 
+## Interface e mundos por semente
+
+`hud.gd` monta a barra de menus, a coluna direita (`minimap.gd`, status, informações) e as janelas, com o tema de `ui_theme.gd`. `main_menu.gd` cuida do menu principal, da pausa e da tela de novo mundo. `world_gen.gd` gera terreno e vila a partir de `{seed, landscape, bounty, name}`; `Sim.new(settings)` usa o gerador, e `Sim.new()` mantém o mapa clássico. O save guarda `world` e regenera o terreno ao carregar. Detalhes em [INTERFACE.md](INTERFACE.md).
+
 ## Companhia v0.3.0
 
 `entities/company.gd` contém catálogo estável, pré-condições, transação de contratação e bônus. `ui/company_panel.gd` é a apresentação. Os contratos reutilizam a identidade do fundador e só criam uma pessoa se ausente e com moradia disponível. O bônus produtivo escala o delta do próprio trabalho (insumos e produção); o de cavalaria escala deslocamento. `Citizen.equipment` guarda índices normalizados e dois booleanos; `specialist` é ID estável. Save schema 2 com campos opcionais: antigos usam defaults e dados inválidos não alteram o estado vivo. Renderização compõe camadas em `world_view.gd`, mantendo a base e o sort corrigidos na v0.2.1.

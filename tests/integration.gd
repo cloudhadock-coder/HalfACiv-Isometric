@@ -63,6 +63,34 @@ func run() -> void:
  check(game.hud.portrait.display_scale()==1 and game.hud.portrait_note.visible==not game.hud.registry.is_final(16),"legacy portrait native scale and pending note")
  var probe=PortraitView.new();probe.size=Vector2(130,130);probe.texture=ImageTexture.create_from_image(Image.create(64,64,false,Image.FORMAT_RGBA8))
  check(probe.display_scale()==2,"64x64 approved art shown at integer 2x");probe.size=Vector2(100,100);check(probe.display_scale()==1,"never fractional");probe.free()
+ # Village registry: sortable villager/building tables, building selection and message history.
+ game.hud.toggle_roster();await process_frame
+ game.hud.registry_tab=1;game.hud.refresh_registry();await process_frame
+ check(game.hud.ledger_list.get_child_count()==25 and not game.hud.roster_grid.visible,"villager table lists 24 rows plus header")
+ game.hud.ledger_list.get_child(5).pressed.emit();await process_frame
+ check(game.selected==4 and not game.hud.roster_panel.visible,"villager row selects that villager")
+ game.hud.toggle_roster();game.hud.registry_tab=2;game.hud.refresh_registry();await process_frame
+ check(game.hud.ledger_list.get_child_count()==game.sim.buildings.size()+1,"building table lists every building")
+ var spot_b=Iso.project(Vector2(game.sim.buildings[2].x,game.sim.buildings[2].y));var gap=game.camera_rig.focus.distance_to(spot_b)
+ game.hud.ledger_list.get_child(3).pressed.emit();await process_frame
+ check(game.selected_building==2 and game.selected==-1 and game.hud.selection_kind=="building","building row selects that building")
+ check(gap<1.0 or game.camera_rig.focus.distance_to(spot_b)<gap,"building row focuses camera")
+ game.hud.notify("Mensagem de teste");check(game.hud.messages.latest()=="Mensagem de teste" and game.hud.messages.get_child_count()>=1,"notice shown over the map")
+ game.hud.toggle_roster();game.hud.registry_tab=3;game.hud.refresh_registry();await process_frame
+ check(game.hud.ledger_list.get_child(0).get_child(1).text=="Mensagem de teste","message history in registry")
+ game.hud.toggle_roster();game.hud.registry_tab=0
+ game.hud.quick_info(game.sim,4,-1,Vector2(400,300));check(game.hud.quick.visible and game.hud.quick.text.text.contains(game.sim.people[4].citizen_name),"Ctrl quick-info card")
+ game.hud.quick_info(game.sim,-1,-1,Vector2(400,300));check(not game.hud.quick.visible,"quick-info hides over empty ground")
+ # Middle click without drag centres the map; Ctrl+middle restores default zoom.
+ game.camera_rig.set_step(4);var spot=game.camera_rig.useful.get_center()+Vector2(60,40);var target=game.camera_rig.screen_to_world(spot)
+ var tap=InputEventMouseButton.new();tap.button_index=MOUSE_BUTTON_MIDDLE;tap.pressed=true;tap.position=spot
+ Input.warp_mouse(spot);await process_frame;await process_frame;target=game.camera_rig.screen_to_world(spot);Input.parse_input_event(tap);await process_frame
+ tap=tap.duplicate();tap.pressed=false;target=game.camera_rig.screen_to_world(spot);Input.parse_input_event(tap);await process_frame
+ check(game.camera_rig.focus.distance_to(target)<1.0 and not game.dragging,"middle click centres the map")
+ tap=tap.duplicate();tap.pressed=true;tap.ctrl_pressed=true;Input.parse_input_event(tap);await process_frame
+ tap=tap.duplicate();tap.pressed=false;Input.parse_input_event(tap);await process_frame
+ check(game.camera_rig.step==maxi(2,game.camera_rig.minimum_step),"ctrl+middle click restores default zoom")
+ game.select_person(16)
  game.hud.profession.select(17);game.hud.profession.item_selected.emit(17)
  check(game.sim.people[16].kind==17 and game.sim.people[16].portrait_id==16,"profession dropdown preserves face")
  game.hud.speed_buttons[2].pressed.emit();check(game.speed==2,"speed button")

@@ -38,11 +38,12 @@ def main():
  if 'EXPORTED_COMPANY_OK=true capture=0' not in company_smoke:raise SystemExit('Exported company or kit missing')
  if git('status','--porcelain'):raise SystemExit('Build changed tracked or unignored files: review before release')
  exe=output/'HalfACiv-Isometric.exe'
- report={'version':version,'commit':commit,'engine':'4.7.2-stable','platform':'Windows x64','exe_sha256':hashlib.sha256(exe.read_bytes()).hexdigest(),'checks':counts,'windows_smoke':'passed','benchmark':json.loads((ROOT/'docs/visual-validation/v0.3.0/benchmark.json').read_text())}
+ report={'version':version,'commit':commit,'engine':'4.7.2-stable','platform':'Windows x64','exe_sha256':hashlib.sha256(exe.read_bytes()).hexdigest(),'checks':counts,'windows_smoke':'passed','benchmark':json.loads((ROOT/f'docs/visual-validation/{tag}/benchmark.json').read_text())}
  (output/'BUILD_INFO.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
  notes=(ROOT/'docs/RELEASE_NOTES.md').read_text(encoding='utf-8').replace('{{COMMIT}}',commit)
  (output/'RELEASE_NOTES.md').write_text(notes,encoding='utf-8')
- (output/'README.txt').write_text('HalfACiv Isometric '+tag+' — Cavalaria e personagens\n\nExtraia o ZIP e execute HalfACiv-Isometric.exe no Windows 10/11 x64.\nWASD: câmera; roda: zoom ancorado; botão do meio: arrastar. B/I: recolher painéis.\nSelecione categoria e construção, depois clique no terreno livre.\nClique em um morador para inspecionar e trocar seu ofício.\nHabitantes e retratos: galeria selecionável. R: contratos e equipamentos de cavalaria.\n1 / 2 / 4: velocidade; Espaço / Esc: pausa; F5: salvar.\n\nSaves da v0.1.0 são migrados. A primeira gravação mantém realm.json.v0.1.bak.\nSave: %APPDATA%/Godot/app_userdata/HalfACiv Isometric/realm.json\n\nConsulte RELEASE_NOTES.md para recursos, limites e créditos.\n',encoding='utf-8')
+ title=notes.splitlines()[0].lstrip('# ').strip()
+ (output/'README.txt').write_text(title+'\n\nExtraia o ZIP e execute HalfACiv-Isometric.exe no Windows 10/11 x64.\nMenu principal: Enter continua, N cria um mundo aleatório, P personaliza (nome, semente, paisagem, recursos).\nWASD: câmera; roda: zoom; botão do meio: arrastar ou centralizar; minimapa: clique para mover a vista.\nB/I: recolher construção e coluna lateral. H: registro da aldeia. R: companhia e cavalaria.\nCtrl sobre o mapa: ficha rápida; Shift: rotas. 1 / 2 / 4: velocidade; Esc: menu; F5: salvar.\n\nSaves da v0.1.0 são migrados. A primeira gravação mantém realm.json.v0.1.bak.\nSave: %APPDATA%/Godot/app_userdata/HalfACiv Isometric/realm.json\n\nConsulte RELEASE_NOTES.md para recursos, limites e créditos.\n',encoding='utf-8')
  shutil.copy2(ROOT/'LICENSE',output/'LICENSE.txt')
  shutil.copy2(ROOT/'assets/tilesets/ATTRIBUTION.md',output/'CREDITS.md')
  shutil.copy2(ROOT/'assets/original/GandalfHardcore/READ ME.txt',output/'GandalfHardcore-LICENSE.txt')

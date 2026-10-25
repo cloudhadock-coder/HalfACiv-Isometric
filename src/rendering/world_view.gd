@@ -22,6 +22,7 @@ var static_objects: Array=[]
 var water_cells: Array=[]
 var seen_revision: int=-1
 var animate: bool=true
+var show_routes: bool=false
 func _ready() -> void:
  texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
  var names=sim.Catalog.DATA.keys()+["grass","grass_1","grass_2","grass_3","tree","water","road","plaza"]
@@ -90,6 +91,7 @@ func _draw() -> void:
    if selected_person==object.i:draw_arc(object.point+Vector2(0,1),10,0,TAU,20,Color("e3c77e"),1)
  if selected_building>=0 and selected_building<sim.buildings.size():
   var selected=sim.buildings[selected_building];diamond(Vector2i(selected.x,selected.y),Color("e5c582"),1.5)
+ if show_routes:draw_routes()
  if sim.valid(hovered):diamond(hovered,Color("e7ca88") if build_kind.is_empty() or sim.can_build(build_kind,hovered) else Color("d57d69"),1.5)
  for obj in objects:
   if obj.type==0:
@@ -134,6 +136,25 @@ func _draw() -> void:
      draw_rect(Rect2(p+Vector2(7,-35),Vector2(2,1)),Color("b7c3d0"))
  if sim.valid(hovered):
   if not build_kind.is_empty():draw_tile(build_kind,hovered,Color(1,1,1,0.55))
+# Shift overlay: the selected villager's path, a building's staff links, or every cargo route.
+func draw_routes() -> void:
+ if selected_person>=0 and selected_person<people.size():
+  draw_route(people[selected_person],Color("e3c77e"))
+ elif selected_building>=0 and selected_building<sim.buildings.size():
+  var b=sim.buildings[selected_building];var anchor=Iso.project(Vector2(b.x,b.y))
+  for c in people:
+   if c.employer!=selected_building:continue
+   draw_dashed_line(anchor,person_point(c),Color(0.65,0.73,0.53,0.8),1.0,3.0)
+   draw_route(c,Color("a6bb87"))
+ else:
+  for c in people:
+   if not c.cargo.is_empty():draw_route(c,Color("8fb4c9"))
+func draw_route(c,colour: Color) -> void:
+ if c.route.is_empty():return
+ var from=person_point(c)
+ for cell in c.route:
+  var to=Iso.project(Vector2(cell));draw_dashed_line(from,to,colour,1.0,4.0);from=to
+ diamond(c.route.back(),colour,1)
 func draw_ellipse_shadow(p: Vector2) -> void:
  draw_colored_polygon(PackedVector2Array([p+Vector2(-7,0),p+Vector2(-3,-2),p+Vector2(5,-2),p+Vector2(8,0),p+Vector2(4,2),p+Vector2(-4,2)]),Color(0.07,0.13,0.13,0.23))
 

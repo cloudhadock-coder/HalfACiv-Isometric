@@ -3,6 +3,7 @@ const Company=preload("res://src/entities/company.gd")
 const Sim=preload("res://src/economy/simulation.gd")
 const Citizen=preload("res://src/entities/citizen.gd")
 const PortraitKit=preload("res://src/ui/portrait_kit.gd")
+const WorldGen=preload("res://src/world/world_gen.gd")
 static var PATH: String="user://realm.json"
 static func save_game(sim,citizens: Array=[]) -> Error:
  var entries=[]
@@ -10,6 +11,7 @@ static func save_game(sim,citizens: Array=[]) -> Error:
  for c in source:
   entries.append({"x":c.position.x,"y":c.position.y,"kind":c.kind,"portrait":c.portrait_id,"name":c.citizen_name,"horse_only":c.horse_only,"cargo":c.cargo,"stamina":c.stamina,"work_elapsed":c.work_elapsed,"delivered":c.delivered,"appearance":c.appearance,"specialist":c.specialist,"equipment":c.equipment})
  var data={"schema":2,"version":ProjectSettings.get_setting("application/config/version","0.3.0"),"saved_at":int(Time.get_unix_time_from_system()),"resources":sim.resources,"buildings":sim.buildings,"people":entries,"seconds":sim.seconds,"tick":sim.tick_count,"immigration_elapsed":sim.immigration_elapsed}
+ if not sim.world.is_empty():data["world"]=sim.world
  var file=FileAccess.open(PATH+".tmp",FileAccess.WRITE)
  if file==null:return FileAccess.get_open_error()
  file.store_string(JSON.stringify(data));file.close()
@@ -21,6 +23,15 @@ static func save_game(sim,citizens: Array=[]) -> Error:
   var error=DirAccess.copy_absolute(PATH,PATH+".bak")
   if error!=OK:return error
  return DirAccess.rename_absolute(PATH+".tmp",PATH)
+# Light, non-validating read for the main menu card; load_game still validates everything.
+static func summary() -> Dictionary:
+ if not FileAccess.file_exists(PATH):return {}
+ var parser=JSON.new()
+ if parser.parse(FileAccess.get_file_as_string(PATH))!=OK or not parser.data is Dictionary:return {}
+ var data=parser.data;var world=data.get("world",{})
+ var name=world.get("name","Vale da Aurora") if world is Dictionary else "Vale da Aurora"
+ var people=data.get("people",[]);var seconds=data.get("seconds",0)
+ return {"name":str(name),"day":1+int(float(seconds)/Sim.DAY_SECONDS) if numeric(seconds) else 1,"population":maxi(0,people.size()-1) if people is Array else 0,"saved_at":int(data.get("saved_at",0)) if numeric(data.get("saved_at",0)) else 0,"seed":int(world.get("seed",0)) if world is Dictionary and numeric(world.get("seed",0)) else 0}
 static func numeric(value) -> bool:
  return (value is float or value is int) and is_finite(float(value))
 static func amount_map(value,allowed: Dictionary) -> bool:
@@ -35,7 +46,10 @@ static func load_game(sim) -> Dictionary:
  var data=parser.data
  if not data is Dictionary or (data.get("schema",0)!=1 and data.get("schema",0)!=2):return {}
  var legacy=data.schema==1
- var candidate=Sim.new()
+ # Seeded worlds store their settings; the terrain is regenerated from them deterministically.
+ var world=data.get("world",{})
+ if not world is Dictionary or (not world.is_empty() and not WorldGen.valid(world)):return {}
+ var candidate=Sim.new(WorldGen.normalize(world) if not world.is_empty() else {})
  if not amount_map(data.get("resources"),candidate.resources):return {}
  for key in candidate.resources:
   if not data.resources.has(key):return {}
@@ -113,7 +127,7 @@ static func load_game(sim) -> Dictionary:
  candidate.reassign_jobs()
  candidate.apply_offline(int(Time.get_unix_time_from_system())-int(data.get("saved_at",Time.get_unix_time_from_system())))
  # Commit only after complete validation; malformed saves leave the live game untouched.
- sim.resources=candidate.resources;sim.buildings=candidate.buildings;sim.people=candidate.people;sim.terrain=candidate.terrain;sim.seconds=candidate.seconds;sim.tick_count=candidate.tick_count;sim.elapsed=0;sim.population=candidate.population;sim.immigration_elapsed=candidate.immigration_elapsed;sim.offline_seconds=candidate.offline_seconds
+ sim.resources=candidate.resources;sim.buildings=candidate.buildings;sim.people=candidate.people;sim.terrain=candidate.terrain;sim.world=candidate.world;sim.seconds=candidate.seconds;sim.tick_count=candidate.tick_count;sim.elapsed=0;sim.population=candidate.population;sim.immigration_elapsed=candidate.immigration_elapsed;sim.offline_seconds=candidate.offline_seconds
  sim.nav.rebuild(sim);sim.reassign_jobs();sim.revision+=1
  data["migrated"]=legacy
  return data

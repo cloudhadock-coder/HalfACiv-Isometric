@@ -5,6 +5,8 @@ const Store=preload("res://src/persistence/save_store.gd")
 const Citizen=preload("res://src/entities/citizen.gd")
 const Professions=preload("res://src/entities/professions.gd")
 const PortraitKit=preload("res://src/ui/portrait_kit.gd")
+const Ledger=preload("res://src/ui/village_ledger.gd")
+const WorldGen=preload("res://src/world/world_gen.gd")
 var checks: int=0
 var failures: int=0
 func check(value: bool,label: String) -> void:
@@ -139,6 +141,67 @@ func _init() -> void:
  check(Store.load_game(loaded).is_empty() and loaded.resources==original,"invalid save leaves live state untouched")
  var f=FileAccess.open(Store.PATH,FileAccess.WRITE);f.store_string("{broken");f.close();check(Store.load_game(loaded).is_empty(),"corrupted JSON rejected")
  for suffix in ["",".bak",".tmp",".v0.1.bak"]:
+  if FileAccess.file_exists(Store.PATH+suffix):DirAccess.remove_absolute(Store.PATH+suffix)
+ # Village registry helpers: stable sorting, attitude colours, shortfalls and resource trends.
+ var town=Sim.new();var rows=Ledger.citizen_rows(town.people)
+ check(rows.size()==24 and rows==range(24),"registry lists villagers in order without the horse")
+ var by_name=Ledger.citizen_rows(town.people,"name")
+ var names_sorted=true
+ for i in range(by_name.size()-1):names_sorted=names_sorted and town.people[by_name[i]].citizen_name.to_lower()<=town.people[by_name[i+1]].citizen_name.to_lower()
+ check(names_sorted and by_name.size()==24,"registry sorts by name")
+ town.people[3].stamina=5;town.people[8].stamina=99
+ var by_vigour=Ledger.citizen_rows(town.people,"stamina",true);check(town.people[by_vigour.back()].stamina==5 and by_vigour.size()==24,"registry sorts by vigour descending")
+ town.people[2].state="Sem posto de trabalho";town.people[5].state="Trabalhando";town.people[6].state="Dormindo"
+ check(Ledger.mood(town.people[2])=="problem" and Ledger.mood(town.people[5])=="work" and Ledger.mood(town.people[6])=="rest","attitude moods")
+ check(town.people[Ledger.citizen_rows(town.people,"state")[0]].state=="Sem posto de trabalho","problems sort first by state")
+ check(Ledger.period(7)=="Trabalho" and Ledger.period(12.5)=="Refeição" and Ledger.period(21)=="Descanso","day periods")
+ check(Ledger.missing({"wood":25,"stone":5},{"wood":10,"stone":9}).contains("15.0 madeira") and Ledger.missing({"wood":5},{"wood":9}).is_empty(),"build shortfall text")
+ town.build("house",Vector2i(19,14));var site=town.buildings.size()-1
+ check(Ledger.building_status(town,site)[0].begins_with("Em obra") and Ledger.building_status(town,site)[1]=="move","construction site status")
+ var ranks=[]
+ for i in Ledger.building_rows(town,"status"):ranks.append(Ledger.MOOD_RANK[Ledger.building_status(town,i)[1]])
+ var ordered=ranks.duplicate();ordered.sort();check(ranks==ordered,"buildings sort by status severity")
+ check(Ledger.building_rows(town).size()==town.buildings.size(),"building rows cover every building")
+ check(Ledger.building_card(town,site).contains("Casa") and Ledger.citizen_card(town,town.people[5]).contains(town.people[5].citizen_name),"quick-info cards")
+ var trend=[];Ledger.push_sample(trend,0,{"wood":100.0});Ledger.push_sample(trend,0.5,{"wood":101.0});check(trend.size()==1,"samples are spaced by a second")
+ Ledger.push_sample(trend,10,{"wood":110.0});check(absf(Ledger.rates(trend,240).wood-10.0)<0.001,"trend is change per game hour")
+ for t in range(11,80):Ledger.push_sample(trend,t,{"wood":110.0})
+ check(trend.back()[0]-trend.front()[0]<=Ledger.TREND_WINDOW+1,"trend window is bounded")
+ Ledger.push_sample(trend,2,{"wood":0.0});check(trend.size()==1,"trend resets when time goes backwards")
+ # Seeded worlds: deterministic, varied, and every starting building reachable on any seed.
+ var first=Sim.new({"seed":4242});var again=Sim.new({"seed":4242});var neighbour=Sim.new({"seed":4243})
+ check(first.terrain==again.terrain and str(first.buildings)==str(again.buildings) and first.world==again.world,"same seed, same world")
+ check(first.terrain!=neighbour.terrain,"different seeds differ")
+ check(Sim.new().world.is_empty() and Sim.new().realm_name()=="Vale da Aurora","empty settings keep the classic map")
+ check(WorldGen.normalize({"seed":5}).landscape==WorldGen.normalize({"seed":5}).landscape and WorldGen.normalize({"seed":5}).name==WorldGen.name_for(5),"bare seed derives landscape and name")
+ check(WorldGen.seed_from_text("123")==123 and WorldGen.seed_from_text("vale")==WorldGen.seed_from_text("vale") and WorldGen.seed_from_text("vale")>=1,"text seeds")
+ check(Sim.new({"seed":9,"bounty":"escasso"}).resources.wood==round(180*0.6) and Sim.new({"seed":9,"bounty":"farto"}).resources.gold==round(90*1.6),"starting bounty")
+ var fisheries=0;var worlds=0
+ for seed in range(1,91):
+  var w=Sim.new({"seed":seed*7919,"landscape":WorldGen.LANDSCAPES[seed%3]});worlds+=1
+  var ok=w.buildings.size()>=21 and w.village_anchor()==WorldGen.CENTRE and w.people.size()==25
+  var water=0
+  for cell in w.terrain:
+   if w.terrain[cell]=="water":water+=1;ok=ok and WorldGen.ring(cell)>WorldGen.SAFE
+  ok=ok and water>=8
+  for i in range(w.buildings.size()):
+   var site_b=w.buildings[i];var cell=Vector2i(site_b.x,site_b.y)
+   ok=ok and w.terrain[cell]=="grass" and w.entrance(i,Vector2(15,15),w.nav).x>=0
+   if site_b.kind=="fishery":
+    fisheries+=1;var shore=false
+    for offset in [Vector2i.LEFT,Vector2i.RIGHT,Vector2i.UP,Vector2i.DOWN]:shore=shore or w.terrain.get(cell+offset,"")=="water"
+    ok=ok and shore
+  for c in w.people:ok=ok and not w.blocked(Vector2i(c.position.round())) and (Vector2i(c.position.round())==WorldGen.CENTRE or not w.nav.path(Vector2i(c.position.round()),WorldGen.CENTRE).is_empty())
+  check(ok,"seeded world %d is valid and reachable"%seed)
+ check(fisheries>=worlds-2,"fishery finds a shore on nearly every seed (%d/%d)"%[fisheries,worlds])
+ var seeded=Sim.new({"seed":777,"landscape":"rio","bounty":"farto","name":"Vale de Teste"});seeded.tick(3)
+ check(Store.save_game(seeded)==OK,"save seeded world")
+ var reloaded=Sim.new();check(not Store.load_game(reloaded).is_empty(),"load seeded world")
+ check(reloaded.terrain==seeded.terrain and reloaded.world==seeded.world and reloaded.realm_name()=="Vale de Teste" and reloaded.buildings.size()==seeded.buildings.size(),"seeded world survives save and load")
+ check(Store.summary().name=="Vale de Teste" and Store.summary().seed==777 and Store.summary().population==24,"save summary for the main menu")
+ var stored=JSON.parse_string(FileAccess.get_file_as_string(Store.PATH));stored.world.landscape="vulcão";file_json(stored)
+ check(Store.load_game(Sim.new()).is_empty(),"invalid world settings rejected")
+ for suffix in ["",".bak",".tmp"]:
   if FileAccess.file_exists(Store.PATH+suffix):DirAccess.remove_absolute(Store.PATH+suffix)
  print("TEST_RESULT assertions=",checks," failures=",failures)
  quit(0 if failures==0 else 1)

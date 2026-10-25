@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.4.0 — Interface, menu e mundos por semente
+
+- Ícone do jogo desenhado à mão (16 e 32 px, ampliações inteiras até 256 px) em `assets/icon/`, gerado por `tools/ui_pipeline/build_icon.py`, aplicado ao executável e à janela.
+- O clique do meio passa a distinguir clique de arrasto pela distância entre pressionar e soltar, não pelo movimento acumulado.
+- `build_release.py` e o benchmark passaram a usar a versão do projeto, sem caminhos fixos da v0.3.0.
+
+- Disposição dos 4X clássicos: barra de menus (Jogo, Aldeia, Ver, Conselheiros, Ajuda), coluna direita com minimapa clicável, status (recursos com ícones e tendência) e informações da seleção, e construção como janela flutuante.
+- Molduras em pixel art com chanfro e ícones de recurso 12×12 em `assets/ui/`, gerados por `tools/ui_pipeline/build_ui.py`. São substituíveis por arte à mão sem mudar código. Tema central em `src/ui/ui_theme.gd`.
+- O HUD fica em escala inteira de pixels de tela (1:1 em 1080p, 2× em 1440p).
+- Menu principal com cartão do save, atalhos para todas as ações, novo mundo aleatório em um clique, mapa clássico e menu de pausa. Tela "Personalizar mundo" com nome, semente (número ou palavra), paisagem, recursos e prévia ao vivo.
+- Geração de mundo por semente (`src/world/world_gen.gd`): lagos, rio ou costa, florestas, estradas e vila inicial distribuída com acesso garantido. O save guarda as opções do mundo; saves antigos continuam no mapa clássico (esquema 2).
+- Painel de ajuda com os controles, tecla C para centralizar a praça e rotas fixáveis pelo menu Ver.
+- Testes: 90 sementes verificadas por execução, determinismo, salvar e carregar, opções inválidas, tamanhos e reprodutibilidade das peças de UI, além de capturas em `docs/visual-validation/interface/`. Veja `docs/INTERFACE.md`.
+
+### Interface inspirada no Civ2-UI-Additions (incluída na v0.4.0)
+
+- Registro da aldeia [H] com abas Retratos, Moradores, Edifícios e Mensagens, ordenáveis e com totais. Clicar seleciona e centraliza.
+- Ficha rápida com Ctrl sobre moradores e prédios. Shift traça rotas (selecionado, equipe do prédio ou todas as cargas).
+- Clique do meio centraliza o mapa; Ctrl+meio volta ao zoom 2×.
+- Estados com cores de atitude, tendência de recursos por hora, avisos sobrepostos ao mapa com histórico, obras sem recursos esmaecidas com o que falta e período do dia no rodapé.
+- Só as ideias vieram do [Civ2-UI-Additions](https://github.com/FoxAhead/Civ2-UI-Additions) (MIT); nenhum código foi reutilizado. Veja `docs/UI_ADDITIONS.md`.
+- Testes novos de lógica e integração, e capturas em `docs/visual-validation/ui-additions/`. Retratos, arte e formato de save não mudaram.
+
 ## v0.3.0 — Cavalaria e personagens
 
 - Companhia do Vale [R]: quatro contratos únicos para especialistas, com custo, condições e bônus funcionais.

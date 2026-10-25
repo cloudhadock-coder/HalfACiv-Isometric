@@ -17,7 +17,7 @@ func open() -> void:
 func rebuild() -> void:
  for child in content.get_children():content.remove_child(child);child.queue_free()
  var head=HBoxContainer.new();content.add_child(head)
- game.hud.label("COMPANHIA DO VALE",head,20).size_flags_horizontal=Control.SIZE_EXPAND_FILL
+ game.hud.heading("COMPANHIA DO VALE",head).size_flags_horizontal=Control.SIZE_EXPAND_FILL
  game.hud.button("Fechar",func():hide(),head)
  var tabs=HBoxContainer.new();content.add_child(tabs)
  game.hud.button("Contratos",func():tab=0;rebuild(),tabs)

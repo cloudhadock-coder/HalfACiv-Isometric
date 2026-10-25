@@ -22,4 +22,5 @@ func run() -> void:
  samples.sort();var total=0.0
  for value in samples:total+=value
  var result={"villagers":64,"mounted_with_layers":64,"frames":360,"average_fps":360000.0/total,"frame_ms_p95":samples[int(samples.size()*0.95)],"adapter":RenderingServer.get_video_adapter_name(),"engine":Engine.get_version_info().string,"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),"static_memory_bytes":Performance.get_monitor(Performance.MEMORY_STATIC)}
- var file=FileAccess.open("res://docs/visual-validation/v0.3.0/benchmark.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close();print("BENCHMARK_RESULT ",JSON.stringify(result));game.queue_free();quit()
+ var folder="res://docs/visual-validation/v%s/"%ProjectSettings.get_setting("application/config/version");DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(folder))
+ var file=FileAccess.open(folder+"benchmark.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close();print("BENCHMARK_RESULT ",JSON.stringify(result));game.queue_free();quit()

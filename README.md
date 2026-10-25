@@ -1,3 +1,11 @@
+# HalfACiv Isometric v0.4.0
+
+**Interface, menu e mundos por semente:** a tela segue a disposição dos 4X clássicos. No topo fica a barra de menus; na coluna direita, o minimapa clicável, a caixa de status com recursos e tendências e as informações da seleção. A construção virou janela flutuante. O menu principal mostra o domínio salvo, tem atalhos para tudo e cria um mundo aleatório com N ou um mundo personalizado com P (nome, semente, paisagem e recursos, com prévia). Cada semente gera lagos, rio ou costa, florestas, estradas e uma vila acessível. Saves anteriores abrem no mapa clássico.
+
+![Nova interface](docs/visual-validation/interface/Village_Selected_720p.png)
+
+[Interface e geração de mundo](docs/INTERFACE.md) · [Ideias do Civ2-UI-Additions](docs/UI_ADDITIONS.md) · [Notas da versão](docs/RELEASE_NOTES.md) · [Validação](docs/VALIDATION_V0.4.0.md)
+
 # HalfACiv Isometric v0.3.0
 
 **Cavalaria e personagens:** abra Companhia [R] para contratar especialistas e equipar montarias. São cinco pelagens, seis cores heráldicas, barda, equipamento de cavaleiro e estandarte. Selecione primeiro o cavaleiro ou cavalo no mapa para personalizar. F5 salva equipamento e contratos; saves anteriores continuam compatíveis.
@@ -55,6 +63,9 @@ O pipeline é determinístico. `village_art.py` define roupas, ferramentas, retr
 - `Godot_console.exe --headless --path . --script tests/visual_tests.gd`
 - `Godot_console.exe --path . --script tests/visual_validation.gd -- --no-save`
 - `Godot_console.exe --path . --script tests/benchmark.gd`
+- `Godot_console.exe --path . --script tests/interface_capture.gd` (menus, mundos por semente e HUD em 720p/1080p/540p; [interface](docs/INTERFACE.md))
+- `python tools/ui_pipeline/build_ui.py` (molduras e ícones da interface em `assets/ui/`)
+- `Godot_console.exe --path . --script tests/ui_additions_capture.gd` (capturas da interface; [mapeamento Civ2-UI-Additions](docs/UI_ADDITIONS.md))
 - `python scripts/build_release.py` após commit limpo e tag correspondente; os testes são executados novamente antes do empacotamento.
 
 Testes usam saves isolados em `tests/`. Evidências e limites em [docs/VALIDATION.md](docs/VALIDATION.md). Relatório de assets, controles, arquitetura e roadmap também estão em `docs/`.
