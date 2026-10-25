@@ -5,6 +5,8 @@ const HUD=preload("res://src/ui/hud.gd")
 const CameraRig=preload("res://src/rendering/camera_controller.gd")
 const Backdrop=preload("res://src/rendering/table_backdrop.gd")
 const CompanyPanel=preload("res://src/ui/company_panel.gd")
+const CouncilPanel=preload("res://src/ui/council_panel.gd")
+var council_panel
 var company_panel
 var camera_rig
 const Store=preload("res://src/persistence/save_store.gd")
@@ -36,8 +38,17 @@ func _ready() -> void:
  hud.command.connect(run_command);hud.navigate.connect(func(point):camera_rig.move_to(point))
  get_window().focus_exited.connect(func():dragging=false)
  company_panel=CompanyPanel.new();company_panel.game=self;hud.add_child(company_panel)
+ council_panel=CouncilPanel.new();council_panel.game=self;hud.add_child(council_panel)
  hud.update_resources(sim);world.animate=false
  camera_rig=CameraRig.new(camera);hud.layout_changed.connect(update_camera_layout);update_camera_layout()
+ if "--council-smoke" in OS.get_cmdline_user_args():
+  paused=true;autosave_clock=-100000;hud.menu.hide();run_command("council")
+  var approved=sim.politics.decide(sim,"relief");council_panel.rebuild()
+  get_tree().create_timer(2.0).timeout.connect(func():
+   var ok=approved and sim.politics.legitimacy==55 and sim.politics.last_council_day==1 and council_panel.visible
+   var error=get_viewport().get_texture().get_image().save_png("user://export-council.png")
+   print("EXPORTED_COUNCIL_OK=",ok," capture=",error)
+   get_tree().quit(0 if ok and error==OK else 1))
  if "--company-smoke" in OS.get_cmdline_user_args():
   paused=false;autosave_clock=-100000;hud.menu.hide();select_person(7);company_panel.open()
   var signed=load("res://src/entities/company.gd").recruit(sim,"hector")
@@ -61,9 +72,10 @@ func capture() -> void:
  if "--capture-night" in OS.get_cmdline_user_args():path="res://docs/visual-validation/v0.2.1/Night.png"
  var error=get_viewport().get_texture().get_image().save_png(path);print("CAPTURE_RESULT ",error," ",path);get_tree().quit()
 func new_game(settings: Dictionary={}) -> void:
- sim=Sim.new(settings);people=sim.people;world.sim=sim;world.people=people;world.refresh();camera_rig.move_to(Iso.project(Vector2(15.5,15.5)));selected=-1;selected_building=-1;world.selected_person=-1;world.selected_building=-1;hud.selection_kind="overview";company_panel.hide();autosave_clock=0;paused=false;hud.menu.hide();hud.roster_panel.hide();hud.update_resources(sim)
+ sim=Sim.new(settings);people=sim.people;world.sim=sim;world.people=people;world.refresh();camera_rig.move_to(Iso.project(Vector2(15.5,15.5)));selected=-1;selected_building=-1;world.selected_person=-1;world.selected_building=-1;hud.selection_kind="overview";company_panel.hide();council_panel.hide();autosave_clock=0;paused=false;hud.menu.hide();hud.roster_panel.hide();hud.update_resources(sim)
  hud.notify(sim.realm_name()+" foi fundada"+(" · semente %d"%sim.world.seed if not sim.world.is_empty() else " · mapa clássico"))
 func toggle_pause() -> void:
+ if council_panel.visible:council_panel.hide();return
  if company_panel.visible:company_panel.hide();return
  if hud.roster_panel.visible:hud.roster_panel.hide();return
  if hud.help_panel.visible:hud.help_panel.hide();return
@@ -82,7 +94,10 @@ func run_command(name: String) -> void:
   "main_menu":
    if not paused:toggle_pause()
   "quit":get_tree().quit()
-  "company":company_panel.open()
+  "council":
+   company_panel.hide();hud.roster_panel.hide();council_panel.open()
+  "company":
+   council_panel.hide();company_panel.open()
   "speed1","speed2","speed4":set_speed(float(name.right(1)))
   "center":camera_rig.move_to(Iso.project(Vector2(15.5,15.5)))
   "zoom":camera_rig.set_step(2)
@@ -112,7 +127,7 @@ func load_game() -> void:
  var data=Store.load_game(sim)
  if data.is_empty():hud.notify("Save ausente ou inválido");return
  people=sim.people;world.sim=sim;world.people=people;world.refresh();camera_rig.move_to(Iso.project(Vector2(15.5,15.5)));selected=-1;selected_building=-1;world.selected_person=-1;world.selected_building=-1;hud.selection_kind="overview"
- company_panel.hide()
+ company_panel.hide();council_panel.hide()
  paused=false;hud.menu.hide();hud.notify(("Save v0.1 migrado · " if data.migrated else "Domínio carregado · ")+"Offline: %ds"%sim.offline_seconds)
 func _process(delta: float) -> void:
  world.animate=not paused
@@ -149,7 +164,8 @@ func _unhandled_input(event: InputEvent) -> void:
  if event is InputEventKey and event.pressed and not event.echo:
   if event.keycode in [KEY_ESCAPE,KEY_SPACE]:toggle_pause()
   elif event.keycode==KEY_F5:save_game()
-  elif event.keycode==KEY_R:company_panel.open()
+  elif event.keycode==KEY_P and not paused:run_command("council")
+  elif event.keycode==KEY_R:run_command("company")
   elif event.keycode==KEY_H:hud.toggle_roster()
   elif event.keycode==KEY_B:hud.toggle_build()
   elif event.keycode==KEY_I:hud.toggle_details()

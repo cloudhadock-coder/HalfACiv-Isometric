@@ -39,3 +39,7 @@ Detalhes e mapeamento em [UI_ADDITIONS.md](UI_ADDITIONS.md).
 ## Companhia v0.3.0
 
 R abre/fecha contratos e cavalaria. Para equipar, selecione o cavaleiro ou cavalo no mapa, abra R e escolha Cavalaria e heráldica. F5 grava contratos, pelagem, cor, barda, estandarte e ritmo. Escape fecha a companhia antes de pausar.
+
+## Conselho v0.4.1
+
+P durante a campanha ou Conselheiros → Conselho do domínio abre as abas Facções e decisões, Reformas, Evolução e Crônicas. Esc fecha primeiro o conselho. A economia continua; Espaço primeiro fecha a janela e, sem janelas abertas, alterna a pausa. No menu principal, P continua personalizando o mundo, como na v0.4.0. F5 salva também o estado político.

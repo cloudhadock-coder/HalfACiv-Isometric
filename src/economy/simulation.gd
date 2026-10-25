@@ -7,6 +7,8 @@ const Professions=preload("res://src/entities/professions.gd")
 const Navigation=preload("res://src/world/navigation.gd")
 const PortraitKit=preload("res://src/ui/portrait_kit.gd")
 const WorldGen=preload("res://src/world/world_gen.gd")
+const Realm=preload("res://src/politics/realm.gd")
+var politics=Realm.new()
 const STEP=0.1
 const DAY_SECONDS=240.0
 var resources: Dictionary={"food":160.0,"wood":180.0,"stone":120.0,"gold":90.0,"influence":10.0}
@@ -175,7 +177,7 @@ func work(index: int,delta: float) -> bool:
  for key in data.get("inputs",{}):
   if resources[key]<data.inputs[key]*factor:return false
  for key in data.get("inputs",{}):resources[key]=maxf(0,resources[key]-data.inputs[key]*factor)
- for key in data.production:b.stored[key]=b.stored.get(key,0.0)+data.production[key]*factor
+ for key in data.production:b.stored[key]=b.stored.get(key,0.0)+data.production[key]*factor*politics.production_multiplier(key)
  return true
 func take_cargo(index: int) -> Dictionary:
  var cargo={};var capacity=12.0
@@ -209,9 +211,9 @@ func tick(delta: float=1.0) -> void:
    person.update(dt,nav,self)
    if not person.horse_only and Professions.patrol(person.kind) and person.employer>=0 and hour()>=6 and hour()<20:
     var data=Catalog.DATA[buildings[person.employer].kind]
-    resources.influence+=data.production.get("influence",0.0)*dt/float(maxi(1,data.slots))
+    resources.influence+=data.production.get("influence",0.0)*politics.production_multiplier("influence")*dt/float(maxi(1,data.slots))
   resources.food=maxf(0,resources.food-population*0.035*dt)
-  resources.gold+=population*0.006*dt
+  resources.gold+=population*0.006*dt*politics.tax_multiplier()
   population=people.size()-1
   immigration_elapsed+=dt
   if immigration_elapsed>=20:
@@ -250,6 +252,6 @@ func apply_offline(duration: int) -> void:
      if resources[key]<data.inputs[key]*factor:enough=false
     if enough:
      for key in data.get("inputs",{}):resources[key]-=data.inputs[key]*factor
-     for key in data.production:resources[key]+=data.production[key]*factor
-  resources.food=maxf(0,resources.food-population*0.035);resources.gold+=population*0.006
+     for key in data.production:resources[key]+=data.production[key]*factor*politics.production_multiplier(key)
+  resources.food=maxf(0,resources.food-population*0.035);resources.gold+=population*0.006*politics.tax_multiplier()
  tick_count=int(seconds);reassign_jobs()

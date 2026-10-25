@@ -10,7 +10,7 @@ static func save_game(sim,citizens: Array=[]) -> Error:
  var source=sim.people if citizens.is_empty() else citizens
  for c in source:
   entries.append({"x":c.position.x,"y":c.position.y,"kind":c.kind,"portrait":c.portrait_id,"name":c.citizen_name,"horse_only":c.horse_only,"cargo":c.cargo,"stamina":c.stamina,"work_elapsed":c.work_elapsed,"delivered":c.delivered,"appearance":c.appearance,"specialist":c.specialist,"equipment":c.equipment})
- var data={"schema":2,"version":ProjectSettings.get_setting("application/config/version","0.3.0"),"saved_at":int(Time.get_unix_time_from_system()),"resources":sim.resources,"buildings":sim.buildings,"people":entries,"seconds":sim.seconds,"tick":sim.tick_count,"immigration_elapsed":sim.immigration_elapsed}
+ var data={"schema":2,"version":ProjectSettings.get_setting("application/config/version","0.3.0"),"saved_at":int(Time.get_unix_time_from_system()),"resources":sim.resources,"buildings":sim.buildings,"people":entries,"seconds":sim.seconds,"tick":sim.tick_count,"immigration_elapsed":sim.immigration_elapsed,"politics":sim.politics.snapshot()}
  if not sim.world.is_empty():data["world"]=sim.world
  var file=FileAccess.open(PATH+".tmp",FileAccess.WRITE)
  if file==null:return FileAccess.get_open_error()
@@ -124,10 +124,15 @@ static func load_game(sim) -> Dictionary:
   var start=Vector2i(person.position.round())
   if candidate.blocked(start) or (start!=anchor and candidate.nav.path(start,anchor).is_empty()):person.position=Vector2(anchor);person.previous=person.position
  candidate.seconds=float(data.get("seconds",data.get("tick",0)));candidate.tick_count=int(candidate.seconds);candidate.immigration_elapsed=float(data.get("immigration_elapsed",0));candidate.population=candidate.people.size()-1
+ var realm=candidate.Realm.restore(data.get("politics",{}))
+ if realm==null or realm.last_council_day>candidate.day():return {}
+ for entry in realm.history:
+  if entry.day>candidate.day():return {}
+ candidate.politics=realm
  candidate.reassign_jobs()
  candidate.apply_offline(int(Time.get_unix_time_from_system())-int(data.get("saved_at",Time.get_unix_time_from_system())))
  # Commit only after complete validation; malformed saves leave the live game untouched.
- sim.resources=candidate.resources;sim.buildings=candidate.buildings;sim.people=candidate.people;sim.terrain=candidate.terrain;sim.world=candidate.world;sim.seconds=candidate.seconds;sim.tick_count=candidate.tick_count;sim.elapsed=0;sim.population=candidate.population;sim.immigration_elapsed=candidate.immigration_elapsed;sim.offline_seconds=candidate.offline_seconds
+ sim.resources=candidate.resources;sim.buildings=candidate.buildings;sim.people=candidate.people;sim.terrain=candidate.terrain;sim.world=candidate.world;sim.politics=candidate.politics;sim.seconds=candidate.seconds;sim.tick_count=candidate.tick_count;sim.elapsed=0;sim.population=candidate.population;sim.immigration_elapsed=candidate.immigration_elapsed;sim.offline_seconds=candidate.offline_seconds
  sim.nav.rebuild(sim);sim.reassign_jobs();sim.revision+=1
  data["migrated"]=legacy
  return data

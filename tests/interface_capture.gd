@@ -10,7 +10,9 @@ func check(ok: bool,message: String) -> void:
 func _init() -> void:call_deferred("run")
 func shot(name: String) -> void:
  await process_frame;await process_frame;await RenderingServer.frame_post_draw
- check(root.get_texture().get_image().save_png(FOLDER+name+".png")==OK,"capture "+name)
+ var image=root.get_texture().get_image()
+ check(not image.is_empty(),"real GPU viewport "+name)
+ if "--no-save" not in OS.get_cmdline_user_args():check(image.save_png(FOLDER+name+".png")==OK,"capture "+name)
 func fits(control: Control,label: String) -> void:
  var s=game.hud.scale.x;var view=root.get_visible_rect().size
  var r=Rect2(control.position*s,control.size*s)

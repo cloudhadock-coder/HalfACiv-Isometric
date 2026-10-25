@@ -1,3 +1,21 @@
+# HalfACiv Isometric v0.4.1 — Política e progressão
+
+Esta atualização recupera o plano original da etapa política, preservando a interface, o minimapa e os mundos por semente da v0.4.0.
+
+Pressione **P** durante a campanha ou use **Conselheiros → Conselho do domínio**. Administre Camponeses, Guildas, Clero e Nobreza, aprove uma decisão por dia, promulgue reformas e evolua de Aldeia até Reino. Custos, efeitos e requisitos aparecem antes de confirmar. O conselho não pausa a economia. Esc fecha a janela; com as janelas fechadas, Espaço alterna a pausa. F5 salva.
+
+Saves anteriores continuam compatíveis: começam com política neutra, sem inventar decisões. A aproximação offline respeita reformas aprovadas e não toma decisões políticas.
+
+[Regras e balanceamento](docs/POLITICS.md) · [Validação](docs/VALIDATION_V0.4.1.md) · [Release](https://github.com/cloudhadock-coder/HalfACiv-Isometric/releases/tag/v0.4.1)
+
+Para executar no Windows 10/11 x64, extraia o ZIP da Release e abra `HalfACiv-Isometric.exe`. Salve e feche a versão antiga antes de abrir a nova; escolha Carregar domínio. Para desenvolver, abra `project.godot` no Godot 4.7.2; os comandos de build/testes existentes estão abaixo. Testes novos: `tests/politics_tests.gd` (janela gráfica) e `tests/realm_campaign.gd` (headless).
+
+Limites: balanceamento político inicial; não há guerras, diplomacia externa ou transformação automática dos sprites da cidade. Oito direções/ciclos próprios de cavalaria e aprovação dos retratos continuam pendentes.
+
+---
+
+## Documentação anterior e demais sistemas preservados
+
 # HalfACiv Isometric v0.4.0
 
 **Interface, menu e mundos por semente:** a tela segue a disposição dos 4X clássicos. No topo fica a barra de menus; na coluna direita, o minimapa clicável, a caixa de status com recursos e tendências e as informações da seleção. A construção virou janela flutuante. O menu principal mostra o domínio salvo, tem atalhos para tudo e cria um mundo aleatório com N ou um mundo personalizado com P (nome, semente, paisagem e recursos, com prévia). Cada semente gera lagos, rio ou costa, florestas, estradas e uma vila acessível. Saves anteriores abrem no mapa clássico.

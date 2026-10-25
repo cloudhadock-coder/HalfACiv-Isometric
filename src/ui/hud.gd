@@ -98,7 +98,7 @@ func _ready() -> void:
  menu_entry(bar,"Jogo",[["Salvar  (F5)","save"],["Carregar","load"],[],["Novo mundo…","new_world"],["Menu principal  (Esc)","main_menu"],[],["Sair","quit"]])
  menu_entry(bar,"Aldeia",[["Construir  (B)","build"],["Companhia e cavalaria  (R)","company"],[],["Velocidade 1×  (1)","speed1"],["Velocidade 2×  (2)","speed2"],["Velocidade 4×  (4)","speed4"]])
  menu_entry(bar,"Ver",[["Painel lateral  (I)","details"],["Centralizar a praça  (C)","center"],["Zoom normal  (Ctrl+meio)","zoom"],["Fixar rotas  (Shift)","routes"]])
- menu_entry(bar,"Conselheiros",[["Moradores  (H)","registry1"],["Edifícios","registry2"],["Retratos","registry0"],["Mensagens","registry3"]])
+ menu_entry(bar,"Conselheiros",[["Conselho do domínio  (P)","council"],[],["Moradores  (H)","registry1"],["Edifícios","registry2"],["Retratos","registry0"],["Mensagens","registry3"]])
  menu_entry(bar,"Ajuda",[["Controles","help"]])
  bar_info=label("",bar,13);bar_info.size_flags_horizontal=Control.SIZE_EXPAND_FILL;bar_info.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT;bar_info.vertical_alignment=VERTICAL_ALIGNMENT_CENTER;bar_info.add_theme_color_override("font_color",UiTheme.MUTED)
  # Construction tool window.
@@ -156,7 +156,7 @@ func _ready() -> void:
  help_panel=panel(Vector2.ZERO,Vector2(560,0));var hv=VBoxContainer.new();hv.add_theme_constant_override("separation",8);help_panel.add_child(hv)
  var hh=HBoxContainer.new();hv.add_child(hh);heading("CONTROLES",hh).size_flags_horizontal=Control.SIZE_EXPAND_FILL;button("Fechar [Esc]",func():help_panel.hide(),hh)
  var help=RichTextLabel.new();help.bbcode_enabled=true;help.fit_content=true;help.custom_minimum_size.x=530;help.add_theme_font_size_override("normal_font_size",14);hv.add_child(help)
- help.text="[color=#dfbd72]Mapa[/color]\nWASD move · Roda: zoom no cursor · Meio: arrastar ou, num clique, centralizar · Ctrl+meio: zoom normal · C: centralizar a praça\n\n[color=#dfbd72]Seleção[/color]\nClique: morador ou prédio · Ctrl sobre o mapa: ficha rápida · Shift: rotas · Minimapa: clique ou arraste\n\n[color=#dfbd72]Janelas[/color]\nB construção · I coluna lateral · H registro · R companhia · Esc fecha a janela aberta ou abre o menu\n\n[color=#dfbd72]Jogo[/color]\nEspaço pausa · 1/2/4 velocidade · F5 salvar"
+ help.text="[color=#dfbd72]Mapa[/color]\nWASD move · Roda: zoom no cursor · Meio: arrastar ou, num clique, centralizar · Ctrl+meio: zoom normal · C: centralizar a praça\n\n[color=#dfbd72]Seleção[/color]\nClique: morador ou prédio · Ctrl sobre o mapa: ficha rápida · Shift: rotas · Minimapa: clique ou arraste\n\n[color=#dfbd72]Janelas[/color]\nB construção · I coluna lateral · H registro · R companhia · P conselho · Esc fecha a janela aberta ou abre o menu\n\n[color=#dfbd72]Jogo[/color]\nEspaço pausa · 1/2/4 velocidade · F5 salvar"
  help_panel.hide()
  left_tab=button("Construir ▶",toggle_build,self);left_tab.theme=theme;left_tab.hide()
  right_tab=button("◀ Painel",toggle_details,self);right_tab.theme=theme;right_tab.hide()
@@ -265,7 +265,7 @@ func update_resources(sim,_delta: float=0.0) -> void:
  var trend=Ledger.rates(samples,sim.DAY_SECONDS)
  realm_label.text=sim.realm_name().to_upper()
  date_label.text=clock_text(sim)+" · "+Ledger.period(sim.hour())
- bar_info.text=sim.realm_name()+"  ·  "+clock_text(sim)+"  "
+ bar_info.text=sim.realm_name()+" · "+sim.politics.STAGES[sim.politics.stage]+" · Leg. %d · "%sim.politics.legitimacy+clock_text(sim)
  var cells=resource_cell("people","Moradores / capacidade","%d/%d"%[sim.population,sim.housing_capacity()],0.0)
  for pair in [["influence","Influência"],["food","Alimento"],["wood","Madeira"],["stone","Pedra"],["gold","Ouro"]]:
   cells+=resource_cell(pair[0],pair[1],"%d"%sim.resources[pair[0]],trend.get(pair[0],0.0))
@@ -288,7 +288,7 @@ func show_overview(sim) -> void:
   if not c.cargo.is_empty():carrying+=1
   if c.task in ["sleep","meal"]:resting+=1
   if c.employer<0 and not Professions.patrol(c.kind) and c.kind not in [4,22]:vacant+=1
- details.text="[color=#dfbd72]Uma aldeia em movimento[/color]\nNo trabalho: %d\nTransportando: %d\nRefeição / descanso: %d\nSem posto: %d\n\n06h–12h / 13h–20h: trabalho\n12h–13h: refeição · 20h–06h: descanso\n\nConstrua casas para receber moradores. Troque os ofícios ao selecionar uma pessoa."%[working,carrying,resting,vacant]
+ details.text="[color=#dfbd72]"+sim.politics.STAGES[sim.politics.stage]+" · Legitimidade %d/100"%sim.politics.legitimacy+"[/color]\nConselho e evolução: P\n\n[color=#dfbd72]Uma aldeia em movimento[/color]\nNo trabalho: %d\nTransportando: %d\nRefeição / descanso: %d\nSem posto: %d\n\n06h–12h / 13h–20h: trabalho\n12h–13h: refeição · 20h–06h: descanso\n\nConstrua casas para receber moradores. Troque os ofícios ao selecionar uma pessoa."%[working,carrying,resting,vacant]
 func show_person(c) -> void:
  selection_kind="person";title.text=c.citizen_name;portrait.texture=registry.for_citizen(c);portrait_note.visible=not registry.citizen_is_final(c);profession.visible=not c.horse_only
  if last_person_kind!=c.kind:profession.select(c.kind);last_person_kind=c.kind
@@ -304,7 +304,10 @@ func show_building(b,index: int=-1) -> void:
   workers=int(_sim.jobs.get(index,0));active=_sim.active_workers(index)
   for c in _sim.people:
    if c.employer==index:names.append(c.citizen_name)
- details.text=("[color=#dfbd72]Em obra: %.0fs[/color]"%b.remaining if b.remaining>0 else "[color=#a6bb87]Em funcionamento[/color]")+"\n\n"+data.benefit+"\n\nPostos: %d/%d | Presentes: %d\n"%[workers,data.slots,active]+", ".join(names)+"\n\nProdução máxima/s: "+resource_text(data.production)+"\nInsumos/s: "+resource_text(data.get("inputs",{}))+"\nAguardando entrega: "+resource_text(b.stored)
+ var adjusted=data.production.duplicate()
+ if _sim!=null:
+  for key in adjusted:adjusted[key]*=_sim.politics.production_multiplier(key)
+ details.text=("[color=#dfbd72]Em obra: %.0fs[/color]"%b.remaining if b.remaining>0 else "[color=#a6bb87]Em funcionamento[/color]")+"\n\n"+data.benefit+"\n\nPostos: %d/%d | Presentes: %d\n"%[workers,data.slots,active]+", ".join(names)+"\n\nProdução máxima/s: "+resource_text(adjusted)+"\nInsumos/s: "+resource_text(data.get("inputs",{}))+"\nAguardando entrega: "+resource_text(b.stored)
  if workers==0 and data.slots>0:details.text+="\n[color=#dda176]Atribua um trabalhador compatível.[/color]"
 func quick_info(sim,person: int,building: int,screen: Vector2) -> void:
  var card=""

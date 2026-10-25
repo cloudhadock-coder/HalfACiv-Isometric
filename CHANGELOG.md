@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.4.1 — Política e progressão do plano original
+
+- Quatro facções com apoio e legitimidade de 0 a 100.
+- Conselho [P] com cinco decisões, custos e efeitos apresentados, uma deliberação por dia e histórico persistente.
+- Quatro reformas permanentes com bônus reais de alimento, ouro, influência ou tributos, online e offline.
+- Evolução explícita Aldeia → Vila → Cidade Livre → Principado → Reino, com requisitos, custos e confirmação.
+- Save schema 2 compatível: política opcional com defaults neutros para saves antigos, validação atômica e cooldown preservado.
+- Indicadores políticos na interface existente e janela adaptável com requisitos atualizados sem perder scroll.
+- Testes de decisões, reformas, economia, progresso, saves, campanha automatizada sem injeção de recursos e capturas reais.
+- Preservados menu, minimapa, registro, mundos por semente e demais recursos da v0.4.0.
+
+
+
 ## v0.4.0 — Interface, menu e mundos por semente
 
 - Ícone do jogo desenhado à mão (16 e 32 px, ampliações inteiras até 256 px) em `assets/icon/`, gerado por `tools/ui_pipeline/build_icon.py`, aplicado ao executável e à janela.
