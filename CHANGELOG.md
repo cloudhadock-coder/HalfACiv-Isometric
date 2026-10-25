@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.2] - 2026-10-25 — Padrão de retratos
+### Adicionado
+- Direção artística oficial dos retratos (`docs/PORTRAIT_ART_STYLE_GUIDE.md`), baseada em duas folhas de referência analisadas na resolução nativa de 64×64. Referências são locais e ficam fora do Git por licença.
+- Auditoria dos 24 retratos (`docs/PORTRAIT_AUDIT.md`): todos classificados como placeholder, com a identidade de cada NPC registrada e o trabalho artístico pendente priorizado.
+- Manifesto NPC ↔ retrato (`assets/portraits/portraits.json`) com status `legacy_placeholder`/`in_review`/`approved` e revisão registrada.
+- Pipeline `tools/portrait_pipeline/`: validação, stage/promote sem reamostragem, miniaturas, atlas e galeria `docs/portrait-validation/portrait-gallery.png`.
+- `AGENTS.md` com a regra permanente de retratos.
+### Alterado
+- Retratos exibidos por `PortraitView`: maior escala inteira de pixels de tela, nearest-neighbor, centralizado e sem recorte, inclusive sob stretch de janela (1080p). Painel 128×128 e galeria de habitantes em 5 colunas.
+- A nota "Retrato em desenvolvimento" passa a depender do status no manifesto.
+### Não alterado
+- Nenhum retrato novo foi desenhado: os 24 originais seguem como fallback. Sprites do mapa, tilesets, mecânicas e formato de save não mudaram.
+### Validação
+- 9 testes de assets, 21.111 verificações de lógica, 22.482 de câmera/geometria, 27 de integração, 1.873 GPU e 3 verificações pixel a pixel dos retratos na tela.
+
 ## [0.2.1] - 2026-10-24 — Visual Fixes
 ### Corrigido
 - Limites geométricos da câmera, zoom com âncora, acesso aos vértices e arraste liberado sobre a interface.

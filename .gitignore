@@ -15,3 +15,10 @@ docs/tile-contact*
 tests/halfaciv-art-*/
 
 tools/visual-reference/
+
+# Official portrait references and the GandalfHardcore pack copy: local-only, license forbids redistribution.
+assets/art_reference/*
+!assets/art_reference/portraits/
+assets/art_reference/portraits/*
+!assets/art_reference/portraits/README.md
+docs/portrait-validation/local/

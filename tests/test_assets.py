@@ -57,6 +57,44 @@ class Assets(unittest.TestCase):
    for f in range(8):
     frame=horse.crop((f*48,row*48,f*48+48,row*48+48));self.assertLessEqual(frame.getbbox()[3],41)
     self.assertTrue(set(frame.getchannel('A').tobytes()) <= {0,255},'no baked second shadow')
+ def test_portrait_manifest_and_atlas(self):
+  sys.path.insert(0,str(ROOT/'tools/portrait_pipeline'))
+  import validate,generate_atlas,common
+  errors,warnings,pending=validate.validate();self.assertEqual(errors,[])
+  doc=common.load_manifest();self.assertEqual(len(doc['portraits']),24)
+  # Every pending NPC keeps its v0.2 face as fallback; none is presented as final art.
+  self.assertEqual(len(pending),sum(e['status']!='approved' for e in doc['portraits']))
+  import tempfile,shutil
+  with tempfile.TemporaryDirectory(prefix='halfaciv-art-',dir=ROOT/'tests') as temp:
+   scratch=Path(temp);shutil.copytree(ROOT/'assets/portraits',scratch/'assets/portraits',ignore=shutil.ignore_patterns('*.import'))
+   generate_atlas.build(scratch,docs=False);first=(scratch/'assets/portraits/generated/portrait_atlas.png').read_bytes()
+   generate_atlas.build(scratch,docs=False);self.assertEqual(first,(scratch/'assets/portraits/generated/portrait_atlas.png').read_bytes())
+   self.assertEqual(first,(ROOT/'assets/portraits/generated/portrait_atlas.png').read_bytes(),'committed atlas is stale')
+ def test_portrait_export_gate(self):
+  sys.path.insert(0,str(ROOT/'tools/portrait_pipeline'))
+  import validate,export,common
+  from PIL import ImageDraw
+  # Synthetic fixture exercising the gate only; it is not portrait art.
+  fixture=Image.new('RGBA',(64,64),(0,0,0,0));d=ImageDraw.Draw(fixture)
+  for n in range(16):d.rectangle((8+n*3,4+n,10+n*3,63),fill=(40+n*12,30+n*8,20+n*5,255))
+  import tempfile,shutil
+  with tempfile.TemporaryDirectory(prefix='halfaciv-art-',dir=ROOT/'tests') as temp:
+   scratch=Path(temp);shutil.copytree(ROOT/'assets/portraits',scratch/'assets/portraits',ignore=shutil.ignore_patterns('*.import'))
+   drawing=scratch/'drawing.png';fixture.resize((192,192),Image.NEAREST).save(drawing)
+   out=export.stage(3,drawing,root=scratch);self.assertEqual(Image.open(out).tobytes(),fixture.tobytes(),'3x export must reduce losslessly')
+   self.assertEqual(drawing.read_bytes(),(scratch/'assets/portraits/source/3_darin.png').read_bytes(),'source preserved untouched')
+   entry=common.load_manifest(scratch)['portraits'][3];self.assertEqual(entry['status'],'in_review')
+   self.assertEqual(common.resolved(entry,scratch),scratch/'assets/portraits/3.png','in review still shows fallback')
+   with self.assertRaises(ValueError):export.promote(3,'','',root=scratch)
+   export.promote(3,'Diretor de arte','Comparado às referências',root=scratch,date='2026-10-25')
+   self.assertEqual(validate.validate(scratch)[0],[])
+   self.assertEqual(common.resolved(common.load_manifest(scratch)['portraits'][3],scratch),scratch/'assets/portraits/approved/3.png')
+   for bad in [fixture.resize((100,100),Image.NEAREST),fixture.resize((128,128),Image.BILINEAR)]:
+    with self.assertRaises(ValueError):export.to_native(bad)
+   soft=fixture.copy();soft.putpixel((20,30),(90,60,40,128))
+   with self.assertRaises(ValueError):export.to_native(soft)
+   with self.assertRaises(FileExistsError):export.stage(3,drawing,root=scratch)
+   self.assertTrue(common.final_image_errors(fixture.resize((128,128),Image.NEAREST)),'upscaled art must not pass')
  def test_horse(self):
   im=Image.open(ROOT/'assets/horses/horse.png');self.assertEqual(im.size,(512,128))
   for row in range(2):

@@ -25,7 +25,9 @@ def main():
  visual=run([engine,'--headless','--path',ROOT,'--script','tests/visual_tests.gd'],output/'visual-test.log')
  integration=run([engine,'--path',ROOT,'--script','tests/integration.gd'],output/'integration-test.log')
  gpu=run([engine,'--path',ROOT,'--script','tests/visual_validation.gd','--','--no-save'],output/'gpu-visual-test.log')
- counts={'asset_tests':int(re.search(r'Ran (\d+) tests',assets).group(1)),'logic_assertions':int(re.search(r'assertions=(\d+)',logic).group(1)),'visual_assertions':int(re.search(r'assertions=(\d+)',visual).group(1)),'integration_assertions':int(re.search(r'assertions=(\d+)',integration).group(1)),'gpu_checks':int(re.search(r'checks=(\d+)',gpu).group(1))}
+ portraits=run([sys.executable,ROOT/'tools/portrait_pipeline/validate.py'],output/'portrait-validate.log')
+ portrait_ui=run([engine,'--path',ROOT,'--script','tests/portrait_ui_capture.gd','--','--no-save'],output/'portrait-ui-test.log')
+ counts={'asset_tests':int(re.search(r'Ran (\d+) tests',assets).group(1)),'logic_assertions':int(re.search(r'assertions=(\d+)',logic).group(1)),'visual_assertions':int(re.search(r'assertions=(\d+)',visual).group(1)),'integration_assertions':int(re.search(r'assertions=(\d+)',integration).group(1)),'gpu_checks':int(re.search(r'checks=(\d+)',gpu).group(1)),'portrait_ui_pixel_checks':int(re.search(r'PORTRAIT_UI_RESULT checks=(\d+) failures=0',portrait_ui).group(1)),'portraits_pending_art':int(re.search(r'pending=(\d+)',portraits).group(1))}
  run([engine,'--headless','--path',ROOT,'--export-release','Windows Desktop',output/'HalfACiv-Isometric.exe'],output/'export.log')
  smoke=run([output/'HalfACiv-Isometric.exe','--headless','--','--smoke'],output/'smoke.log')
  if 'SMOKE_OK version='+version not in smoke:raise SystemExit('Exported executable did not confirm version')
@@ -35,7 +37,7 @@ def main():
  (output/'BUILD_INFO.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
  notes=(ROOT/'docs/RELEASE_NOTES.md').read_text(encoding='utf-8').replace('{{COMMIT}}',commit)
  (output/'RELEASE_NOTES.md').write_text(notes,encoding='utf-8')
- (output/'README.txt').write_text('HalfACiv Isometric '+tag+' — Correções visuais\n\nExtraia o ZIP e execute HalfACiv-Isometric.exe no Windows 10/11 x64.\nWASD: câmera; roda: zoom ancorado; botão do meio: arrastar. B/I: recolher painéis.\nSelecione categoria e construção, depois clique no terreno livre.\nClique em um morador para inspecionar e trocar seu ofício.\nHabitantes e retratos: galeria selecionável.\n1 / 2 / 4: velocidade; Espaço / Esc: pausa; F5: salvar.\n\nSaves da v0.1.0 são migrados. A primeira gravação mantém realm.json.v0.1.bak.\nSave: %APPDATA%/Godot/app_userdata/HalfACiv Isometric/realm.json\n\nConsulte RELEASE_NOTES.md para recursos, limites e créditos.\n',encoding='utf-8')
+ (output/'README.txt').write_text('HalfACiv Isometric '+tag+' — Padrão de retratos\n\nExtraia o ZIP e execute HalfACiv-Isometric.exe no Windows 10/11 x64.\nWASD: câmera; roda: zoom ancorado; botão do meio: arrastar. B/I: recolher painéis.\nSelecione categoria e construção, depois clique no terreno livre.\nClique em um morador para inspecionar e trocar seu ofício.\nHabitantes e retratos: galeria selecionável.\n1 / 2 / 4: velocidade; Espaço / Esc: pausa; F5: salvar.\n\nSaves da v0.1.0 são migrados. A primeira gravação mantém realm.json.v0.1.bak.\nSave: %APPDATA%/Godot/app_userdata/HalfACiv Isometric/realm.json\n\nConsulte RELEASE_NOTES.md para recursos, limites e créditos.\n',encoding='utf-8')
  shutil.copy2(ROOT/'LICENSE',output/'LICENSE.txt')
  shutil.copy2(ROOT/'assets/tilesets/ATTRIBUTION.md',output/'CREDITS.md')
  shutil.copy2(ROOT/'assets/original/GandalfHardcore/READ ME.txt',output/'GandalfHardcore-LICENSE.txt')

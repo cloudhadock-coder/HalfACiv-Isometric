@@ -33,7 +33,7 @@ func _ready() -> void:
  camera_rig=CameraRig.new(camera);hud.layout_changed.connect(update_camera_layout);update_camera_layout()
  if "--smoke" in OS.get_cmdline_user_args():
   paused=false;hud.menu.hide()
-  get_tree().create_timer(5.0).timeout.connect(func():print("SMOKE_OK version=0.2.1 ticks=",sim.tick_count," people=",sim.people.size()," buildings=",sim.buildings.size());get_tree().quit())
+  get_tree().create_timer(5.0).timeout.connect(func():print("SMOKE_OK version=0.2.2 ticks=",sim.tick_count," people=",sim.people.size()," buildings=",sim.buildings.size());get_tree().quit())
  if "--capture" in OS.get_cmdline_user_args():
   paused=false;hud.menu.hide();sim.tick(18);select_person(16);get_tree().create_timer(2.0).timeout.connect(capture)
  if "--capture-night" in OS.get_cmdline_user_args():

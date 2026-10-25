@@ -1,6 +1,7 @@
 extends SceneTree
 const Store=preload("res://src/persistence/save_store.gd")
 const Iso=preload("res://src/world/iso.gd")
+const PortraitView=preload("res://src/ui/portrait_view.gd")
 var failures: int=0
 var assertions: int=0
 func check(value: bool,label: String) -> void:
@@ -57,6 +58,11 @@ func run() -> void:
  check(game.hud.roster_grid.get_child_count()==24,"24 portraits in roster")
  game.hud.roster_grid.get_child(16).get_child(0).pressed.emit()
  check(game.selected==16 and game.hud.portrait.texture!=null and not game.hud.roster_panel.visible,"roster selection")
+ # Portraits resolve through the manifest and are drawn only at whole-number nearest-neighbour scales.
+ check(game.hud.portrait.texture==game.hud.registry.texture(16) and game.hud.portrait.texture_filter==CanvasItem.TEXTURE_FILTER_NEAREST,"portrait from manifest, nearest filter")
+ check(game.hud.portrait.display_scale()==1 and game.hud.portrait_note.visible==not game.hud.registry.is_final(16),"legacy portrait native scale and pending note")
+ var probe=PortraitView.new();probe.size=Vector2(130,130);probe.texture=ImageTexture.create_from_image(Image.create(64,64,false,Image.FORMAT_RGBA8))
+ check(probe.display_scale()==2,"64x64 approved art shown at integer 2x");probe.size=Vector2(100,100);check(probe.display_scale()==1,"never fractional");probe.free()
  game.hud.profession.select(17);game.hud.profession.item_selected.emit(17)
  check(game.sim.people[16].kind==17 and game.sim.people[16].portrait_id==16,"profession dropdown preserves face")
  game.hud.speed_buttons[2].pressed.emit();check(game.speed==2,"speed button")

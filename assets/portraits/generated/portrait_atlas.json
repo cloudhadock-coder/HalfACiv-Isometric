@@ -1,0 +1,225 @@
+{
+ "cell": [
+  96,
+  112
+ ],
+ "columns": 8,
+ "portraits": {
+  "0": {
+   "npc": "Aldric",
+   "x": 0,
+   "y": 0,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "aa6b690bbc7d0aad42d264fa290ae7265a09c489f96dd00f8551c83ee813a750"
+  },
+  "1": {
+   "npc": "Elena",
+   "x": 96,
+   "y": 0,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "9108eb0bed8a648fc0ddf29b9ea0604d28c9027ba33110a74534c0beaef5457f"
+  },
+  "2": {
+   "npc": "Borin",
+   "x": 192,
+   "y": 0,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "c24a815f8217cdf3aa75277214026f9201c5bce7274fe63c7d4eec5581c1f70a"
+  },
+  "3": {
+   "npc": "Darin",
+   "x": 288,
+   "y": 0,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "1a046883072ce42fef6751809cbae77a2f6633993a06fae48fd4d6e139a64059"
+  },
+  "4": {
+   "npc": "Edwin",
+   "x": 384,
+   "y": 0,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "e195acf672b9d6a5892206991d79961a7066f9670620174884c61d5107dcf29a"
+  },
+  "5": {
+   "npc": "Farid",
+   "x": 480,
+   "y": 0,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "6d74bc876ed984a8246ce652dbfc3b1a8b1c75c5d833169a41bda52e8dc879cf"
+  },
+  "6": {
+   "npc": "Gareth",
+   "x": 576,
+   "y": 0,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "c119d0eda949c16f1f747624e2fdf1ad58d9cf41042bd0f617950b18fb32f974"
+  },
+  "7": {
+   "npc": "Hector",
+   "x": 672,
+   "y": 0,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "b80b651aabf8ce9e92c9b67c9cbc504d6c47762f58d0907f3a986c346c3457f6"
+  },
+  "8": {
+   "npc": "Ivar",
+   "x": 0,
+   "y": 112,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "a12aa63177a6880c23cbcb1c3c1e1d3a4132cca0cf9e42565e9c167a84f73adb"
+  },
+  "9": {
+   "npc": "Jonas",
+   "x": 96,
+   "y": 112,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "95818b92df8699a381ad2832421e46bdac64ae4459707107c3d1d7247b40eebb"
+  },
+  "10": {
+   "npc": "Klara",
+   "x": 192,
+   "y": 112,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "1ce2315ac040683431e243ba92bdb70d37cae50bddd8ae6cfc40a48dff06ea40"
+  },
+  "11": {
+   "npc": "Lucian",
+   "x": 288,
+   "y": 112,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "fa66d0f9a1cfcc41ac332b48dc23d5da852f1f7503c175082165979b439a4664"
+  },
+  "12": {
+   "npc": "Mara",
+   "x": 384,
+   "y": 112,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "3c038a3610eea4e159f57979c2349223ba6b5d238c4311441a2ed12b2eb049f5"
+  },
+  "13": {
+   "npc": "Oswin",
+   "x": 480,
+   "y": 112,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "b64ec8f88048930cf8558de730b60d9ef3b937764ad2ecc5469a69dc694c7639"
+  },
+  "14": {
+   "npc": "Odo",
+   "x": 576,
+   "y": 112,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "1787c7dfe65660789b379c8f2c515290344159caff3f0232e09217ecbbd488f5"
+  },
+  "15": {
+   "npc": "Beatriz",
+   "x": 672,
+   "y": 112,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "c6539f1a900519b8758a0ee216768696aad2f48fe215a4cb8daafe1856b059f5"
+  },
+  "16": {
+   "npc": "Ulric",
+   "x": 0,
+   "y": 224,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "2cf973628f3437e5e758d601cc15daf4edfd034868267914e62a70c271c4b324"
+  },
+  "17": {
+   "npc": "Tomas",
+   "x": 96,
+   "y": 224,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "215326fd78c9f5bcdbef0ccb6087617bb4f47be50c9cbd20f7fdb43fc00285e1"
+  },
+  "18": {
+   "npc": "Ysabel",
+   "x": 192,
+   "y": 224,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "1fc7b6adfc78595a528c7485fe4f97ad7bb97ea90d5082906b863b594c82663c"
+  },
+  "19": {
+   "npc": "Bruno",
+   "x": 288,
+   "y": 224,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "db44f6531d4060ffbf0ad0ca47d963b9b3a4d48ae704d8bf1c284bdc0e20aa9f"
+  },
+  "20": {
+   "npc": "Rosa",
+   "x": 384,
+   "y": 224,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "466e9626d8dfb0f7071fc4d4aab25ef73f51915a2d10a9a956f2846ed45984b3"
+  },
+  "21": {
+   "npc": "Agnes",
+   "x": 480,
+   "y": 224,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "47cc3f0d65b260851eade8aee45b03520f903f5b2c1651194a8531c247b212d0"
+  },
+  "22": {
+   "npc": "Nuno",
+   "x": 576,
+   "y": 224,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "2f0a700d8fa417bd7340c33084eeb463ee8991bbc268ed1cd88d16aef16a0faa"
+  },
+  "23": {
+   "npc": "Cedric",
+   "x": 672,
+   "y": 224,
+   "w": 96,
+   "h": 112,
+   "status": "legacy_placeholder",
+   "sha256": "1addd8bac69a0d044cf061e2a08b89bf26bdfc3a4f7bd97e8f2f1a716c630863"
+  }
+ }
+}

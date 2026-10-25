@@ -7,7 +7,7 @@ static func save_game(sim,citizens: Array=[]) -> Error:
  var source=sim.people if citizens.is_empty() else citizens
  for c in source:
   entries.append({"x":c.position.x,"y":c.position.y,"kind":c.kind,"portrait":c.portrait_id,"name":c.citizen_name,"horse_only":c.horse_only,"cargo":c.cargo,"stamina":c.stamina,"work_elapsed":c.work_elapsed,"delivered":c.delivered})
- var data={"schema":2,"version":ProjectSettings.get_setting("application/config/version","0.2.1"),"saved_at":int(Time.get_unix_time_from_system()),"resources":sim.resources,"buildings":sim.buildings,"people":entries,"seconds":sim.seconds,"tick":sim.tick_count,"immigration_elapsed":sim.immigration_elapsed}
+ var data={"schema":2,"version":ProjectSettings.get_setting("application/config/version","0.2.2"),"saved_at":int(Time.get_unix_time_from_system()),"resources":sim.resources,"buildings":sim.buildings,"people":entries,"seconds":sim.seconds,"tick":sim.tick_count,"immigration_elapsed":sim.immigration_elapsed}
  var file=FileAccess.open(PATH+".tmp",FileAccess.WRITE)
  if file==null:return FileAccess.get_open_error()
  file.store_string(JSON.stringify(data));file.close()

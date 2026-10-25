@@ -18,10 +18,12 @@ var left_tab: Button
 var right_tab: Button
 const Catalog=preload("res://src/construction/catalog.gd")
 const Professions=preload("res://src/entities/professions.gd")
+const PortraitRegistry=preload("res://src/ui/portrait_registry.gd")
+const PortraitView=preload("res://src/ui/portrait_view.gd")
 var resources: Label
 var status: Label
 var details: RichTextLabel
-var portrait: TextureRect
+var portrait
 var menu: PanelContainer
 var profession: OptionButton
 var portrait_note: Label
@@ -31,6 +33,7 @@ var build_list: VBoxContainer
 var roster_panel: PanelContainer
 var roster_grid: GridContainer
 var portraits: Array=[]
+var registry
 var theme: Theme
 var category: String="Moradia"
 var selection_kind: String="overview"
@@ -52,7 +55,7 @@ func _ready() -> void:
  var bs=style.duplicate();bs.bg_color=Color("283b3f");bs.set_content_margin_all(8);theme.set_stylebox("normal","Button",bs);theme.set_stylebox("normal","OptionButton",bs)
  var hover=bs.duplicate();hover.bg_color=Color("44574c");theme.set_stylebox("hover","Button",hover);theme.set_stylebox("pressed","Button",hover)
  theme.set_color("font_color","Label",Color("e4dac4"));theme.set_color("font_color","Button",Color("e4dac4"));theme.default_font_size=15
- for i in range(24):portraits.append(load("res://assets/portraits/"+str(i)+".png"))
+ registry=PortraitRegistry.new();portraits=registry.textures
  top_panel=panel(Vector2(12,12),Vector2(923,52));var top=top_panel;var hb=HBoxContainer.new();hb.add_theme_constant_override("separation",20);top.add_child(hb)
  var brand=label("VALE DA AURORA",hb,18);brand.add_theme_color_override("font_color",Color("dfbd72"))
  resources=label("",hb,15);resources.size_flags_horizontal=Control.SIZE_EXPAND_FILL;resources.clip_text=true
@@ -74,7 +77,7 @@ func _ready() -> void:
  var heads=HBoxContainer.new();dv.add_child(heads);title=label("VIDA NA ALDEIA",heads,16);title.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title.clip_text=true;title.custom_minimum_size.x=120
  button("↶",func():selection_kind="overview";last_person_kind=-1;show_overview(_sim),heads)
  button("▶",toggle_details,heads).tooltip_text="Recolher informações [I]"
- portrait=TextureRect.new();portrait.custom_minimum_size=Vector2(96,112);portrait.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;portrait.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;portrait.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST;dv.add_child(portrait)
+ portrait=PortraitView.new();portrait.custom_minimum_size=Vector2(128,128);dv.add_child(portrait)
  portrait_note=label("Retrato em desenvolvimento",dv,11);portrait_note.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;portrait_note.add_theme_color_override("font_color",Color("a79d80"))
  profession=OptionButton.new();profession.custom_minimum_size=Vector2(232,34)
  for entry in Professions.DATA:profession.add_item(entry.name)
@@ -85,15 +88,15 @@ func _ready() -> void:
  status=label("",bh,14);status.size_flags_horizontal=Control.SIZE_EXPAND_FILL;status.clip_text=true
  for value in [1,2,4]:
   var speed=value;speed_buttons[value]=button(str(value)+"×",func():speed_changed.emit(float(speed)),bh)
- label("WASD · Roda · Arrastar · F5 salvar | v0.2.1",bh,12)
+ label("WASD · Roda · Arrastar · F5 salvar | v0.2.2",bh,12)
  menu=panel(Vector2(416,152),Vector2(448,416));var mv=VBoxContainer.new();mv.add_theme_constant_override("separation",15);menu.add_child(mv)
  var logo=label("HALFACIV\nISOMETRIC",mv,32);logo.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;logo.add_theme_color_override("font_color",Color("dfbd72"))
- var subtitle=label("v0.2.1 — Correções visuais\nCada habitante tem uma história e um ofício.",mv,15);subtitle.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+ var subtitle=label("v0.2.2 — Padrão de retratos\nCada habitante tem uma história e um ofício.",mv,15);subtitle.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
  button("Continuar no vale",func():pause_requested.emit(),mv);button("Carregar domínio",func():load_requested.emit(),mv);button("Nova aldeia",func():new_requested.emit(),mv);button("Sair",func():get_tree().quit(),mv)
  roster_panel=panel(Vector2(262,90),Vector2(728,544));var rv=VBoxContainer.new();roster_panel.add_child(rv)
  var rh=HBoxContainer.new();rv.add_child(rh);label("OS ROSTOS DA ALDEIA",rh,20).size_flags_horizontal=Control.SIZE_EXPAND_FILL;button("Fechar",func():roster_panel.hide(),rh)
  var rs=ScrollContainer.new();rs.custom_minimum_size=Vector2(696,468);rs.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED;rv.add_child(rs)
- roster_grid=GridContainer.new();roster_grid.columns=6;roster_grid.add_theme_constant_override("h_separation",8);roster_grid.add_theme_constant_override("v_separation",10);rs.add_child(roster_grid);roster_panel.hide()
+ roster_grid=GridContainer.new();roster_grid.columns=5;roster_grid.add_theme_constant_override("h_separation",8);roster_grid.add_theme_constant_override("v_separation",10);rs.add_child(roster_grid);roster_panel.hide()
  left_tab=button("Construir ▶",toggle_build,self);left_tab.theme=theme;left_tab.hide()
  right_tab=button("◀ Informações",toggle_details,self);right_tab.theme=theme;right_tab.hide()
  get_viewport().size_changed.connect(resize);resize();set_speed(1)
@@ -172,7 +175,7 @@ func show_overview(sim) -> void:
   if c.employer<0 and not Professions.patrol(c.kind) and c.kind not in [4,22]:vacant+=1
  details.text="[color=#dfbd72]Uma aldeia em movimento[/color]\n\nNo trabalho: %d\nTransportando: %d\nRefeição / descanso: %d\nSem posto: %d\n\n06h–12h / 13h–20h: trabalho\n12h–13h: refeição\n20h–06h: descanso\n\nConstrua casas para receber moradores. Troque os ofícios ao selecionar uma pessoa."%[working,carrying,resting,vacant]
 func show_person(c) -> void:
- selection_kind="person";title.text=c.citizen_name;portrait.texture=portraits[c.portrait_id];portrait_note.show();profession.visible=not c.horse_only
+ selection_kind="person";title.text=c.citizen_name;portrait.texture=portraits[c.portrait_id];portrait_note.visible=not registry.is_final(c.portrait_id);profession.visible=not c.horse_only
  if last_person_kind!=c.kind:profession.select(c.kind);last_person_kind=c.kind
  var workplace="Sem posto"
  if _sim!=null and c.employer>=0:workplace=Catalog.DATA[_sim.buildings[c.employer].kind].name
@@ -194,5 +197,5 @@ func toggle_roster() -> void:
   var c=_sim.people[i]
   if c.horse_only:continue
   var index=i;var box=VBoxContainer.new();roster_grid.add_child(box)
-  var b=TextureButton.new();b.texture_normal=portraits[c.portrait_id];b.custom_minimum_size=Vector2(104,112);b.ignore_texture_size=true;b.stretch_mode=TextureButton.STRETCH_KEEP_ASPECT_CENTERED;b.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST;b.tooltip_text=c.citizen_name+" · "+Professions.name_for(c.kind)+"\n"+c.state;b.pressed.connect(func():roster_panel.hide();citizen_selected.emit(index));box.add_child(b)
+  var b=Button.new();b.custom_minimum_size=Vector2(130,130);var face=PortraitView.new();face.texture=portraits[c.portrait_id];face.set_anchors_preset(Control.PRESET_FULL_RECT);b.add_child(face);b.tooltip_text=c.citizen_name+" · "+Professions.name_for(c.kind)+"\n"+c.state;b.pressed.connect(func():roster_panel.hide();citizen_selected.emit(index));box.add_child(b)
   var l=label(c.citizen_name,box,12);l.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER

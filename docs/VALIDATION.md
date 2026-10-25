@@ -1,3 +1,13 @@
+# Validação v0.2.2
+
+Estado inicial: Git limpo em c13c1bd (v0.2.1). Escopo: retratos (documentação, manifesto, pipeline, exibição). Sprites do mapa, tilesets, mecânicas e saves não foram tocados.
+
+Passaram: 9 testes Python de assets (incluindo manifesto, atlas determinístico, stage/promote e rejeições do pipeline); 21.111 verificações de lógica; 22.482 de geometria/câmera; 27 de integração; 1.873 GPU; 3 verificações de retrato pixel-exato na tela (galeria e painel em 1280×720; painel em 1920×1080 sob stretch de 1,5×). A contagem de geometria é 22.482 também no commit v0.2.1 sem alterações; o valor 22.494 registrado para a v0.2.1 não se reproduz e não foi causado por esta versão.
+
+Inspeção visual: [galeria](portrait-validation/portrait-gallery.png), [galeria de habitantes](portrait-validation/ui-roster.png), [painel](portrait-validation/ui-detail-panel.png), [painel 1080p](portrait-validation/ui-detail-panel-1080p.png) e comparação local com as referências (fora do Git). Resultado: os retratos são exibidos corretamente e sem distorção, mas nenhum atinge o padrão artístico ([auditoria](PORTRAIT_AUDIT.md)). A aprovação técnica não foi tratada como aprovação artística.
+
+---
+
 # Validação v0.2.1
 
 Estado inicial: Git limpo em 2c04395. Gravação de 43,60 s localizada e inspecionada. Capturas antes/depois e reprodução detalhada em [VISUAL_BUGS_V0.2.1.md](VISUAL_BUGS_V0.2.1.md).
