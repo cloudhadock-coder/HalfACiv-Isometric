@@ -26,3 +26,9 @@ Atlas de personagem: 384×168, frames 48×56; idle/walk/work com 5/8/8 fases. A 
 Adaptações do tileset CC BY: novas seleções de casas/capela/feira, 12 construções adicionais utilizáveis, letreiros, caixas, fornalha, redes, vasos, cercados, quatro variantes de grama e pavimento da praça. Algumas construções compartilham a mesma base com detalhes distintos. Moinho e torre usam atlas de quatro frames nativos, sem inferir direções inexistentes. A paleta do terreno foi atenuada; originais intactos.
 
 Cinco testes Python verificam frames válidos/distintos, 24 retratos únicos, cavalo, atlas ambientais e reprodução byte a byte de uma geração independente. Pipeline e metadados em `assets/ui/identities.json` são públicos; originais, sprites derivados e GIFs de referência continuam privados. Contatos da inspeção foram gerados apenas para análise local.
+
+
+## Patch v0.2.1 — origem e pivôs confirmados
+A inspeção por pixels confirmou a superfície original com topo y=24, centro y=40 e base y=56; as oito linhas inferiores são extrusão, não a origem do chão. A antiga subtração (32,48) estava incorreta. Cópias em `assets/tilesets/visual_v021` usam origem (32,40), removem extrusão interna e mantêm toda a arte acima da superfície. Terrenos são recortados por máscara analítica semiaberta, sem furos. A forja derivada recebe uma pequena saída de fumaça; o original permanece intacto.
+
+Corpos derivados em `assets/characters/native` têm frames 30×35/pivô (15,35), gerados por nearest-neighbor uma vez. Cavalo derivado `horse_native_v021.png`: frames 48×48/pivô (24,41), sem a sombra translúcida duplicada. Árvores derivadas mantêm raízes/solo byte a byte entre frames; só a copa acima de y=24 muda. Metadados e hashes de origem em `assets/ui/render_policy_v021.json`. O conjunto privado continua excluído do Git e incorporado apenas ao jogo.

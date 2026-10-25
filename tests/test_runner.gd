@@ -19,9 +19,13 @@ func _init() -> void:
  check(s.people.size()==25 and s.population==24,"24 villagers and horse")
  check(s.Catalog.DATA.size()==18,"18 building kinds")
  check(s.housing_capacity()==24,"housing capacity")
+ s.people[0].position=Vector2(15.25,8.125)
+ var positions=[]
+ for person in s.people:positions.append(person.position)
  var wood=s.resources.wood
  check(s.build("house",Vector2i(19,14)),"place house")
  check(s.resources.wood==wood-25,"charge exactly once")
+ for i in range(s.people.size()):check(s.people[i].position==positions[i],"construction does not teleport villagers")
  check(not s.build("house",Vector2i(19,14)),"reject overlap")
  check(not s.build("farm",Vector2i(26,20)),"reject water")
  check(not s.build("farm",Vector2i(15,15)),"preserve plaza")
@@ -45,7 +49,10 @@ func _init() -> void:
  working.resources.wood=0;var gold=working.buildings[forge].stored.get("gold",0)
  check(not working.work(forge,1),"forge cannot run without fuel")
  check(working.buildings[forge].stored.get("gold",0)==gold,"missing inputs cannot create output")
+ working.people[2].position=Vector2(15.25,8.125)
+ var exact_position=working.people[2].position
  check(working.set_profession(2,16),"change profession")
+ check(working.people[2].position==exact_position,"profession change does not teleport to a tile centre")
  check(working.people[2].kind==16 and working.people[2].portrait_id==2,"profession preserves personal appearance")
  check(not working.set_profession(24,16),"horse cannot become worker")
  check(not working.set_profession(999,16),"reject invalid citizen")
@@ -84,7 +91,7 @@ func _init() -> void:
  for key in offline.resources:check(offline.resources[key]>=0,"resource nonnegative "+key)
  # Save schema 2 preserves stocks, identities, delivery cargo and clock.
  Store.PATH="res://tests/realm-test.json"
- var saved=Sim.new();saved.people[2].cargo={"wood":6.0};saved.people[2].stamina=57;saved.people[2].delivered=9;saved.seconds=42
+ var saved=Sim.new();saved.people[2].cargo={"wood":6.0};saved.people[2].stamina=57;saved.people[2].delivered=9;saved.seconds=42;saved.people[2].position=Vector2(15.25,8.125)
  check(Store.save_game(saved)==OK,"save schema 2")
  var original_food=saved.resources.food;saved.resources.food+=3
  check(Store.save_game(saved)==OK,"replace existing save atomically")
@@ -95,6 +102,7 @@ func _init() -> void:
  check(not result.is_empty() and not result.migrated,"load schema 2")
  check(loaded.people[2].cargo==saved.people[2].cargo and loaded.people[2].delivered==9,"cargo and delivery counters persist")
  check(loaded.people[2].stamina==57 and loaded.seconds==42,"stamina and time persist")
+ check(loaded.people[2].position.distance_to(saved.people[2].position)<0.001,"save load preserves fractional feet position")
  # v0.1 migration retains the original community and bank, without granting 12 extra villagers.
  var legacy_people=[]
  for i in range(13):legacy_people.append({"x":14,"y":10+i,"kind":i%12,"horse_only":i==12})

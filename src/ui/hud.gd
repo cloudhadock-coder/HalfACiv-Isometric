@@ -7,6 +7,15 @@ signal pause_requested
 signal speed_changed(speed: float)
 signal profession_changed(kind: int)
 signal citizen_selected(index: int)
+signal layout_changed
+var build_panel: PanelContainer
+var detail_panel: PanelContainer
+var top_panel: PanelContainer
+var action_panel: PanelContainer
+var bottom_panel: PanelContainer
+var build_scroll: ScrollContainer
+var left_tab: Button
+var right_tab: Button
 const Catalog=preload("res://src/construction/catalog.gd")
 const Professions=preload("res://src/entities/professions.gd")
 var resources: Label
@@ -44,44 +53,49 @@ func _ready() -> void:
  var hover=bs.duplicate();hover.bg_color=Color("44574c");theme.set_stylebox("hover","Button",hover);theme.set_stylebox("pressed","Button",hover)
  theme.set_color("font_color","Label",Color("e4dac4"));theme.set_color("font_color","Button",Color("e4dac4"));theme.default_font_size=15
  for i in range(24):portraits.append(load("res://assets/portraits/"+str(i)+".png"))
- var top=panel(Vector2(12,12),Vector2(923,52));var hb=HBoxContainer.new();hb.add_theme_constant_override("separation",20);top.add_child(hb)
+ top_panel=panel(Vector2(12,12),Vector2(923,52));var top=top_panel;var hb=HBoxContainer.new();hb.add_theme_constant_override("separation",20);top.add_child(hb)
  var brand=label("VALE DA AURORA",hb,18);brand.add_theme_color_override("font_color",Color("dfbd72"))
- resources=label("",hb,15)
- var actions=panel(Vector2(947,12),Vector2(321,52));var buttons=HBoxContainer.new();actions.add_child(buttons)
+ resources=label("",hb,15);resources.size_flags_horizontal=Control.SIZE_EXPAND_FILL;resources.clip_text=true
+ action_panel=panel(Vector2(947,12),Vector2(321,52));var actions=action_panel;var buttons=HBoxContainer.new();actions.add_child(buttons)
  button("Salvar",func():save_requested.emit(),buttons);button("Carregar",func():load_requested.emit(),buttons);button("Menu",func():pause_requested.emit(),buttons)
- var build_panel=panel(Vector2(12,80),Vector2(222,564));var vb=VBoxContainer.new();vb.add_theme_constant_override("separation",9);build_panel.add_child(vb)
- label("CONSTRUIR A ALDEIA",vb,16)
+ build_panel=panel(Vector2(12,80),Vector2(222,293));var vb=VBoxContainer.new();vb.add_theme_constant_override("separation",9);build_panel.add_child(vb)
+ var build_heading=HBoxContainer.new();vb.add_child(build_heading)
+ label("CONSTRUIR",build_heading,15).size_flags_horizontal=Control.SIZE_EXPAND_FILL
+ button("◀",toggle_build,build_heading).tooltip_text="Recolher painel de construção [B]"
  var cats=HBoxContainer.new();vb.add_child(cats)
  for pair in [["Moradia","Casas"],["Alimentos","Alim."],["Oficinas","Ofic."],["Comunidade","Vila"]]:
   var key=pair[0];var b=button(pair[1],func():category=key;populate_builds(),cats);b.add_theme_font_size_override("font_size",12)
- var scroll=ScrollContainer.new();scroll.custom_minimum_size=Vector2(196,364);scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED;vb.add_child(scroll)
+ build_scroll=ScrollContainer.new();var scroll=build_scroll;scroll.custom_minimum_size=Vector2(196,63);scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL;scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED;vb.add_child(scroll)
  build_list=VBoxContainer.new();build_list.size_flags_horizontal=Control.SIZE_EXPAND_FILL;build_list.add_theme_constant_override("separation",7);scroll.add_child(build_list)
  populate_builds()
  hint=label("Selecione uma construção.\nDepois clique no terreno livre.",vb,12);hint.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;hint.custom_minimum_size=Vector2(190,42)
  button("Cancelar ferramenta [Esc]",func():build_selected.emit("");hint.text="Selecione uma construção.",vb)
- var detail_panel=panel(Vector2(1006,80),Vector2(262,564));var dv=VBoxContainer.new();dv.add_theme_constant_override("separation",8);detail_panel.add_child(dv)
- var heads=HBoxContainer.new();dv.add_child(heads);title=label("VIDA NA ALDEIA",heads,16);title.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+ detail_panel=panel(Vector2(1006,80),Vector2(262,564));var dv=VBoxContainer.new();dv.add_theme_constant_override("separation",8);detail_panel.add_child(dv)
+ var heads=HBoxContainer.new();dv.add_child(heads);title=label("VIDA NA ALDEIA",heads,16);title.size_flags_horizontal=Control.SIZE_EXPAND_FILL;title.clip_text=true;title.custom_minimum_size.x=120
  button("↶",func():selection_kind="overview";last_person_kind=-1;show_overview(_sim),heads)
+ button("▶",toggle_details,heads).tooltip_text="Recolher informações [I]"
  portrait=TextureRect.new();portrait.custom_minimum_size=Vector2(96,112);portrait.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;portrait.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;portrait.texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST;dv.add_child(portrait)
  portrait_note=label("Retrato em desenvolvimento",dv,11);portrait_note.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;portrait_note.add_theme_color_override("font_color",Color("a79d80"))
  profession=OptionButton.new();profession.custom_minimum_size=Vector2(232,34)
  for entry in Professions.DATA:profession.add_item(entry.name)
  profession.item_selected.connect(func(index):profession_changed.emit(index));dv.add_child(profession)
- details=RichTextLabel.new();details.custom_minimum_size=Vector2(232,233);details.bbcode_enabled=true;dv.add_child(details)
+ details=RichTextLabel.new();details.custom_minimum_size=Vector2(232,150);details.size_flags_vertical=Control.SIZE_EXPAND_FILL;details.bbcode_enabled=true;dv.add_child(details)
  button("Habitantes e retratos",toggle_roster,dv)
- var bottom=panel(Vector2(12,658),Vector2(1256,50));var bh=HBoxContainer.new();bh.add_theme_constant_override("separation",12);bottom.add_child(bh)
- status=label("",bh,14);status.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+ bottom_panel=panel(Vector2(12,658),Vector2(1256,50));var bottom=bottom_panel;var bh=HBoxContainer.new();bh.add_theme_constant_override("separation",12);bottom.add_child(bh)
+ status=label("",bh,14);status.size_flags_horizontal=Control.SIZE_EXPAND_FILL;status.clip_text=true
  for value in [1,2,4]:
   var speed=value;speed_buttons[value]=button(str(value)+"×",func():speed_changed.emit(float(speed)),bh)
- label("WASD · Roda · Arrastar · F5 salvar | v0.2.0",bh,12)
+ label("WASD · Roda · Arrastar · F5 salvar | v0.2.1",bh,12)
  menu=panel(Vector2(416,152),Vector2(448,416));var mv=VBoxContainer.new();mv.add_theme_constant_override("separation",15);menu.add_child(mv)
  var logo=label("HALFACIV\nISOMETRIC",mv,32);logo.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;logo.add_theme_color_override("font_color",Color("dfbd72"))
- var subtitle=label("v0.2.0 — Vida na aldeia\nCada habitante tem uma história e um ofício.",mv,15);subtitle.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+ var subtitle=label("v0.2.1 — Correções visuais\nCada habitante tem uma história e um ofício.",mv,15);subtitle.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
  button("Continuar no vale",func():pause_requested.emit(),mv);button("Carregar domínio",func():load_requested.emit(),mv);button("Nova aldeia",func():new_requested.emit(),mv);button("Sair",func():get_tree().quit(),mv)
  roster_panel=panel(Vector2(262,90),Vector2(728,544));var rv=VBoxContainer.new();roster_panel.add_child(rv)
  var rh=HBoxContainer.new();rv.add_child(rh);label("OS ROSTOS DA ALDEIA",rh,20).size_flags_horizontal=Control.SIZE_EXPAND_FILL;button("Fechar",func():roster_panel.hide(),rh)
  var rs=ScrollContainer.new();rs.custom_minimum_size=Vector2(696,468);rs.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED;rv.add_child(rs)
  roster_grid=GridContainer.new();roster_grid.columns=6;roster_grid.add_theme_constant_override("h_separation",8);roster_grid.add_theme_constant_override("v_separation",10);rs.add_child(roster_grid);roster_panel.hide()
+ left_tab=button("Construir ▶",toggle_build,self);left_tab.theme=theme;left_tab.hide()
+ right_tab=button("◀ Informações",toggle_details,self);right_tab.theme=theme;right_tab.hide()
  get_viewport().size_changed.connect(resize);resize();set_speed(1)
 func populate_builds() -> void:
  for child in build_list.get_children():child.queue_free()
@@ -90,6 +104,7 @@ func populate_builds() -> void:
   if data.category!=category:continue
   var key=kind;var b=button(data.name+"\n"+cost_text(data.cost),func():build_selected.emit(key);hint.text=Catalog.DATA[key].name+": clique no mapa.\n"+Catalog.DATA[key].benefit,build_list)
   b.custom_minimum_size=Vector2(190,56);b.alignment=HORIZONTAL_ALIGNMENT_LEFT;b.add_theme_font_size_override("font_size",14);b.icon=load("res://assets/tilesets/"+kind+".png");b.expand_icon=true;b.add_theme_constant_override("icon_max_width",32);b.tooltip_text=data.benefit+"\nObra: %ds | Postos: %d"%[data.time,data.slots]
+ call_deferred("resize")
 func cost_text(cost: Dictionary) -> String:
  var chunks=PackedStringArray()
  for key in cost:chunks.append(str(cost[key])+{"wood":" M","stone":" P","gold":" O"}.get(key,""))
@@ -99,7 +114,40 @@ func resource_text(values: Dictionary) -> String:
  for key in values:chunks.append("%.1f %s"%[values[key],Catalog.RESOURCE_NAMES.get(key,key)])
  return ", ".join(chunks) if not chunks.is_empty() else "—"
 func resize() -> void:
- var size=get_viewport().get_visible_rect().size;var s=minf(size.x/1280.0,size.y/720.0);scale=Vector2(s,s)
+ if bottom_panel==null:return
+ var viewport=get_viewport().get_visible_rect().size
+ var s=minf(viewport.x/1280.0,viewport.y/720.0);scale=Vector2(s,s)
+ var virtual=viewport/s
+ action_panel.position.x=virtual.x-333
+ top_panel.custom_minimum_size.x=virtual.x-357;top_panel.size.x=virtual.x-357
+ bottom_panel.position.y=virtual.y-62;bottom_panel.custom_minimum_size.x=virtual.x-24;bottom_panel.size.x=virtual.x-24
+ detail_panel.position.x=virtual.x-274
+ var available=virtual.y-156
+ detail_panel.custom_minimum_size.y=available;detail_panel.size.y=available
+ var count=0
+ for kind in Catalog.DATA:
+  if Catalog.DATA[kind].category==category:count+=1
+ var height=minf(available,230+count*63)
+ build_scroll.custom_minimum_size.y=minf(count*63,maxf(63,height-230))
+ build_panel.custom_minimum_size.y=height;build_panel.size.y=height
+ menu.position=(virtual-menu.size)*0.5
+ roster_panel.position=Vector2((virtual.x-728)*0.5,90)
+ if left_tab!=null:left_tab.position=Vector2(12,80)
+ if right_tab!=null:right_tab.position=Vector2(virtual.x-154,80)
+ layout_changed.emit()
+func toggle_build() -> void:
+ build_panel.visible=not build_panel.visible;left_tab.visible=not build_panel.visible
+ resize()
+func toggle_details() -> void:
+ detail_panel.visible=not detail_panel.visible;right_tab.visible=not detail_panel.visible
+ resize()
+func useful_map_rect() -> Rect2:
+ var viewport=get_viewport().get_visible_rect().size;var s=scale.x
+ var left=(build_panel.position.x+build_panel.size.x+12)*s if build_panel.visible else 12*s
+ var right=(detail_panel.position.x-12)*s if detail_panel.visible else viewport.x-12*s
+ var top=maxf(top_panel.position.y+top_panel.size.y,action_panel.position.y+action_panel.size.y)*s+10*s
+ var bottom=bottom_panel.position.y*s-10*s
+ return Rect2(Vector2(left,top),Vector2(maxf(64,right-left),maxf(64,bottom-top)))
 func set_speed(speed: int) -> void:
  for value in speed_buttons:speed_buttons[value].disabled=value==speed
 func notify(text: String) -> void:

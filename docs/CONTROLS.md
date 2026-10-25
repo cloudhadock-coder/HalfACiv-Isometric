@@ -1,4 +1,4 @@
-# Controles v0.2.0
+# Controles v0.2.1
 
 - **WASD**: mover câmera. **Roda**: zoom. **Botão do meio**: arrastar.
 - **Clique**: selecionar morador ou prédio. Em construção: colocar no tile indicado.
@@ -13,3 +13,6 @@
 O pesqueiro exige margem de água. Prédios produtivos precisam de trabalhadores compatíveis e de acesso. O resultado fica no posto até a entrega; confira insumos e estoque no inspetor. Casas com vagas atraem moradores se houver alimento. O sono ocorre no acesso da casa, sem interiores nesta versão.
 
 Novo domínio inicia uma comunidade em memória. O arquivo anterior permanece até o próximo salvar/autosave. Saves antigos recebem backup permanente `.v0.1.bak` ao serem regravados.
+
+
+**B / I** ou as setas: recolher/expandir construção e informações. A câmera considera a área útil restante. A roda usa passos de zoom 1/1,5/2/3/4, preservando o ponto do cursor quando os limites permitem. O mínimo é ajustado ao viewport; 2× é o padrão. Ao inspecionar os cantos, o contorno do tabuleiro e o fundo de mesa são intencionais.

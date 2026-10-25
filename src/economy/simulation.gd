@@ -83,7 +83,7 @@ func build(kind: String,cell: Vector2i) -> bool:
  if not reachable:buildings.pop_back();nav.rebuild(self);return false
  for key in Catalog.DATA[kind].cost:resources[key]-=Catalog.DATA[kind].cost[key]
  for person in people:
-  person.position=person.position.round();person.previous=person.position;person.route.clear();person.task="rest"
+  person.previous=person.position;person.route.clear();person.task="rest"
  revision+=1;reassign_jobs();return true
 func entrance(index: int,from: Vector2,navigation) -> Vector2i:
  if index<0 or index>=buildings.size():return Vector2i(-1,-1)
@@ -154,7 +154,7 @@ func reassign_jobs() -> void:
 func set_profession(index: int,kind: int) -> bool:
  if index<0 or index>=people.size() or kind<0 or kind>=24 or people[index].horse_only:return false
  var person=people[index];person.kind=kind;person.mounted=kind==7
- person.route.clear();person.position=person.position.round();person.previous=person.position;person.task="rest"
+ person.route.clear();person.previous=person.position;person.task="rest"
  reassign_jobs();return true
 func work(index: int,delta: float) -> bool:
  var b=buildings[index];var data=Catalog.DATA[b.kind];var factor=delta/float(maxi(1,data.slots))*float(b.level)

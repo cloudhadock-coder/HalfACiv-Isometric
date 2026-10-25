@@ -17,7 +17,7 @@ func run() -> void:
  await create_timer(1.2).timeout
  check(game.sim.tick_count>=1 and game.sim.resources.food!=before,"economy ticks while playing")
  var zoom=game.camera.zoom.x
- var wheel=InputEventMouseButton.new();wheel.button_index=MOUSE_BUTTON_WHEEL_UP;wheel.pressed=true;game._unhandled_input(wheel)
+ var wheel=InputEventMouseButton.new();wheel.button_index=MOUSE_BUTTON_WHEEL_UP;wheel.pressed=true;wheel.position=game.camera_rig.useful.get_center();game._unhandled_input(wheel)
  check(game.camera.zoom.x>zoom,"camera zoom")
  # The actual category and build button, then a real viewport mouse position.
  game.hud.category="Oficinas";game.hud.populate_builds()
@@ -28,10 +28,30 @@ func run() -> void:
  check(forge_button!=null,"new forge button exists")
  forge_button.pressed.emit();check(game.world.build_kind=="forge","build button selects new kind")
  var cell=Vector2i(19,17);var screen=game.get_viewport().get_canvas_transform()*Iso.project(Vector2(cell))
+ check(game.camera_rig.useful.has_point(screen),"forge click lies inside real map viewport")
  Input.warp_mouse(screen);await process_frame
- var count=game.sim.buildings.size();var click=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true;click.position=screen;game._unhandled_input(click)
- check(game.sim.buildings.size()==count+1 and game.sim.buildings.back().kind=="forge","mouse builds forge")
+ var count=game.sim.buildings.size();var click=InputEventMouseButton.new();click.button_index=MOUSE_BUTTON_LEFT;click.pressed=true;click.position=screen
+ Input.parse_input_event(click)
+ var release=click.duplicate();release.pressed=false;Input.parse_input_event(release)
+ await process_frame
+ check(game.sim.buildings.size()==count+1 and game.sim.buildings.back().kind=="forge","mouse builds forge through actual input dispatch")
+ game.hud.category="Moradia";game.hud.populate_builds();await process_frame
+ for button in game.hud.build_list.get_children():
+  if not button.is_queued_for_deletion() and button.text.begins_with("Casa"):button.pressed.emit()
+ cell=Vector2i(14,13);screen=game.get_viewport().get_canvas_transform()*Iso.project(Vector2(cell))
+ check(game.camera_rig.useful.has_point(screen),"house click lies inside real map viewport")
+ Input.warp_mouse(screen);await process_frame;count=game.sim.buildings.size()
+ click.position=screen;Input.parse_input_event(click);release.position=screen;Input.parse_input_event(release)
+ await process_frame
+ check(game.sim.buildings.size()==count+1 and game.sim.buildings.back().kind=="house","mouse builds house through actual input dispatch")
  game.hud.build_selected.emit("")
+ # Release over a consuming UI control must terminate a map drag.
+ var middle=InputEventMouseButton.new();middle.button_index=MOUSE_BUTTON_MIDDLE;middle.pressed=true;middle.position=game.camera_rig.useful.get_center()
+ Input.warp_mouse(middle.position);Input.parse_input_event(middle);await process_frame
+ check(game.dragging,"real middle press starts drag")
+ middle.pressed=false;middle.position=(game.hud.build_panel.position+Vector2(20,20))*game.hud.scale
+ Input.warp_mouse(middle.position);Input.parse_input_event(middle);await process_frame
+ check(not game.dragging,"release over GUI stops real drag")
  # Gallery button selects a real villager and sets the corresponding portrait.
  game.hud.toggle_roster();await process_frame
  check(game.hud.roster_grid.get_child_count()==24,"24 portraits in roster")

@@ -62,3 +62,6 @@ if __name__=='__main__':
  run()
  from village_art import build
  build(ROOT)
+
+ from visual_patch import build as visual_patch
+ visual_patch(ROOT)

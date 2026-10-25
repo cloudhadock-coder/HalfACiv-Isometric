@@ -16,5 +16,5 @@ func run() -> void:
   var now=Time.get_ticks_usec();samples.append(float(now-previous)/1000.0);previous=now
  samples.sort();var total=0.0
  for value in samples:total+=value
- var result={"villagers":64,"frames":360,"average_fps":360000.0/total,"frame_ms_p95":samples[int(samples.size()*0.95)],"adapter":RenderingServer.get_video_adapter_name(),"engine":Engine.get_version_info().string}
- var file=FileAccess.open("res://docs/benchmark-v0.2.0.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close();print("BENCHMARK_RESULT ",JSON.stringify(result));game.queue_free();quit()
+ var result={"villagers":64,"frames":360,"average_fps":360000.0/total,"frame_ms_p95":samples[int(samples.size()*0.95)],"adapter":RenderingServer.get_video_adapter_name(),"engine":Engine.get_version_info().string,"draw_calls":Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME),"static_memory_bytes":Performance.get_monitor(Performance.MEMORY_STATIC)}
+ var file=FileAccess.open("res://docs/visual-validation/v0.2.1/benchmark.json",FileAccess.WRITE);file.store_string(JSON.stringify(result,"  "));file.close();print("BENCHMARK_RESULT ",JSON.stringify(result));game.queue_free();quit()

@@ -1,0 +1,39 @@
+{
+  "version": "0.2.1",
+  "tile_cell": [
+    64,
+    64
+  ],
+  "tile_surface_origin": [
+    32,
+    40
+  ],
+  "tile_diamond": [
+    64,
+    32
+  ],
+  "character_frame": [
+    30,
+    35
+  ],
+  "character_pivot": [
+    15,
+    35
+  ],
+  "horse_frame": [
+    48,
+    48
+  ],
+  "horse_pivot": [
+    24,
+    41
+  ],
+  "originals_modified": false,
+  "resampling": "nearest, once during pipeline; runtime 1:1",
+  "source_hashes": {
+    "tilesets\\grass.png": "544594cbca3ad5cdc52a650468f87e6b48e68882c062d6204a0f703404aa2f0a",
+    "tilesets\\road.png": "6c0e58ef52592bd707c145b8345fc7c2394a2550585edba30c9f66e3f20b7b76",
+    "characters\\0.png": "5ecf53fcd0a8454443387637bc0b701e30f60e8a6901b62f4570b172e4f21192",
+    "horses\\horse.png": "763f41c964002fac547be8d914010620fabae0991fa15638404c3cac3d377832"
+  }
+}

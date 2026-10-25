@@ -1,15 +1,20 @@
-# HalfACiv Isometric — v0.2.0
+# HalfACiv Isometric — v0.2.1
 
 **Vida na aldeia**: estratégia e construção medieval em Godot 4.7.2 / GDScript. Um mapa isométrico real, com moradores que trabalham, fazem refeições, descansam e transportam sua produção.
 
-![A aldeia em funcionamento](docs/gameplay-v0.2.0.png)
+A **v0.2.1** corrige câmera, zoom, alinhamento, profundidade e UI da v0.2.0. [Relatório detalhado](docs/VISUAL_BUGS_V0.2.1.md) e [capturas reais](docs/visual-validation/v0.2.1/Contact_Sheet.png).
+
+![A aldeia corrigida](docs/visual-validation/v0.2.1/Camera_Default.png)
 
 ## Executar no Windows
-Baixe o ZIP em [GitHub Releases](https://github.com/cloudhadock-coder/HalfACiv-Isometric/releases), extraia e abra **HalfACiv-Isometric.exe**. Windows 10/11 x64; Godot não precisa estar instalado. O build local fica em `dist/v0.2.0/`.
+Baixe o ZIP em [GitHub Releases](https://github.com/cloudhadock-coder/HalfACiv-Isometric/releases), extraia e abra **HalfACiv-Isometric.exe**. Windows 10/11 x64; Godot não precisa estar instalado. O build local fica em `dist/v0.2.1/`.
 
 No projeto fonte local, use `Jogar.cmd` ou abra `project.godot` no Godot 4.7.2 e pressione F5. A cópia local da engine está em `tools/godot`. O HalfACiv original não é modificado nem necessário para executar.
 
-## Novidades
+## Correções da v0.2.1
+Câmera limitada pelo losango e pela área útil, zoom ancorado no cursor, superfície com origem (32,40), sprites nativos com pés alinhados, sombras abaixo dos objetos e vento sem mover o chão. B/I ou as setas recolhem os painéis. Estradas/água/praça não têm furos; o mundo termina num tabuleiro com borda uniforme. Em janelas largas, a vista utiliza a área total. Saves continuam no esquema 2, preservando posições fracionárias.
+
+## Funcionalidades preservadas da v0.2.0
 - 24 ofícios e uma comunidade inicial de 24 moradores, além do cavalo. Postos compatíveis têm limite de vagas; ofícios podem ser redistribuídos no inspetor.
 - Trabalho de 06h a 12h e de 13h a 20h, refeição ao meio-dia, sono e recuperação de vigor. Guardas patrulham; construtores aceleram obras; carregadores buscam cargas.
 - Produção depende da presença no posto. Recursos ficam no local de trabalho até serem entregues ao depósito ou à feira. Forja, padaria, carpintaria e estalagem usam insumos.
@@ -35,6 +40,8 @@ O pipeline é determinístico. `village_art.py` define roupas, ferramentas, retr
 - `python tests/test_assets.py`
 - `Godot_console.exe --headless --path . --script tests/test_runner.gd`
 - `Godot_console.exe --path . --script tests/integration.gd`
+- `Godot_console.exe --headless --path . --script tests/visual_tests.gd`
+- `Godot_console.exe --path . --script tests/visual_validation.gd -- --no-save`
 - `Godot_console.exe --path . --script tests/benchmark.gd`
 - `python scripts/build_release.py` após commit limpo e tag correspondente; os testes são executados novamente antes do empacotamento.
 

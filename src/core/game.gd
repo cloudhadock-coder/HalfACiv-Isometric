@@ -2,6 +2,9 @@ extends Node2D
 const Sim=preload("res://src/economy/simulation.gd")
 const World=preload("res://src/rendering/world_view.gd")
 const HUD=preload("res://src/ui/hud.gd")
+const CameraRig=preload("res://src/rendering/camera_controller.gd")
+const Backdrop=preload("res://src/rendering/table_backdrop.gd")
+var camera_rig
 const Store=preload("res://src/persistence/save_store.gd")
 const Iso=preload("res://src/world/iso.gd")
 var sim=Sim.new()
@@ -18,26 +21,31 @@ var hud_clock: float=0
 var speed: float=1
 func _ready() -> void:
  people=sim.people
+ add_child(Backdrop.new())
  world=World.new();world.sim=sim;world.people=people;add_child(world)
- camera=Camera2D.new();camera.position=Iso.project(Vector2(15.5,15));camera.zoom=Vector2(1.65,1.65);add_child(camera);world.camera=camera
+ camera=Camera2D.new();camera.position=Iso.project(Vector2(15.5,15.5));add_child(camera);world.camera=camera
  hud=HUD.new();add_child(hud)
  hud.build_selected.connect(func(kind):world.build_kind=kind)
  hud.pause_requested.connect(toggle_pause);hud.save_requested.connect(save_game);hud.load_requested.connect(load_game);hud.new_requested.connect(new_game)
  hud.speed_changed.connect(set_speed);hud.profession_changed.connect(change_profession);hud.citizen_selected.connect(select_person)
+ get_window().focus_exited.connect(func():dragging=false)
  hud.update_resources(sim);world.animate=false
+ camera_rig=CameraRig.new(camera);hud.layout_changed.connect(update_camera_layout);update_camera_layout()
  if "--smoke" in OS.get_cmdline_user_args():
   paused=false;hud.menu.hide()
-  get_tree().create_timer(5.0).timeout.connect(func():print("SMOKE_OK version=0.2.0 ticks=",sim.tick_count," people=",sim.people.size()," buildings=",sim.buildings.size());get_tree().quit())
+  get_tree().create_timer(5.0).timeout.connect(func():print("SMOKE_OK version=0.2.1 ticks=",sim.tick_count," people=",sim.people.size()," buildings=",sim.buildings.size());get_tree().quit())
  if "--capture" in OS.get_cmdline_user_args():
   paused=false;hud.menu.hide();sim.tick(18);select_person(16);get_tree().create_timer(2.0).timeout.connect(capture)
  if "--capture-night" in OS.get_cmdline_user_args():
   paused=false;hud.menu.hide();sim.seconds=145;sim.tick(8);get_tree().create_timer(2.0).timeout.connect(capture)
+func update_camera_layout() -> void:
+ if camera_rig!=null:camera_rig.configure(get_viewport_rect().size,hud.useful_map_rect())
 func capture() -> void:
- var path="user://gameplay-v0.2.0.png" if OS.has_feature("template") else "res://docs/gameplay-v0.2.0.png"
- if "--capture-night" in OS.get_cmdline_user_args():path="res://docs/night-v0.2.0.png"
+ var path="user://gameplay-v0.2.1.png" if OS.has_feature("template") else "res://docs/visual-validation/v0.2.1/Camera_Default.png"
+ if "--capture-night" in OS.get_cmdline_user_args():path="res://docs/visual-validation/v0.2.1/Night.png"
  var error=get_viewport().get_texture().get_image().save_png(path);print("CAPTURE_RESULT ",error," ",path);get_tree().quit()
 func new_game() -> void:
- sim=Sim.new();people=sim.people;world.sim=sim;world.people=people;world.refresh();selected=-1;selected_building=-1;world.selected_person=-1;world.selected_building=-1;hud.selection_kind="overview";autosave_clock=0;paused=false;hud.menu.hide();hud.roster_panel.hide();hud.notify("Uma nova aldeia nasceu")
+ sim=Sim.new();people=sim.people;world.sim=sim;world.people=people;world.refresh();camera_rig.move_to(Iso.project(Vector2(15.5,15.5)));selected=-1;selected_building=-1;world.selected_person=-1;world.selected_building=-1;hud.selection_kind="overview";autosave_clock=0;paused=false;hud.menu.hide();hud.roster_panel.hide();hud.notify("Uma nova aldeia nasceu")
 func toggle_pause() -> void:
  if hud.roster_panel.visible:hud.roster_panel.hide();return
  if not world.build_kind.is_empty():world.build_kind="";return
@@ -54,7 +62,7 @@ func save_game() -> void:
 func load_game() -> void:
  var data=Store.load_game(sim)
  if data.is_empty():hud.notify("Save ausente ou inválido");return
- people=sim.people;world.sim=sim;world.people=people;world.refresh();selected=-1;selected_building=-1;world.selected_person=-1;world.selected_building=-1;hud.selection_kind="overview"
+ people=sim.people;world.sim=sim;world.people=people;world.refresh();camera_rig.move_to(Iso.project(Vector2(15.5,15.5)));selected=-1;selected_building=-1;world.selected_person=-1;world.selected_building=-1;hud.selection_kind="overview"
  paused=false;hud.menu.hide();hud.notify(("Save v0.1 migrado · " if data.migrated else "Domínio carregado · ")+"Offline: %ds"%sim.offline_seconds)
 func _process(delta: float) -> void:
  world.animate=not paused
@@ -70,20 +78,25 @@ func _process(delta: float) -> void:
   if hud.selection_kind=="person" and selected>=0 and selected<people.size():hud.show_person(people[selected])
   elif hud.selection_kind=="building" and selected_building>=0 and selected_building<sim.buildings.size():hud.show_building(sim.buildings[selected_building],selected_building)
  var direction=Vector2(float(Input.is_physical_key_pressed(KEY_D))-float(Input.is_physical_key_pressed(KEY_A)),float(Input.is_physical_key_pressed(KEY_S))-float(Input.is_physical_key_pressed(KEY_W)))
- if not paused:camera.position+=direction.normalized()*delta*440/camera.zoom.x
- camera.position.x=clampf(camera.position.x,-800,800);camera.position.y=clampf(camera.position.y,80,950);world.hovered=Iso.tile(get_global_mouse_position())
+ if not paused:camera_rig.pan_screen(direction.normalized()*delta*440)
+ world.hovered=Iso.tile(get_global_mouse_position())
+func _input(event: InputEvent) -> void:
+ # GUI controls may consume the release, so it cannot be handled only as unhandled input.
+ if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_MIDDLE and not event.pressed:dragging=false
 func _unhandled_input(event: InputEvent) -> void:
  if event is InputEventKey and event.pressed and not event.echo:
   if event.keycode in [KEY_ESCAPE,KEY_SPACE]:toggle_pause()
   elif event.keycode==KEY_F5:save_game()
+  elif event.keycode==KEY_B:hud.toggle_build()
+  elif event.keycode==KEY_I:hud.toggle_details()
   elif event.keycode in [KEY_1,KEY_2,KEY_4]:set_speed(float(event.keycode-KEY_0))
  if event is InputEventMouseButton:
   if event.button_index==MOUSE_BUTTON_MIDDLE:dragging=event.pressed
   if paused:return
   if event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
-   var z=clampf(camera.zoom.x*(1.12 if event.button_index==MOUSE_BUTTON_WHEEL_UP else 0.89),0.65,3.5);camera.zoom=Vector2(z,z)
+   camera_rig.zoom_at(1 if event.button_index==MOUSE_BUTTON_WHEEL_UP else -1,event.position)
   if event.pressed and event.button_index==MOUSE_BUTTON_LEFT:click_map()
- if event is InputEventMouseMotion and dragging and not paused:camera.position-=event.relative/camera.zoom
+ if event is InputEventMouseMotion and dragging and not paused:camera_rig.pan_screen(-event.relative)
 func click_map() -> void:
  var cell=Iso.tile(get_global_mouse_position())
  if not world.build_kind.is_empty():

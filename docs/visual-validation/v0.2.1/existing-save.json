@@ -1,0 +1,10 @@
+{
+  "buildings": 22,
+  "offline_seconds": 30,
+  "passed": true,
+  "people": 25,
+  "schema": 2.0,
+  "screenshot_error": 0,
+  "source_file_unchanged": true,
+  "source_version": "0.2.0"
+}

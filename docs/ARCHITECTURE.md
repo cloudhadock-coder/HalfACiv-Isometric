@@ -22,3 +22,11 @@ Offline: no máximo 7200 segundos, sem movimento, imigração ou eventos visuais
 
 ## Adicionar conteúdo
 Profissão: acrescentar ID em `professions.gd`, receita de aparência em `village_art.py` e testes. Não reordenar IDs existentes. Prédio: entrada em `catalog.gd` e tile/atlas no pipeline; `WorldView` carrega o catálogo automaticamente. Retrato: 96×112 em `assets/portraits/ID.png`; corpo e retrato compartilham uma identidade independente do ofício. Personagem: atlas 384×168, frames 48×56, linhas idle/walk/work, contagens 5/8/8. A linha work usa poses idle com ferramenta sobreposta, não animações direcionais inéditas. Cavalo mantém atlas 512×128 com oito frames por linha. Novas direções exigem produção artística, sem rotação de 45 graus.
+
+
+## Patch visual v0.2.1
+`camera_bounds.gd` calcula região convexa do losango/viewport, incluindo margem limitada para inspecionar seus vértices; `camera_controller.gd` mantém foco, zoom discreto, âncora e translação alinhada ao pixel. Região em cache só muda com layout/zoom. `table_backdrop.gd` é um CanvasLayer fixo, independente da câmera. A borda de pedra pertence apenas ao contorno global.
+
+A superfície nativa é centrada em (32,40), não (32,48). `visual_patch.py` gera cópias alinhadas, máscaras analíticas e frames já reduzidos por nearest-neighbor; não edita fontes anteriores. `render_policy.gd` define pivôs e desempate estável. A posição interpolada é calculada uma vez por pessoa e usada para desenhar/ordenar; a lista estática em cache é mesclada à lista móvel. Sombras são uma passagem anterior aos objetos.
+
+A posição simulada não é mais arredondada por construção/troca de ofício/load; o pathfinder continua a usar células. Nenhum custo, receita, turno, imigração ou regra de progressão mudou. Save continua no esquema 2. `window/stretch/aspect=expand` foi validado por captura real 1600×720, e HUD/rig trabalham no viewport efetivo. Regressões geométricas e oclusão GPU fazem parte do build.

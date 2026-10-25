@@ -13,3 +13,5 @@ tests/realm-test.json*
 docs/*.png.import
 docs/tile-contact*
 tests/halfaciv-art-*/
+
+tools/visual-reference/

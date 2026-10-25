@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.1] - 2026-10-24 — Visual Fixes
+### Corrigido
+- Limites geométricos da câmera, zoom com âncora, acesso aos vértices e arraste liberado sobre a interface.
+- Origem dos tiles, máscaras sem furos, extrusões internas e acabamento externo do tabuleiro.
+- Profundidade baseada no pé interpolado, sombras no chão e raízes estáveis no vento.
+- Escala nativa/pivôs de NPCs e montaria, sombra duplicada e emissores de fogo/fumaça.
+- Saltos de posição em construção, troca de profissão e load, sem alterar o formato dos saves.
+- Painéis recolhíveis, dimensionamento por categoria e viewport expandido em janelas largas.
+### Validação
+- 7 testes de assets, 21.111 verificações de lógica, 22.494 de câmera/geometria, 23 de integração e 1.873 verificações GPU aprovados.
+- Save real v0.2.0 carregado sem alterar o original; capturas e relatório de bugs em docs/.
+
+
 ## [0.2.0] - 2026-10-24
 ### Adicionado
 - 24 profissões, postos compatíveis com vagas, troca de ofício e identidade individual preservada.

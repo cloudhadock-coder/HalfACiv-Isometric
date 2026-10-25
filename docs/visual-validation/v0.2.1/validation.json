@@ -1,0 +1,238 @@
+{
+  "captures": [
+    {
+      "file": "Camera_Default.png",
+      "focus": [
+        0.0,
+        496.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 2.0
+    },
+    {
+      "file": "Camera_Zoom_In.png",
+      "focus": [
+        0.0,
+        496.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 4.0
+    },
+    {
+      "file": "Camera_Zoom_Out.png",
+      "focus": [
+        0.0,
+        496.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 1.0
+    },
+    {
+      "file": "Camera_North_Edge.png",
+      "focus": [
+        0.0,
+        62.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 2.0
+    },
+    {
+      "file": "Camera_South_Edge.png",
+      "focus": [
+        0.0,
+        898.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 2.0
+    },
+    {
+      "file": "Camera_East_Edge.png",
+      "focus": [
+        877.25,
+        496.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 2.0
+    },
+    {
+      "file": "Camera_West_Edge.png",
+      "focus": [
+        -877.25,
+        496.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 2.0
+    },
+    {
+      "file": "Village_Closeup.png",
+      "focus": [
+        32.0,
+        496.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 3.0
+    },
+    {
+      "file": "UI_Layout.png",
+      "focus": [
+        0.0,
+        496.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 2.0
+    },
+    {
+      "file": "UI_Collapsed.png",
+      "focus": [
+        0.0,
+        496.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 2.0
+    },
+    {
+      "file": "Cavalry_Closeup.png",
+      "focus": [
+        -218.719970703125,
+        589.359985351563
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 3.0
+    },
+    {
+      "file": "Horse_Closeup.png",
+      "focus": [
+        -288.0,
+        496.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 3.0
+    },
+    {
+      "file": "UI_Layout_960x540.png",
+      "focus": [
+        0.0,
+        496.0
+      ],
+      "size": [
+        960,
+        540
+      ],
+      "zoom": 2.0
+    },
+    {
+      "file": "UI_Wide_1600x720.png",
+      "focus": [
+        0.0,
+        496.0
+      ],
+      "size": [
+        1600,
+        720
+      ],
+      "zoom": 2.0
+    },
+    {
+      "file": "UI_Layout_1080.png",
+      "focus": [
+        0.0,
+        496.0
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "zoom": 2.0
+    },
+    {
+      "file": "Depth_Base.png",
+      "focus": [
+        160.0,
+        452.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 3.0
+    },
+    {
+      "file": "NPC_Behind.png",
+      "focus": [
+        160.0,
+        452.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 3.0
+    },
+    {
+      "file": "NPC_Front.png",
+      "focus": [
+        160.0,
+        452.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 3.0
+    },
+    {
+      "file": "NPC_Depth_Test.png",
+      "focus": [
+        160.0,
+        452.0
+      ],
+      "size": [
+        1280,
+        720
+      ],
+      "zoom": 3.0
+    }
+  ],
+  "checks": 1873,
+  "depth": {
+    "foreground_pixel_checks": 1503,
+    "occluded_pixel_checks": 342
+  },
+  "failures": 0
+}
