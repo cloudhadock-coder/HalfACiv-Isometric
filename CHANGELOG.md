@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.4.2 — Sprites e animações de construções
+
+- 18 tipos de construção integrados à folha fornecida, com previews consistentes no mapa, seleção e construção.
+- Nove ciclos com contagem e FPS explícitos: moinho (4), bandeiras (14), fumaça de casas (16) e trigo (16).
+- Corrigida a torre que alternava estruturas distintas; novo posto fortificado com bandeira azul.
+- Capela representada pela igreja de pedra; serraria pelo acampamento florestal da folha.
+- Cercas e solo das hortas fixos durante o movimento do trigo; fumaça nativa sem sobreposição procedural duplicada.
+- Pausa, pivô 32,40, ordenação, transparência nativa e bordas do tabuleiro preservados.
+- Pipeline específico reproduzível, sem tocar em retratos/personagens ou restaurar os atlas antigos removidos localmente.
+- Testes de atlas, ciclos, bases fixas, determinismo e viewport real; teste GPU de profundidade usa o frame efetivamente desenhado.
+
+
+
 ## v0.4.1 — Política e progressão do plano original
 
 - Quatro facções com apoio e legitimidade de 0 a 100.

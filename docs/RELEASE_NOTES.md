@@ -1,25 +1,26 @@
-# HalfACiv Isometric v0.4.1 — Política e progressão
+# HalfACiv Isometric v0.4.2 — Sprites e animações
 
-Recupera o escopo originalmente previsto para a v0.4.0 e mantém suas melhorias de interface, minimapa, registro e mundos por semente.
+Atualiza o uso da folha de construções fornecida, preservando a política/progressão da v0.4.1 e todos os sistemas anteriores.
 
-## Incluído
-- Camponeses, Guildas, Clero e Nobreza, com apoio e legitimidade de 0 a 100.
-- Conselho [P] com cinco decisões, prévia dos custos/efeitos, uma decisão por dia e crônicas persistentes.
-- Quatro reformas com bônus reais na produção ou nos tributos, aplicados online e offline.
-- Aldeia → Vila → Cidade Livre → Principado → Reino: evolução confirmada pelo jogador, com população, moradia, edifícios, apoio, legitimidade e recursos como requisitos.
-- Persistência opcional compatível com schema 2; saves anteriores iniciam política neutra. Nenhum evento, decisão ou promoção é inventado offline.
-- Testes de política, economia, progressão e saves, além de campanha automatizada usando apenas ações reais e passagem do tempo.
+## Implementado
+- 18 tipos com sprites derivados da folha nativa, incluindo igreja para a capela, acampamento para a serraria e posto fortificado com bandeira azul para a torre.
+- Nove sequências: moinho com 4 frames, bandeiras com 14, fumaça de casas e trigo com 16; FPS e contagens explícitos.
+- A torre não alterna mais entre estruturas diferentes.
+- Cercas e solo fixos no trigo; fumaça nativa sem camada procedural duplicada nas casas.
+- Previews do inspector, da construção e do mapa consistentes; obras e ghosts ficam no frame 0; pausa congela as animações.
+- Pipeline isolado e determinístico, sem alterar personagens/retratos nem restaurar os atlas removidos localmente.
+- Pivô, bordas, nearest-neighbor, transparência nativa e ordenação preservados. Testes de profundidade com a máscara do frame efetivamente desenhado.
 
 ## Executar
-Extraia o ZIP e abra HalfACiv-Isometric.exe no Windows 10/11 x64. Salve/feche a versão antiga e use Carregar domínio. P na campanha ou Conselheiros → Conselho do domínio; F5 salva; Esc fecha a janela. Para pausar, feche as janelas e pressione Espaço. O conselho permanece em tempo real e não pausa a economia. P no menu principal continua abrindo Personalizar mundo. Custos e condições estão na própria janela e em docs/POLITICS.md no repositório.
+Extraia o ZIP e execute HalfACiv-Isometric.exe no Windows 10/11 x64. Salve/feche a versão antiga e use Carregar domínio. Saves mantêm o schema 2; não há mudança das regras de política, produção, recrutamento, progressão ou mundos por semente. Controles anteriores preservados: WASD, roda, meio, minimapa, B/I/H/R/P, F5.
 
 ## Validação
-Suítes, commit, hashes e benchmark constam em BUILD_INFO.json. O pipeline repete testes no commit marcado, exporta Windows, executa EXE em headless/OpenGL e verifica a companhia e o conselho. Capturas reais em docs/visual-validation/v0.4.1; resultados em docs/VALIDATION_V0.4.1.md. Save real da v0.4.0 carregado com hash original preservado.
+Testes e verificações reais em BUILD_INFO.json e docs/VALIDATION_V0.4.2.md. Capturas reais em docs/visual-validation/v0.4.2/. O EXE exportado é executado em headless/OpenGL, com verificação do catálogo de animações embarcado. A folha original completa não acompanha o ZIP como asset solto.
 
 ## Limitações
-Balanceamento inicial de política. Não inclui guerras, diplomacia externa, revoltas, novos territórios ou sprites diferentes de cidade por estágio. Cavalaria ainda lateral, com ritmos reutilizados; retratos e partes do kit continuam em revisão. Nenhuma arte foi promovida. A v0.5.0 continua dedicada à expansão territorial.
+Nem toda célula da folha é animação; variantes estáticas não são reproduzidas como ciclos. Os nove tipos sem sequência continuam com sprite estático e efeitos ambientais aplicáveis. A torre usa o posto fortificado animado da folha. Cavalaria lateral e aprovação dos retratos continuam pendentes, sem alterações nesta versão.
 
 ## Créditos
-GandalfHardcore Character Asset Pack incorporado ao jogo, sem assets licenciados soltos. Tiles crabcrabcrabs, CC BY 4.0: https://crabcrabcrabs.itch.io/isometric-strategy-medieval-pixel-art-tiles . Godot 4.7.2/MIT; licenças e atribuições no ZIP. Nenhuma referência licenciada foi enviada a IA nesta versão.
+Isometric Strategy - Medieval Pixel Art Tiles, crabcrabcrabs, CC BY 4.0: https://crabcrabcrabs.itch.io/isometric-strategy-medieval-pixel-art-tiles . Recortes, paleta de solo, detalhes ocupacionais e estabilização das hortas descritos em CREDITS.md. GandalfHardcore Character Asset Pack incorporado conforme licença, sem sprites soltos. Godot 4.7.2/MIT. Nenhuma referência licenciada foi enviada a IA.
 
 Commit testado: `{{COMMIT}}`.

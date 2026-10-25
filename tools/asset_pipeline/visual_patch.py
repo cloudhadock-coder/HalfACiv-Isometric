@@ -42,17 +42,6 @@ def build(root):
      elif not pixels[x,y][3]:pixels[x,y]=fallback
   im.save(out/path.name)
  animations=assets/'buildings/visual_v021';animations.mkdir(exist_ok=True)
- for name in ['mill','tower']:
-  source_atlas=Image.open(assets/'buildings'/f'{name}_animation.png').convert('RGBA');atlas=Image.new('RGBA',source_atlas.size)
-  for i in range(4):
-   frame=clip_surface(source_atlas.crop((i*64,0,i*64+64,64)))
-   pixels=frame.load()
-   for y in range(24,64):
-    for x in range(64):
-     r,g,b,a=pixels[x,y]
-     if (r,g,b) in greens:pixels[x,y]=(int(r*.84),int(g*.78),int(b*.83),a)
-   atlas.paste(frame,(i*64,0))
-  atlas.save(animations/f'{name}_animation.png')
  # Only the crown above y=24 moves. Ground and trunk never shear.
  tree=Image.open(out/'tree.png').convert('RGBA');atlas=Image.new('RGBA',(256,64))
  for i,offset in enumerate([0,1,0,-1]):

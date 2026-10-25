@@ -26,7 +26,8 @@ func apply_person(person) -> void:
 func colour_close(a: Color,b: Color) -> bool:
  return maxf(maxf(absf(a.r-b.r),absf(a.g-b.g)),absf(a.b-b.b))<0.006
 func depth_pixels(image: Image,base: Image,person,building: Dictionary,behind: bool) -> int:
- var tile=game.world.tiles.house.get_image()
+ var frame=game.world.building_frame("house",Vector2i(building.x,building.y))
+ var tile=game.world.building_art.textures.house.get_image().get_region(Rect2i(frame*64,0,64,64))
  var sprite=game.world.characters[person.portrait_id].get_image()
  var foot=game.world.person_point(person)
  var first=game.camera_rig.world_to_screen(foot-Policy.CHARACTER_PIVOT)

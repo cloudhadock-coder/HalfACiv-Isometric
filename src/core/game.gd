@@ -41,6 +41,13 @@ func _ready() -> void:
  council_panel=CouncilPanel.new();council_panel.game=self;hud.add_child(council_panel)
  hud.update_resources(sim);world.animate=false
  camera_rig=CameraRig.new(camera);hud.layout_changed.connect(update_camera_layout);update_camera_layout()
+ if "--buildings-smoke" in OS.get_cmdline_user_args():
+  paused=false;autosave_clock=-100000;hud.menu.hide()
+  get_tree().create_timer(2.0).timeout.connect(func():
+   var ok=world.building_art.data.size()==18 and world.building_art.data.tower.count==14 and world.building_art.data.house.count==16 and world.phase>0
+   var error=get_viewport().get_texture().get_image().save_png("user://export-buildings.png")
+   print("EXPORTED_BUILDINGS_OK=",ok," capture=",error)
+   get_tree().quit(0 if ok and error==OK else 1))
  if "--council-smoke" in OS.get_cmdline_user_args():
   paused=true;autosave_clock=-100000;hud.menu.hide();run_command("council")
   var approved=sim.politics.decide(sim,"relief");council_panel.rebuild()

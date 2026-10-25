@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cjo6vp3c50ijl"
-path="res://.godot/imported/mill_animation.png-e351f3ebba30de0804a9dfcb653745ce.ctex"
+uid="uid://dti1wgcmae6x8"
+path="res://.godot/imported/warehouse.png-412f013cecd77c0e95a583a4b01f543d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/buildings/visual_v021/mill_animation.png"
-dest_files=["res://.godot/imported/mill_animation.png-e351f3ebba30de0804a9dfcb653745ce.ctex"]
+source_file="res://assets/buildings/native_v042/warehouse.png"
+dest_files=["res://.godot/imported/warehouse.png-412f013cecd77c0e95a583a4b01f543d.ctex"]
 
 [params]
 

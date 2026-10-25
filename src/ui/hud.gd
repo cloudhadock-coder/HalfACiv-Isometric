@@ -181,7 +181,7 @@ func populate_builds() -> void:
   var data=Catalog.DATA[kind]
   if data.category!=category:continue
   var key=kind;var b=button(data.name+"\n"+cost_text(data.cost),func():build_selected.emit(key);hint.text=Catalog.DATA[key].name+": clique no mapa.\n"+Catalog.DATA[key].benefit,build_list)
-  b.custom_minimum_size=Vector2(190,56);b.alignment=HORIZONTAL_ALIGNMENT_LEFT;b.add_theme_font_size_override("font_size",14);b.icon=load("res://assets/tilesets/"+kind+".png");b.expand_icon=true;b.add_theme_constant_override("icon_max_width",32);b.tooltip_text=data.benefit+"\nObra: %ds | Postos: %d"%[data.time,data.slots]
+  b.custom_minimum_size=Vector2(190,56);b.alignment=HORIZONTAL_ALIGNMENT_LEFT;b.add_theme_font_size_override("font_size",14);b.icon=load("res://assets/buildings/native_v042/"+kind+".png");b.expand_icon=true;b.add_theme_constant_override("icon_max_width",32);b.tooltip_text=data.benefit+"\nObra: %ds | Postos: %d"%[data.time,data.slots]
   b.set_meta("kind",key);b.set_meta("tip",b.tooltip_text)
  if _sim!=null:update_costs(_sim.resources)
  call_deferred("resize")
@@ -298,7 +298,7 @@ func show_person(c) -> void:
  if not c.specialist.is_empty():details.text+="\n\nContrato: "+c.specialist+" · bônus ativo no ofício de origem"
  if c.mounted or c.horse_only:details.text+="\n\nEquipar montaria: Companhia [R]"
 func show_building(b,index: int=-1) -> void:
- selection_kind="building";var data=Catalog.DATA[b.kind];title.text=data.name;portrait.texture=load("res://assets/tilesets/"+b.kind+".png");portrait_note.hide();profession.hide()
+ selection_kind="building";var data=Catalog.DATA[b.kind];title.text=data.name;portrait.texture=load("res://assets/buildings/native_v042/"+b.kind+".png");portrait_note.hide();profession.hide()
  var workers=0;var active=0;var names=PackedStringArray()
  if _sim!=null:
   workers=int(_sim.jobs.get(index,0));active=_sim.active_workers(index)

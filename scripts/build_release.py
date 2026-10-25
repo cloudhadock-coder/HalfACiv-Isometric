@@ -21,6 +21,8 @@ def main():
  output=ROOT/'dist'/tag;output.mkdir(parents=True,exist_ok=True)
  engine=next((ROOT/'tools/godot').glob('Godot*_win64_console.exe'))
  assets=run([sys.executable,ROOT/'tests/test_assets.py'],output/'assets-test.log')
+ building_assets=run([sys.executable,ROOT/'tests/test_buildings.py'],output/'building-assets-test.log')
+ building_animation=run([engine,'--path',ROOT,'--script','tests/building_animation_tests.gd','--','--no-save'],output/'building-animation-test.log')
  cavalry=run([sys.executable,ROOT/'tests/test_cavalry.py'],output/'cavalry-assets-test.log')
  company=run([engine,'--path',ROOT,'--script','tests/company_tests.gd','--','--no-save'],output/'company-test.log')
  kit=run([sys.executable,ROOT/'tools/portrait_pipeline/kit.py','validate'],output/'kit-test.log')
@@ -34,7 +36,7 @@ def main():
  gpu=run([engine,'--path',ROOT,'--script','tests/visual_validation.gd','--','--no-save'],output/'gpu-visual-test.log')
  portraits=run([sys.executable,ROOT/'tools/portrait_pipeline/validate.py'],output/'portrait-validate.log')
  portrait_ui=run([engine,'--path',ROOT,'--script','tests/portrait_ui_capture.gd','--','--no-save'],output/'portrait-ui-test.log')
- counts={'politics_checks':int(re.search(r'POLITICS_RESULT checks=(\d+)',politics).group(1)),'realm_campaign': 'passed=true' in campaign,'interface_regression': 'INTERFACE_CAPTURE failures=0' in interface,'ui_additions_regression':'UI_ADDITIONS_CAPTURE failures=0' in additions,'company_checks':int(re.search(r'COMPANY_RESULT checks=(\d+)',company).group(1)),'cavalry_asset_tests':3,'asset_tests':int(re.search(r'Ran (\d+) tests',assets).group(1)),'logic_assertions':int(re.search(r'assertions=(\d+)',logic).group(1)),'visual_assertions':int(re.search(r'assertions=(\d+)',visual).group(1)),'integration_assertions':int(re.search(r'assertions=(\d+)',integration).group(1)),'gpu_checks':int(re.search(r'checks=(\d+)',gpu).group(1)),'portrait_ui_pixel_checks':int(re.search(r'PORTRAIT_UI_RESULT checks=(\d+) failures=0',portrait_ui).group(1)),'portraits_pending_art':int(re.search(r'pending=(\d+)',portraits).group(1))}
+ counts={'building_asset_tests':int(re.search(r'Ran (\d+) tests',building_assets).group(1)),'building_animation_checks':int(re.search(r'BUILDING_ANIMATION_RESULT checks=(\d+)',building_animation).group(1)),'politics_checks':int(re.search(r'POLITICS_RESULT checks=(\d+)',politics).group(1)),'realm_campaign': 'passed=true' in campaign,'interface_regression': 'INTERFACE_CAPTURE failures=0' in interface,'ui_additions_regression':'UI_ADDITIONS_CAPTURE failures=0' in additions,'company_checks':int(re.search(r'COMPANY_RESULT checks=(\d+)',company).group(1)),'cavalry_asset_tests':3,'asset_tests':int(re.search(r'Ran (\d+) tests',assets).group(1)),'logic_assertions':int(re.search(r'assertions=(\d+)',logic).group(1)),'visual_assertions':int(re.search(r'assertions=(\d+)',visual).group(1)),'integration_assertions':int(re.search(r'assertions=(\d+)',integration).group(1)),'gpu_checks':int(re.search(r'checks=(\d+)',gpu).group(1)),'portrait_ui_pixel_checks':int(re.search(r'PORTRAIT_UI_RESULT checks=(\d+) failures=0',portrait_ui).group(1)),'portraits_pending_art':int(re.search(r'pending=(\d+)',portraits).group(1))}
  run([engine,'--headless','--path',ROOT,'--export-release','Windows Desktop',output/'HalfACiv-Isometric.exe'],output/'export.log')
  smoke=run([output/'HalfACiv-Isometric.exe','--headless','--','--smoke'],output/'smoke.log')
  if 'SMOKE_OK version='+version not in smoke:raise SystemExit('Exported executable did not confirm version')
@@ -42,6 +44,8 @@ def main():
  if 'EXPORTED_COMPANY_OK=true capture=0' not in company_smoke:raise SystemExit('Exported company or kit missing')
  council_smoke=run([output/'HalfACiv-Isometric.exe','--','--council-smoke'],output/'council-windows-smoke.log')
  if 'EXPORTED_COUNCIL_OK=true capture=0' not in council_smoke:raise SystemExit('Exported political simulation failed')
+ building_smoke=run([output/'HalfACiv-Isometric.exe','--','--buildings-smoke'],output/'buildings-windows-smoke.log')
+ if 'EXPORTED_BUILDINGS_OK=true capture=0' not in building_smoke:raise SystemExit('Exported building atlas verification failed')
  if git('status','--porcelain'):raise SystemExit('Build changed tracked or unignored files: review before release')
  exe=output/'HalfACiv-Isometric.exe'
  report={'version':version,'commit':commit,'engine':'4.7.2-stable','platform':'Windows x64','exe_sha256':hashlib.sha256(exe.read_bytes()).hexdigest(),'checks':counts,'windows_smoke':'passed','benchmark':json.loads((ROOT/f'docs/visual-validation/{tag}/benchmark.json').read_text())}

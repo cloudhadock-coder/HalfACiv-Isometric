@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://biq2jjl026t45"
-path="res://.godot/imported/tower_animation.png-fd111fcb120119e56802e55de2daf371.ctex"
+uid="uid://b58wikqvucke2"
+path="res://.godot/imported/barracks_atlas.png-f109f89e0f933bf10cb46d7d3e9b2f6a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/buildings/visual_v021/tower_animation.png"
-dest_files=["res://.godot/imported/tower_animation.png-fd111fcb120119e56802e55de2daf371.ctex"]
+source_file="res://assets/buildings/native_v042/barracks_atlas.png"
+dest_files=["res://.godot/imported/barracks_atlas.png-f109f89e0f933bf10cb46d7d3e9b2f6a.ctex"]
 
 [params]
 

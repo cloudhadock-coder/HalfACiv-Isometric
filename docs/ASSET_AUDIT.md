@@ -38,3 +38,26 @@ Corpos derivados em `assets/characters/native` têm frames 30×35/pivô (15,35),
 Fonte preservada: `assets/horses/horse_native_v021.png`. Gerador `tools/asset_pipeline/cavalry.py`: atlas RGBA 384×96, 16 frames 48×48, pivô 24,41. Cinco pelagens por recoloração seletiva do corpo; manta/estandarte em seis cores, barda e equipamento do cavaleiro com contornos e sombreamento desenhados na grade nativa. Camadas fixam suas bases e seguem o mesmo índice temporal; não usam rotação nem espelhamento de armas. Metadados em `assets/horses/cavalry/metadata.json`. Desenhos novos do projeto; fonte existente incorporada ao jogo, sem redistribuir o GandalfHardcore solto. Testes validam alfa, frames, dimensões, diferenças e determinismo.
 
 Disponível uma vista lateral e dois ciclos (idle/walk), não oito direções. Ritmos de trote/galope reutilizam walk. Barda e equipamento são cosméticos e estilizados, não equivalem a um conjunto artístico final completo. Retratos e 19 partes do trabalho PixelLab anterior permanecem não aprovados; somente fallback no jogo até revisão humana.
+
+## v0.4.2 — Folha de construções fornecida
+
+Fonte inspecionada: `assets/art_reference/Buildings/sprite-Sheet.png`, 1024×1280 RGBA, grade 16×20 de células 64×64. SHA-256 `a6af0235f3538458ae65e46d1ed0b515cf1ece6881cd0a3b5d8979b20a0fd31f`. É byte a byte idêntica à cópia preservada em `assets/original/sprite-Sheet.png`; esta atualização corrige o uso da folha, não alega receber uma arte diferente. Atribuição existente crabcrabcrabs/CC BY 4.0 preservada. Nenhuma fonte original ou folha completa foi adicionada ao Git/release; só produtos derivados incorporados e capturas do jogo.
+
+Problema confirmado: a torre antiga usava colunas 6–9 da linha 0, que são variantes de edifícios, não uma sequência contínua. Os oito arquivos antigos de animação/importação de moinho e torre já estavam excluídos localmente no começo; as exclusões foram preservadas, retirando dependências e geradores antigos, sem restaurá-los.
+
+Pipeline novo: `tools/asset_pipeline/buildings.py`, saída `assets/buildings/native_v042/`, 18 previews e 18 atlas, manifesto com contagem/FPS/linhas/colunas, pivô 32,40. Não toca em retratos, personagens ou originais. Não há redimensionamento, rotação ou espelhamento: pixels nativos, nearest-neighbor. Tons de grama seguem a moderação da v0.2.1 e a extrusão interna é removida no mesmo limite geométrico, preservando o tabuleiro externo.
+
+| Sequência | Linha (base zero) | Colunas | Frames | FPS |
+|---|---:|---|---:|---:|
+| Moinho | 1 | 0–3 | 4 | 6 |
+| Quartel / bandeira vermelha | 2 | 0–13 | 14 | 8 |
+| Torre / posto fortificado com bandeira azul | 14 | 0–13 | 14 | 8 |
+| Casa, herbário, carpintaria / fumaça azul | 16 | 0–15 | 16 | 8 |
+| Padaria e estalagem / fumaça cinza | 15 | 0–15 | 16 | 8 |
+| Horta / trigo | 5 | 0–15 | 16 | 6 |
+
+Nove tipos têm ciclos. Capela usa a igreja de pedra/vermelha da célula (15,4); serraria usa o acampamento com árvores (0,0); pedreira usa rochas (3,0). Feira, depósito, estábulo, pesqueiro, forja e pasto mantêm adaptações ocupacionais discretas sobre os recortes nativos. Sem animações inventadas para variantes estáticas. A torre é representada como um posto fortificado de pedra com bandeira azul; a torre estreita de telhado vermelho da folha não é tratada como frame alternativo.
+
+Na linha do trigo as cercas não são consistentes em todos os recortes. A base/cerca fica no frame 0 e só cores nativas do trigo dentro de sua silhueta fixa são transferidas por frame; não se transforma nem deforma a planta. Fonte tem alfa 0, 68 e 255: o alfa parcial nativo é preservado, sem filtragem. A regra binária dos portraits não é aplicada indevidamente às construções.
+
+Fumaça de casas agora é a sequência nativa; removida a sobreposição de uma segunda fumaça procedural nesses prédios. Forja conserva seu efeito próprio. Árvores, água, trabalhadores e cavalaria continuam animados como antes. Previews de construção e de obra usam frame 0. Cada prédio pronto usa um deslocamento temporal determinístico por tile, evitando sincronização artificial e saltos ao reconstruir listas.

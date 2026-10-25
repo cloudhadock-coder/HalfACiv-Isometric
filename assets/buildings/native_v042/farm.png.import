@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://da7vgcl4uln48"
-path="res://.godot/imported/tower_animation.png-130b537dda944fc584eb4c5af8015bef.ctex"
+uid="uid://biernufkv6xnd"
+path="res://.godot/imported/farm.png-52e8827dbce968a7e222a114a09653dd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/buildings/tower_animation.png"
-dest_files=["res://.godot/imported/tower_animation.png-130b537dda944fc584eb4c5af8015bef.ctex"]
+source_file="res://assets/buildings/native_v042/farm.png"
+dest_files=["res://.godot/imported/farm.png-52e8827dbce968a7e222a114a09653dd.ctex"]
 
 [params]
 

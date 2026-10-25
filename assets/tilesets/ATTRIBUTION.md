@@ -7,3 +7,5 @@ Characters: GandalfHardcore Character Asset Pack, used under the included custom
 Original horse and provisional portrait studies: HalfACiv Isometric project.
 
 v0.2.1 derived copies: corrected surface origin (32,40), clipped internal extrusion, analytic ground masks, fixed-root tree wind and a small forge chimney. Original source tiles remain unchanged.
+
+v0.4.2: explicit native 4/14/16-frame sequences, church and forest-camp crops, matching construction/inspector previews, occupational signs retained. Wheat colours animated inside a fixed silhouette to preserve fence/soil. Grass palette and surface-edge clipping match v0.2.1. Full supplied sheet is local-only; incorporated derived game sprites retain this CC BY 4.0 attribution.

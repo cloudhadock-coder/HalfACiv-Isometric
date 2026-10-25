@@ -19,10 +19,14 @@ class Assets(unittest.TestCase):
    im=Image.open(ROOT/f'assets/portraits/{i}.png');self.assertEqual(im.size,(96,112));hashes.add(hashlib.sha256(im.tobytes()).hexdigest())
   self.assertEqual(len(hashes),24)
  def test_environment_atlases(self):
-  for name in ['mill','tower']:
-   im=Image.open(ROOT/f'assets/buildings/{name}_animation.png');self.assertEqual(im.size,(256,64))
-   frames=[im.crop((f*64,0,f*64+64,64)).tobytes() for f in range(4)]
-   self.assertGreater(len(set(frames)),1)
+  import json
+  folder=ROOT/'assets/buildings/native_v042'
+  data=json.loads((folder/'manifest.json').read_text())['animations']
+  for name in ['mill','tower','house','barracks','farm']:
+   entry=data[name];count=entry['count']
+   with Image.open(folder/entry['atlas']) as im:
+    self.assertEqual(im.size,(64*count,64))
+    self.assertGreater(len({im.crop((f*64,0,f*64+64,64)).tobytes() for f in range(count)}),1)
  def test_deterministic_extension(self):
   import importlib.util,tempfile,shutil
   spec=importlib.util.spec_from_file_location('village_art',ROOT/'tools/asset_pipeline/village_art.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
@@ -32,7 +36,7 @@ class Assets(unittest.TestCase):
    for name in ['tilesets','characters','portraits','buildings','ui']:(scratch/'assets'/name).mkdir()
    shutil.copytree(ROOT/'assets/tilesets',scratch/'assets/tilesets',dirs_exist_ok=True)
    module.build(scratch)
-   for name in ['portraits/17.png','characters/23.png','tilesets/forge.png','buildings/mill_animation.png']:
+   for name in ['portraits/17.png','characters/23.png','tilesets/forge.png']:
     self.assertEqual((scratch/'assets'/name).read_bytes(),(ROOT/'assets'/name).read_bytes(),name)
    (scratch/'assets/horses').mkdir();shutil.copy2(ROOT/'assets/horses/horse.png',scratch/'assets/horses/horse.png')
    patch_spec=importlib.util.spec_from_file_location('visual_patch',ROOT/'tools/asset_pipeline/visual_patch.py');patch=importlib.util.module_from_spec(patch_spec);patch_spec.loader.exec_module(patch);patch.build(scratch)

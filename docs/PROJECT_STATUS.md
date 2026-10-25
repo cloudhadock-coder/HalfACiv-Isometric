@@ -1,3 +1,11 @@
+# Status do projeto — v0.4.2
+
+Atualização dos sprites e animações de construções, usando a folha fornecida. 18 tipos, nove sequências, previews unificados, base e cerca estáveis; nenhuma mudança em gameplay, saves, personagens ou retratos. Fonte e remoções locais preservadas. Validação em VALIDATION_V0.4.2.md; publicação confirmada apenas no relatório final.
+
+A política da v0.4.1 permanece implementada; a próxima etapa funcional do roadmap continua sendo expansão territorial v0.5.0. As pendências artísticas de cavalaria e retratos continuam sem promoção automática.
+
+---
+
 # Status do projeto — v0.4.1
 
 Base: v0.4.0 publicada, commit `f1d3875`; Git limpo no início desta implementação. A v0.4.0 implementou interface, menu, minimapa e mundos por semente, adiantando parte da expansão prevista, sem implementar o núcleo político do roadmap original.

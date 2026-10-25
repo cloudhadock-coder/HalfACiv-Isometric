@@ -84,11 +84,7 @@ def build(root):
   if name=='pasture':
    for x,y in [(16,46),(32,53),(42,45)]:d.ellipse((x,y-3,x+7,y+1),fill='#e4dbbc');d.rectangle((x+5,y-2,x+8,y),fill='#534a3c');d.point((x+1,y+2),fill='#514534');d.point((x+5,y+2),fill='#514534')
   im.save(out/'tilesets'/f'{name}.png')
- # Frame atlases use artwork's native windmill blades and tower flags.
- for name,frames in [('mill',[tile(x,1) for x in range(4)]),('tower',[tile(x,0) for x in range(6,10)])]:
-  atlas=Image.new('RGBA',(256,64))
-  for n,im in enumerate(frames):atlas.paste(im,(64*n,0))
-  atlas.save(out/'buildings'/f'{name}_animation.png')
+ # Building animations are extracted by buildings.py with explicit sequences.
  # Muted, consistent ground and deterministic little meadow variants.
  grass=tile(5,0)
  for i in range(4):
@@ -147,4 +143,4 @@ def build(root):
  preview=Image.new('RGBA',(96*8,112*3))
  for i in range(24):preview.paste(Image.open(out/'portraits'/f'{i}.png'),((i%8)*96,(i//8)*112))
  preview.save(root/'docs/portraits-v0.2.0.png')
- print('VILLAGE_ART_OK: 24 characters, 24 detailed editable portraits, 18 buildings, mill/flag frames')
+ print('VILLAGE_ART_OK: 24 characters, 24 legacy portraits, 18 base buildings; animation extraction in buildings.py')

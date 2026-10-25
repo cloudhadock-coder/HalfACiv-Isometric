@@ -3,6 +3,8 @@ const Iso=preload("res://src/world/iso.gd")
 const Ground=preload("res://src/rendering/ground_layer.gd")
 const FX=preload("res://src/rendering/environment_fx.gd")
 const Policy=preload("res://src/rendering/render_policy.gd")
+const BuildingArt=preload("res://src/rendering/building_art.gd")
+var building_art=BuildingArt.new()
 const Professions=preload("res://src/entities/professions.gd")
 var sim
 var people: Array=[]
@@ -26,9 +28,9 @@ var show_routes: bool=false
 func _ready() -> void:
  texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
  var names=sim.Catalog.DATA.keys()+["grass","grass_1","grass_2","grass_3","tree","water","road","plaza"]
- for kind in names:tiles[kind]=load("res://assets/tilesets/visual_v021/"+kind+".png")
+ for kind in names:tiles[kind]=load(BuildingArt.DIRECTORY+kind+".png" if kind in sim.Catalog.DATA else "res://assets/tilesets/visual_v021/"+kind+".png")
  for i in range(24):characters.append(load("res://assets/characters/native/"+str(i)+".png"))
- for kind in ["mill","tower","tree"]:animated[kind]=load("res://assets/buildings/visual_v021/"+kind+"_animation.png")
+ for kind in ["tree"]:animated[kind]=load("res://assets/buildings/visual_v021/"+kind+"_animation.png")
  horse=load("res://assets/horses/horse_native_v021.png")
  for family in ["coat","cloth","armor","banner","rider_armor"]:
   cavalry[family]=[]
@@ -54,12 +56,17 @@ func visible_point(p: Vector2) -> bool:
  if camera==null:return true
  var extent=get_viewport_rect().size/camera.zoom/2.0+Vector2(100,100)
  return absf(p.x-camera.position.x)<extent.x and absf(p.y-camera.position.y)<extent.y
-func draw_tile(kind: String,cell: Vector2i,tint: Color=Color.WHITE) -> void:
+func draw_tile(kind: String,cell: Vector2i,tint: Color=Color.WHITE,live: bool=true) -> void:
  var point=Iso.project(Vector2(cell))
  if not visible_point(point):return
- if kind in animated:
-  draw_texture_rect_region(animated[kind],Rect2(point-Iso.TILE_ORIGIN,Vector2(64,64)),Rect2(int(phase*(5 if kind=="mill" else (2 if kind=="tree" else 7)))%4*64,0,64,64),tint)
+ if kind in building_art.data:
+  draw_texture_rect_region(building_art.textures[kind],Rect2(point-Iso.TILE_ORIGIN,Vector2(64,64)),Rect2(building_frame(kind,cell,live)*64,0,64,64),tint,false,false)
+ elif kind in animated:
+  draw_texture_rect_region(animated[kind],Rect2(point-Iso.TILE_ORIGIN,Vector2(64,64)),Rect2(int(phase*2)%4*64,0,64,64),tint)
  else:draw_texture(tiles[kind],point-Iso.TILE_ORIGIN,tint)
+func building_frame(kind: String,cell: Vector2i,live: bool=true) -> int:
+ var clock=phase+float((cell.x*17+cell.y*31)%23)*0.13 if live else 0.0
+ return building_art.frame_index(kind,clock)
 func person_point(c) -> Vector2:
  var alpha=clampf(sim.elapsed/sim.STEP,0,1) if animate else 1.0
  var point=Iso.project(c.previous.lerp(c.position,alpha))
@@ -99,12 +106,12 @@ func _draw() -> void:
   elif obj.type==1:
    var b=sim.buildings[obj.index];var cell=Vector2i(int(b.x),int(b.y));var p=Iso.project(Vector2(cell))
    if not visible_point(p):continue
-   draw_tile(b.kind,cell,Color(1,1,1,0.52) if b.remaining>0 else Color.WHITE)
+   draw_tile(b.kind,cell,Color(1,1,1,0.52) if b.remaining>0 else Color.WHITE,b.remaining<=0)
    if b.remaining>0:
     draw_rect(Rect2(p+Vector2(-19,-42),Vector2(38,3)),Color("252c32"))
     draw_rect(Rect2(p+Vector2(-19,-42),Vector2(38*(1-b.remaining/float(sim.Catalog.DATA[b.kind].time)),3)),Color("ddbb72"))
    else:
-    if b.kind in ["house","bakery","tavern"]:FX.smoke(self,p+Vector2(2,-26),phase+obj.index)
+    if b.kind in ["house","bakery","tavern"] and not building_art.has_native_smoke(b.kind):FX.smoke(self,p+Vector2(2,-26),phase+obj.index)
     if b.kind=="forge":FX.smoke(self,p+Vector2(-1,-20),phase+obj.index)
     if b.kind=="forge":FX.fire(self,p+Vector2(-1,3),phase)
     if b.kind in ["tavern","chapel"] and (sim.hour()>18 or sim.hour()<7):
@@ -135,7 +142,7 @@ func _draw() -> void:
      draw_rect(Rect2(p+Vector2(5,-32),Vector2(3,1)),Color("b7c3d0"))
      draw_rect(Rect2(p+Vector2(7,-35),Vector2(2,1)),Color("b7c3d0"))
  if sim.valid(hovered):
-  if not build_kind.is_empty():draw_tile(build_kind,hovered,Color(1,1,1,0.55))
+  if not build_kind.is_empty():draw_tile(build_kind,hovered,Color(1,1,1,0.55),false)
 # Shift overlay: the selected villager's path, a building's staff links, or every cargo route.
 func draw_routes() -> void:
  if selected_person>=0 and selected_person<people.size():

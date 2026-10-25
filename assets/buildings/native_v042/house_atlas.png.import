@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cjmbj8xybo0qx"
-path="res://.godot/imported/mill_animation.png-b817265e6a60f25ea803f89f37655836.ctex"
+uid="uid://7x8u5w01itf1"
+path="res://.godot/imported/house_atlas.png-9e67313991ebb68a2f645bae4a80d887.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/buildings/mill_animation.png"
-dest_files=["res://.godot/imported/mill_animation.png-b817265e6a60f25ea803f89f37655836.ctex"]
+source_file="res://assets/buildings/native_v042/house_atlas.png"
+dest_files=["res://.godot/imported/house_atlas.png-9e67313991ebb68a2f645bae4a80d887.ctex"]
 
 [params]
 

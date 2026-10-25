@@ -1,0 +1,337 @@
+{
+  "schema": 1,
+  "version": "0.4.2",
+  "source_sha256": "a6af0235f3538458ae65e46d1ed0b515cf1ece6881cd0a3b5d8979b20a0fd31f",
+  "source_size": [
+    1024,
+    1280
+  ],
+  "frame": [
+    64,
+    64
+  ],
+  "pivot": [
+    32,
+    40
+  ],
+  "filter": "nearest",
+  "animations": {
+    "house": {
+      "count": 16,
+      "fps": 8,
+      "source_row": 16,
+      "source_columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "atlas": "house_atlas.png",
+      "preview": "house.png",
+      "native_smoke": true
+    },
+    "bakery": {
+      "count": 16,
+      "fps": 8,
+      "source_row": 15,
+      "source_columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "atlas": "bakery_atlas.png",
+      "preview": "bakery.png",
+      "native_smoke": true
+    },
+    "tavern": {
+      "count": 16,
+      "fps": 8,
+      "source_row": 15,
+      "source_columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "atlas": "tavern_atlas.png",
+      "preview": "tavern.png",
+      "native_smoke": true
+    },
+    "herbalist": {
+      "count": 16,
+      "fps": 8,
+      "source_row": 16,
+      "source_columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "atlas": "herbalist_atlas.png",
+      "preview": "herbalist.png",
+      "native_smoke": true
+    },
+    "workshop": {
+      "count": 16,
+      "fps": 8,
+      "source_row": 16,
+      "source_columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "atlas": "workshop_atlas.png",
+      "preview": "workshop.png",
+      "native_smoke": true
+    },
+    "mill": {
+      "count": 4,
+      "fps": 6,
+      "source_row": 1,
+      "source_columns": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "atlas": "mill_atlas.png",
+      "preview": "mill.png",
+      "native_smoke": false
+    },
+    "barracks": {
+      "count": 14,
+      "fps": 8,
+      "source_row": 2,
+      "source_columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "atlas": "barracks_atlas.png",
+      "preview": "barracks.png",
+      "native_smoke": false
+    },
+    "tower": {
+      "count": 14,
+      "fps": 8,
+      "source_row": 14,
+      "source_columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "atlas": "tower_atlas.png",
+      "preview": "tower.png",
+      "native_smoke": false
+    },
+    "farm": {
+      "count": 16,
+      "fps": 6,
+      "source_row": 5,
+      "source_columns": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "atlas": "farm_atlas.png",
+      "preview": "farm.png",
+      "native_smoke": false
+    },
+    "chapel": {
+      "count": 1,
+      "fps": 0,
+      "source_row": 4,
+      "source_columns": [
+        15
+      ],
+      "atlas": "chapel_atlas.png",
+      "preview": "chapel.png",
+      "native_smoke": false
+    },
+    "lumber": {
+      "count": 1,
+      "fps": 0,
+      "source_row": 0,
+      "source_columns": [
+        0
+      ],
+      "atlas": "lumber_atlas.png",
+      "preview": "lumber.png",
+      "native_smoke": false
+    },
+    "quarry": {
+      "count": 1,
+      "fps": 0,
+      "source_row": 0,
+      "source_columns": [
+        3
+      ],
+      "atlas": "quarry_atlas.png",
+      "preview": "quarry.png",
+      "native_smoke": false
+    },
+    "market": {
+      "count": 1,
+      "fps": 0,
+      "source_row": 0,
+      "source_columns": [
+        8
+      ],
+      "atlas": "market_atlas.png",
+      "preview": "market.png",
+      "native_smoke": false
+    },
+    "warehouse": {
+      "count": 1,
+      "fps": 0,
+      "source_row": 0,
+      "source_columns": [
+        2
+      ],
+      "atlas": "warehouse_atlas.png",
+      "preview": "warehouse.png",
+      "native_smoke": false
+    },
+    "stable": {
+      "count": 1,
+      "fps": 0,
+      "source_row": 0,
+      "source_columns": [
+        2
+      ],
+      "atlas": "stable_atlas.png",
+      "preview": "stable.png",
+      "native_smoke": false
+    },
+    "fishery": {
+      "count": 1,
+      "fps": 0,
+      "source_row": 1,
+      "source_columns": [
+        10
+      ],
+      "atlas": "fishery_atlas.png",
+      "preview": "fishery.png",
+      "native_smoke": false
+    },
+    "forge": {
+      "count": 1,
+      "fps": 0,
+      "source_row": 14,
+      "source_columns": [
+        14
+      ],
+      "atlas": "forge_atlas.png",
+      "preview": "forge.png",
+      "native_smoke": false
+    },
+    "pasture": {
+      "count": 1,
+      "fps": 0,
+      "source_row": 0,
+      "source_columns": [
+        5
+      ],
+      "atlas": "pasture_atlas.png",
+      "preview": "pasture.png",
+      "native_smoke": false
+    }
+  }
+}
