@@ -1,0 +1,314 @@
+[
+  {
+    "id": 0,
+    "sex": "Male",
+    "skin": 1,
+    "hair": 1,
+    "shirt": "Shirt",
+    "tool": "hoe",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 1,
+    "sex": "Female",
+    "skin": 2,
+    "hair": 2,
+    "shirt": "Corset",
+    "tool": "basket",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 2,
+    "sex": "Male",
+    "skin": 3,
+    "hair": 3,
+    "shirt": "Green Shirt v2",
+    "tool": "axe",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 3,
+    "sex": "Male",
+    "skin": 4,
+    "hair": 4,
+    "shirt": "Blue Shirt v2",
+    "tool": "pick",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 4,
+    "sex": "Male",
+    "skin": 5,
+    "hair": 5,
+    "shirt": "orange Shirt v2",
+    "tool": "hammer",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 5,
+    "sex": "Male",
+    "skin": 1,
+    "hair": 1,
+    "shirt": "Purple Shirt v2",
+    "tool": "coins",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 6,
+    "sex": "Male",
+    "skin": 2,
+    "hair": 2,
+    "shirt": "Shirt v2",
+    "tool": "sword",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 7,
+    "sex": "Male",
+    "skin": 3,
+    "hair": 3,
+    "shirt": "Blue Shirt v2",
+    "tool": "sword",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 8,
+    "sex": "Male",
+    "skin": 4,
+    "hair": 4,
+    "shirt": "Green Shirt v2",
+    "tool": "bow",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 9,
+    "sex": "Male",
+    "skin": 5,
+    "hair": 5,
+    "shirt": "Purple Shirt v2",
+    "tool": "seal",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 10,
+    "sex": "Female",
+    "skin": 1,
+    "hair": 1,
+    "shirt": "Blue Corset v2",
+    "tool": "seal",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 11,
+    "sex": "Male",
+    "skin": 2,
+    "hair": 2,
+    "shirt": "Shirt",
+    "tool": "book",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 12,
+    "sex": "Female",
+    "skin": 3,
+    "hair": 3,
+    "shirt": "Green Corset v2",
+    "tool": "hoe",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 13,
+    "sex": "Male",
+    "skin": 4,
+    "hair": 4,
+    "shirt": "Blue Shirt v2",
+    "tool": "rod",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 14,
+    "sex": "Male",
+    "skin": 5,
+    "hair": 5,
+    "shirt": "Shirt",
+    "tool": "sack",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 15,
+    "sex": "Female",
+    "skin": 1,
+    "hair": 1,
+    "shirt": "Corset v2",
+    "tool": "bread",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 16,
+    "sex": "Male",
+    "skin": 2,
+    "hair": 2,
+    "shirt": "orange Shirt v2",
+    "tool": "hammer",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 17,
+    "sex": "Male",
+    "skin": 3,
+    "hair": 3,
+    "shirt": "Green Shirt v2",
+    "tool": "saw",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 18,
+    "sex": "Female",
+    "skin": 4,
+    "hair": 4,
+    "shirt": "Green Corset",
+    "tool": "herbs",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 19,
+    "sex": "Male",
+    "skin": 5,
+    "hair": 5,
+    "shirt": "Purple Shirt v2",
+    "tool": "mug",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 20,
+    "sex": "Female",
+    "skin": 1,
+    "hair": 1,
+    "shirt": "Orange Corset",
+    "tool": "crook",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 21,
+    "sex": "Female",
+    "skin": 2,
+    "hair": 2,
+    "shirt": "Blue Corset",
+    "tool": "mug",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 22,
+    "sex": "Male",
+    "skin": 3,
+    "hair": 3,
+    "shirt": "Shirt v2",
+    "tool": "crate",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  },
+  {
+    "id": 23,
+    "sex": "Male",
+    "skin": 4,
+    "hair": 4,
+    "shirt": "Blue Shirt v2",
+    "tool": "lantern",
+    "portrait_size": [
+      96,
+      112
+    ],
+    "portrait_status": "editable_pixel_art"
+  }
+]

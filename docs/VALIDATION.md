@@ -1,19 +1,20 @@
-# Validacao v0.1.0
+# Validação v0.2.0
 
-## Ambiente
-Windows, Godot 4.7.2 stable oficial, OpenGL 3.3 Compatibility, AMD Radeon RX 580 2048SP. Nao foi realizado benchmark de 60 FPS nem validacao em outros modelos de GPU.
+## Ambiente e escopo
+Windows, Godot 4.7.2 stable oficial, renderizador OpenGL 3.3 Compatibility, AMD Radeon RX 580 2048SP. Testes executados no código da v0.2.0; `scripts/build_release.py` os repete no commit/tag limpos e testa o EXE produzido.
 
-## Resultados obtidos
-- Importacao e inicializacao do projeto sem erros.
-- 2.864 verificacoes GDScript: coordenadas, custos, sobreposicao, terreno bloqueado, conclusao de obra, populacao, consumo, tick, AStar, 1.800 passos de movimento sem colidir, offline limitado/deterministico, save/load e dados invalidos.
-- Tres testes Python de assets: frames nao vazios e distintos, 12 retratos distintos e loops de cavalo com variacao.
-- Teste integrado com janela: continuar no menu, producao, zoom, sinal do painel, clique real para colocar horta, salvar/carregar, pausa e retrato; zero falhas.
-- Export Windows x64 com recursos incorporados no EXE, sem originais nem GIFs de referencia.
-- EXE iniciou com OpenGL, simulou quatro ticks com 13 entidades e encerrou com codigo 0; log final-smoke.log sem erros. Headless do build tambem passou antes dos ultimos ajustes de validacao de saves; build final verificado com OpenGL.
-- Capturas reais inspecionadas apos corrigir estrada, agua, escala e montaria. Resolucoes efetivamente capturadas: {'gameplay.png': (1886, 1061), 'gameplay-960x540.png': (960, 540)}. Janela solicitada em 1920x1080 foi ajustada pelo Windows a area util do monitor; nao confundir resolucao solicitada com imagem capturada.
+## Resultados obtidos antes do empacotamento
+- Cinco testes Python: 24 atlas idle/walk/work não vazios e distintos; 24 retratos únicos; cavalo; animações do moinho/bandeira; reprodução byte a byte do pipeline em pasta isolada.
+- **21.084 verificações GDScript, zero falhas:** coordenadas, tipos de conteúdo, custos, conclusão de obras, vagas de moradia/imigração, margem de pesqueiro, produção com presença, estoque/carga/entrega sem duplicação, insumos, troca de profissão preservando aparência, 800 passos de todos os moradores sem atravessar obstáculos, refeição, sono/vigor, rejeição de obra que isola um morador, determinismo em passos fixos, offline limitado, save/load, backup e migração.
+- **18 verificações de integração, zero falhas:** menu, economia, zoom, botão real de forja e clique no mapa, galeria com 24 retratos, profissão, identidade, velocidade, salvar/carregar, pausa da simulação e animações e inspeção de prédio/pessoa.
+- Migração de fixture v0.1.0 conserva 12 moradores mais cavalo e recursos, sem conceder moradores extras. Caso com casa em (15,15) mantém expansão funcional. A primeira gravação migrada cria backup separado.
+- Capturas reais inspecionadas: `gameplay-v0.2.0.png` (1920×1080), `gameplay-v0.2.0-960x540.png` (960×540), noite/galeria (1280×720). Escala, textos, profundidade, ferramentas, cargas, transparências e retratos foram revisados. Animações usam frames distintos validados e ambiente pausa junto com a simulação.
 
-## Limites
-A inspecao confirma composicao estatica de frames e execucao de animacoes, mas nao substitui revisao artistica de todos os frames. Retratos e cavalo sao provis?rios; uma direcao lateral. Caminhos evitam tiles bloqueados; NPCs nao possuem colisao entre si. Trabalhadores simbolizam trabalho comunitario, nao producao individual. Sem politica/recrutamento/progressao de era nesta versao, portanto sem testes desses sistemas ainda ausentes. Licenca GandalfHardcore permite incorporacao em jogos; atlas separados excluidos do Git. Atribuicao CC BY verificada para crabcrabcrabs.
+## Performance local
+Benchmark de 360 frames com **64 moradores + cavalo**, VSync desativado: **137.31 FPS de média**, **8.465 ms p95**, na RX 580 indicada. Terreno persistente e objetos estáticos em cache, culling de objetos e retratos pré-carregados. Resultado não representa hardware diferente, saves maiores ou todas as situações possíveis. Dados brutos em `benchmark-v0.2.0.json`.
 
-## Publicacao
-A Release so pode ser declarada publicada apos o script verificar o endpoint GitHub, o commit da tag e o tamanho/digest do ZIP. O relatorio final registra o resultado real.
+## Distribuição
+O script exporta Windows x64 com PCK incorporado, executa smoke do próprio EXE e registra logs, commit, engine, checks e SHA256 em `dist/v0.2.0/BUILD_INFO.json`. O estado real da publicação é confirmado pelo script da Release e pelo relatório final; este documento não presume publicação antes dessa verificação.
+
+## Limitações práticas
+Uma direção lateral. Sem interiores nem colisão entre pessoas; pontos externos de casas e postos podem ser compartilhados. Rotas reiniciam ao carregar, mas cargas e estoques persistem. Offline é aproximação econômica de 55% de produtividade dos postos atribuídos durante o turno, sem eventos visuais ou imigração. Algumas bases arquitetônicas são reutilizadas; retratos e montaria são arte em desenvolvimento. Recrutamento/política/progressão continuam ausentes e não são contabilizados como testados. Atlas GandalfHardcore privados; originais intactos e GIFs de referência excluídos da distribuição.

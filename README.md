@@ -1,24 +1,44 @@
-# HalfACiv Isometric
-Fundacao jogavel em Godot 4.7.2 / GDScript. Versao: **0.1.0**, fundacao. Veja docs/RELEASE_NOTES.md para escopo e limitacoes.
+# HalfACiv Isometric — v0.2.0
+
+**Vida na aldeia**: estratégia e construção medieval em Godot 4.7.2 / GDScript. Um mapa isométrico real, com moradores que trabalham, fazem refeições, descansam e transportam sua produção.
+
+![A aldeia em funcionamento](docs/gameplay-v0.2.0.png)
 
 ## Executar no Windows
-Build: extraia o ZIP da GitHub Release e execute HalfACiv-Isometric.exe, sem instalar a engine.
+Baixe o ZIP em [GitHub Releases](https://github.com/cloudhadock-coder/HalfACiv-Isometric/releases), extraia e abra **HalfACiv-Isometric.exe**. Windows 10/11 x64; Godot não precisa estar instalado. O build local fica em `dist/v0.2.0/`.
 
-No projeto fonte local, clique em Jogar.cmd (usa o Godot local em tools/godot) ou abra project.godot no Godot 4.7.2 e pressione F5. O jogo nao depende do HalfACiv original. Assets privados precisam estar presentes.
+No projeto fonte local, use `Jogar.cmd` ou abra `project.godot` no Godot 4.7.2 e pressione F5. A cópia local da engine está em `tools/godot`. O HalfACiv original não é modificado nem necessário para executar.
+
+## Novidades
+- 24 ofícios e uma comunidade inicial de 24 moradores, além do cavalo. Postos compatíveis têm limite de vagas; ofícios podem ser redistribuídos no inspetor.
+- Trabalho de 06h a 12h e de 13h a 20h, refeição ao meio-dia, sono e recuperação de vigor. Guardas patrulham; construtores aceleram obras; carregadores buscam cargas.
+- Produção depende da presença no posto. Recursos ficam no local de trabalho até serem entregues ao depósito ou à feira. Forja, padaria, carpintaria e estalagem usam insumos.
+- 18 tipos de construção: os seis originais mais moinho, padaria, pesqueiro, forja, carpintaria, herbário, estalagem, depósito, estábulo, pasto, quartel e torre.
+- Novas casas permitem imigração gradual, com alimento disponível e limite de 64 moradores. O pesqueiro exige margem de água; obras não podem cortar acessos existentes nem prender moradores.
+- 24 retratos editáveis de 96×112 pixels, galeria selecionável e identidade visual preservada quando o ofício muda.
+- Moinho e bandeiras animados, árvores ao vento, água, fumaça, fogo da forja, cargas visíveis e iluminação conforme o horário.
+- Velocidades 1×/2×/4×, resumo da aldeia e inspeção de trabalhadores, insumos e produção em espera.
+
+## Saves e compatibilidade
+Saves da v0.1.0 são migrados para o esquema 2. Inventário e moradores são preservados; rotas são recalculadas. A primeira gravação de um save antigo mantém `realm.json.v0.1.bak`, além do backup rotativo `.bak`. Estoques dos postos, cargas, vigor, ofícios, identidade, entregas e horário são salvos. Autosave a cada 60 segundos reais de jogo ativo.
+
+O progresso offline continua limitado a duas horas, com estimativa econômica conservadora de produtividade. Não move NPCs, não gera imigração e não cria decisões políticas.
 
 ## Desenvolvimento
-Pillow e necessario ao pipeline: `python -m pip install Pillow`. Copie os assets autorizados para assets/original/GandalfHardcore e assets/original/sprite-Sheet.png; execute `python tools/asset_pipeline/build.py`. Os atlas derivados sao privados por restricao de licenca. A instalacao local de Pillow em tools/python_libs e reconhecida automaticamente.
+Instale Pillow com `python -m pip install Pillow`. A instalação local em `tools/python_libs` também é reconhecida. Use cópias autorizadas do pacote em `assets/original/GandalfHardcore/` e do tileset em `assets/original/sprite-Sheet.png`. Execute `python tools/asset_pipeline/build.py` e importe o projeto no Godot.
 
-## Presente
-Mapa isometrico 32x32, camera/zoom, seis construcoes com custo/tempo, economia com cinco recursos, consumo de comida, 13 entidades, animacoes idle/walk, navegacao AStar com obstaculos, montaria, 12 composicoes e retratos provis?rios, selecao, menu/pausa, autosave, backup e progresso offline de ate duas horas.
+Para exportar, mantenha os templates oficiais Windows em `tools/godot/windows_release_x86_64.exe` e `windows_debug_x86_64.exe`.
 
-## Testes
-`python tests/test_assets.py`
-`Godot_console.exe --headless --path . --script tests/test_runner.gd`
-`Godot_console.exe --headless --path . -- --smoke`
-Resultados e limites em docs/VALIDATION.md. Testes de save usam caminho isolado dentro de tests.
+O pipeline é determinístico. `village_art.py` define roupas, ferramentas, retratos, paleta e adaptações dos edifícios. Os personagens derivados do GandalfHardcore são privados e **não entram no Git**. O repositório público exige que o desenvolvedor forneça seu pacote autorizado; o build já inclui os recursos incorporados.
 
-## Limites atuais
-Uma direcao lateral; sem armaduras finais. Portraits e cavalo sao estudos provis?rios. Sem recrutamento, politica, progressao de era, melhorias ou configuracoes. Trabalho e comunitario, nao associado a produtividade individual. Meta 60 FPS ainda nao medida. Atribuicao do tileset confirmada: crabcrabcrabs (CC BY 4.0).
+## Verificação e releases
+- `python tests/test_assets.py`
+- `Godot_console.exe --headless --path . --script tests/test_runner.gd`
+- `Godot_console.exe --path . --script tests/integration.gd`
+- `Godot_console.exe --path . --script tests/benchmark.gd`
+- `python scripts/build_release.py` após commit limpo e tag correspondente; os testes são executados novamente antes do empacotamento.
 
-Veja docs/CONTROLS.md, docs/ARCHITECTURE.md e docs/ROADMAP.md.
+Testes usam saves isolados em `tests/`. Evidências e limites em [docs/VALIDATION.md](docs/VALIDATION.md). Relatório de assets, controles, arquitetura e roadmap também estão em `docs/`.
+
+## Limitações
+Personagens ainda têm uma direção lateral; oito direções e cavalaria completa pertencem à v0.3.0. Retratos e montaria permanecem arte em desenvolvimento. Alguns prédios reutilizam bases do tileset com sinais e detalhes próprios. NPCs evitam obstáculos, mas não colidem entre si; casas e postos usam pontos de acesso externos, sem interiores. Não há combate, recrutamento, política, progressão de era ou menu de configurações nesta versão.

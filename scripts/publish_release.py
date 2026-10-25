@@ -23,8 +23,10 @@ def main():
  api='https://api.github.com/repos/'+REPO
  remote=request(api+'/git/ref/tags/'+tag)
  if remote['object']['sha']!=commit:raise SystemExit('BLOCKED: remote tag differs')
- notes=(ROOT/'docs/RELEASE_NOTES.md').read_text(encoding='utf-8').replace('sera registrado pelo script de publicacao a partir do HEAD exato.',commit)
- archive=ROOT/'dist'/('HalfACiv-Isometric-'+tag+'-Windows-x64.zip')
+ notes=(ROOT/'docs/RELEASE_NOTES.md').read_text(encoding='utf-8').replace('sera registrado pelo script de publicacao a partir do HEAD exato.',commit).replace('{{COMMIT}}',commit)
+ archive=ROOT/'dist'/tag/('HalfACiv-Isometric-'+tag+'-Windows-x64.zip')
+ build=json.loads((archive.parent/'BUILD_INFO.json').read_text(encoding='utf-8'))
+ if build['commit']!=commit or build['version']!=(ROOT/'VERSION').read_text().strip():raise SystemExit('BLOCKED: build metadata differs from tested commit')
  checksum=hashlib.sha256(archive.read_bytes()).hexdigest();notes+='\n\nSHA256 do ZIP: `'+checksum+'`\n'
  try:release=request(api+'/releases/tags/'+tag)
  except urllib.error.HTTPError as exc:

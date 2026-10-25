@@ -58,4 +58,7 @@ def run():
    audit.append(rec)
  (ROOT/'docs/asset_inventory.json').write_text(json.dumps(audit,indent=2),encoding='utf-8')
  print('ASSETS_OK: 14 tiles, 12 characters, 12 portrait studies, horse, GIF contacts')
-if __name__=='__main__':run()
+if __name__=='__main__':
+ run()
+ from village_art import build
+ build(ROOT)

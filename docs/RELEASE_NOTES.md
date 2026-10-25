@@ -1,28 +1,39 @@
-# HalfACiv Isometric v0.1.0
-Uma fundacao jogavel para construir uma aldeia medieval em perspectiva isometrica.
+# HalfACiv Isometric v0.2.0 — Vida na aldeia
 
-## Funcionalidades
-- Godot 4.7.2, mapa 32x32 com tiles 64x32, camera com zoom e arraste.
-- Casas, hortas, serrarias, pedreiras, feiras e capelas: custos, obra e producao.
-- Alimento, madeira, pedra, ouro e influencia; consumo populacional e autosave.
-- 12 composicoes modulares GandalfHardcore com idle/walk, 13 entidades incluindo cavalo e cavaleiro.
-- Navegacao cardinal com obstaculos e rotas recalculadas apos construir.
-- 12 estudos de retratos distintos, selecao de personagem/construcao, menu e pausa.
-- Save/load atomico com backup, progresso offline limitado a duas horas.
+Os moradores agora têm ofícios, rotinas e produção ligada ao seu trabalho. A aldeia inicial inclui 24 moradores, um cavalo e 22 construções.
 
-## Correcoes
-Recortes de estrada e agua, escala dos personagens, postura da montaria, protecao de tiles atravessados por NPCs durante obras e tratamento de JSON corrompido.
+## Novidades
+- **24 profissões:** 12 novos ofícios, incluindo agricultora, pescador, moleiro, padeira, ferreiro, carpinteiro, herbalista, cervejeiro, pastora, estalajadeira, carregador e vigia.
+- **Rotinas:** trabalho pela manhã e à tarde, refeição ao meio-dia, sono, vigor, patrulhas e auxílio do construtor. Ofícios podem ser redistribuídos sem alterar a identidade da pessoa.
+- **Logística funcional:** produção exige presença no posto; recursos aguardam coleta e só entram no estoque comum após entrega. Receitas respeitam consumo de insumos.
+- **18 construções disponíveis:** adicionados moinho, padaria, pesqueiro, forja, carpintaria, herbário, estalagem, depósito, estábulo, pasto, quartel e torre. Pesqueiros exigem margem de água; casas permitem imigração gradual.
+- **Ambiente vivo:** pás de moinho, bandeiras, árvores, água, fumaça, fogo e iluminação conforme o horário. Terreno com cores mais suaves, variantes de grama e praça pavimentada.
+- **24 retratos de 96×112:** galeria selecionável, ferramentas e detalhes de ofício; retratos permanecem identificados como arte em desenvolvimento.
+- **Interface:** categorias de construção, postos e insumos no inspetor, cargas e entregas do morador, resumo da aldeia e velocidades 1×/2×/4×.
 
-## Validacao
-2.864 verificacoes GDScript e tres testes de assets passaram. Teste integrado com janela verificou clique para construir, economia, zoom, save/load, retrato e pausa. Captura real inspecionada em OpenGL com Radeon RX 580 2048SP. Resultado de exportacao/execucao do build em docs/VALIDATION.md.
+## Compatibilidade e correções
+- Saves da v0.1.0 são migrados para esquema 2, preservando recursos e moradores. A primeira gravação mantém uma cópia `realm.json.v0.1.bak`.
+- Cargas, estoques dos postos, vigor, ofícios, aparência, horário e entregas são persistidos; rotas são recalculadas.
+- Obras não podem prender moradores nem fechar acessos existentes. Saves com um prédio na antiga praça continuam permitindo expansão.
+- Corrigidas ordem das identidades ao carregar, duplicação de retrato e seleção após imigração.
+- Offline limitado a duas horas com estimativa econômica conservadora, sem mover pessoas, gerar imigração ou criar eventos visuais.
 
-## Limitacoes conhecidas
-Sprites laterais em uma direcao; oito direcoes ainda exigem arte propria. Cavalo e portraits sao estudos provis?rios, identificados na interface. Cavaleiro sem armadura final. Trabalho comunitario sem simulacao de produtividade individual. Sem recrutamento, faccoes, progressao de era, configuracoes ou combate nesta fundacao. Nenhuma meta de 60 FPS certificada.
+## Validação
+21.084 verificações GDScript, cinco testes Python de assets e 18 verificações de integração passaram. O teste integrado cobre clique de construção, troca de ofício, galeria, velocidades, save/load, pausa e inspetores. Capturas inspecionadas em 960×540, 1280×720 e 1920×1080, incluindo noite e galeria.
+
+Benchmark local de 360 frames com 64 moradores, Godot 4.7.2/OpenGL, Radeon RX 580 2048SP: **137.3 FPS de média**, p95 de **8.46 ms por frame**, VSync desativado. Não é garantia para outras máquinas ou cenas.
+
+O empacotamento repete os testes e inicia o EXE Windows exportado; logs e BUILD_INFO.json identificam o commit e o hash do executável.
 
 ## Windows 10/11 x64
-Extraia o ZIP e execute HalfACiv-Isometric.exe. Nao precisa instalar Godot. WASD move; roda faz zoom; botao do meio arrasta; clique seleciona/constroi; Esc pausa; F5 salva. Save em %APPDATA%/Godot/app_userdata/HalfACiv Isometric/realm.json.
+Extraia o ZIP e execute `HalfACiv-Isometric.exe`, sem instalar Godot. WASD move a câmera; roda faz zoom; botão do meio arrasta. Escolha categoria/construção e clique no terreno. Clique em pessoas para trocar ofício ou inspecionar. 1/2/4 alteram velocidade; Esc/Espaço pausam; F5 salva.
 
-## Creditos
-Tiles: crabcrabcrabs, CC BY 4.0, https://crabcrabcrabs.itch.io/isometric-strategy-medieval-pixel-art-tiles. Personagens: GandalfHardcore, licenca propria para uso em jogos. Originais e atlas restritos nao incluidos no repositorio fonte. Cavalo e retratos provis?rios originais deste projeto. GIFs de referencia nao distribuidos.
+Save em `%APPDATA%/Godot/app_userdata/HalfACiv Isometric/realm.json`. Backup rotativo `.bak`; backup de migração `.v0.1.bak`.
 
-Commit testado: sera registrado pelo script de publicacao a partir do HEAD exato.
+## Limitações conhecidas
+Personagens ainda têm uma direção lateral. Trabalho usa poses idle com ferramenta sobreposta; não inclui novos ciclos anatômicos completos. Cavalaria e retratos continuam em desenvolvimento. Algumas construções compartilham bases visuais. Não há interiores, colisão entre NPCs, combate, recrutamento, política, evolução de era ou configurações. Esses sistemas continuam no roadmap.
+
+## Créditos e commit
+Tiles: **crabcrabcrabs**, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), [origem](https://crabcrabcrabs.itch.io/isometric-strategy-medieval-pixel-art-tiles). Personagens: **GandalfHardcore**, licença própria para incorporação em jogos; originais e atlas derivados excluídos do código-fonte público. Retratos, ferramentas e adaptações são produzidos pelo pipeline editável. GIFs de referência não são distribuídos.
+
+Commit testado: `{{COMMIT}}`.

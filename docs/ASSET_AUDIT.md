@@ -16,3 +16,13 @@ AgD6Fo.gif, tpqMGd.gif e vR4Nwp.gif: 512x444, paleta indexada, duracoes e hashes
 Nao encontrados portraits separados ou atlas de cavalos. Criados 12 estudos originais de busto 64x80, distintos, editaveis no pipeline e identificados como provisorios na interface. Nao sao sprites ampliados. Um cavalo original de perfil, castanho, com manta azul, oito frames de idle/walk; pernas, cabeca, cauda e respiracao variam. Cavaleiro usa roupa azul/espada e duas camadas sincronizadas, ainda sem armadura prateada final. Nenhum desses itens e considerado arte final de oito direcoes.
 
 Inventario reproduzivel em docs/asset_inventory.json: dimensoes, modo, numero/duracao de frames e SHA256. Pipeline: tools/asset_pipeline/build.py. Originais jamais modificados. Paleta detalhada por cor e direcoes adicionais exigem producao artistica futura.
+
+
+## Atualização v0.2.0
+O inventário dos originais permanece com os mesmos hashes. `village_art.py` estende a fonte editável existente, sem enviar assets GandalfHardcore a ferramentas de IA. Gera 24 personagens compostos e 24 retratos originais de 96×112. Os retratos anteriores de 64×80 foram substituídos por versões com sombreamento, cabelo/barba, chapéus e insígnias; a identidade é mantida quando se troca o ofício. Ainda são identificados como arte em desenvolvimento.
+
+Atlas de personagem: 384×168, frames 48×56; idle/walk/work com 5/8/8 fases. A terceira linha é uma composição de pose idle e ferramenta original desenhada por código, não uma animação anatômica completa inédita. Os atlas permanecem excluídos do repositório público.
+
+Adaptações do tileset CC BY: novas seleções de casas/capela/feira, 12 construções adicionais utilizáveis, letreiros, caixas, fornalha, redes, vasos, cercados, quatro variantes de grama e pavimento da praça. Algumas construções compartilham a mesma base com detalhes distintos. Moinho e torre usam atlas de quatro frames nativos, sem inferir direções inexistentes. A paleta do terreno foi atenuada; originais intactos.
+
+Cinco testes Python verificam frames válidos/distintos, 24 retratos únicos, cavalo, atlas ambientais e reprodução byte a byte de uma geração independente. Pipeline e metadados em `assets/ui/identities.json` são públicos; originais, sprites derivados e GIFs de referência continuam privados. Contatos da inspeção foram gerados apenas para análise local.

@@ -9,3 +9,7 @@ __pycache__/
 
 tests/*-save.json*
 tests/realm-test.json*
+
+docs/*.png.import
+docs/tile-contact*
+tests/halfaciv-art-*/
