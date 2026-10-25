@@ -1,3 +1,11 @@
+# HalfACiv Isometric v0.3.0
+
+**Cavalaria e personagens:** abra Companhia [R] para contratar especialistas e equipar montarias. São cinco pelagens, seis cores heráldicas, barda, equipamento de cavaleiro e estandarte. Selecione primeiro o cavaleiro ou cavalo no mapa para personalizar. F5 salva equipamento e contratos; saves anteriores continuam compatíveis.
+
+Os contratos especializam os moradores nomeados existentes, evitando duplicação. Os retratos e partes em revisão continuam como fallback. Trote/galope são ritmos de deslocamento do ciclo lateral; animações anatômicas independentes e oito direções permanecem pendentes.
+
+[Notas da versão](docs/RELEASE_NOTES.md) · [Validação](docs/VALIDATION_V0.3.0.md)
+
 # HalfACiv Isometric — v0.2.2
 
 **Vida na aldeia**: estratégia e construção medieval em Godot 4.7.2 / GDScript. Um mapa isométrico real, com moradores que trabalham, fazem refeições, descansam e transportam sua produção.

@@ -16,3 +16,7 @@ Novo domínio inicia uma comunidade em memória. O arquivo anterior permanece at
 
 
 **B / I** ou as setas: recolher/expandir construção e informações. A câmera considera a área útil restante. A roda usa passos de zoom 1/1,5/2/3/4, preservando o ponto do cursor quando os limites permitem. O mínimo é ajustado ao viewport; 2× é o padrão. Ao inspecionar os cantos, o contorno do tabuleiro e o fundo de mesa são intencionais.
+
+## Companhia v0.3.0
+
+R abre/fecha contratos e cavalaria. Para equipar, selecione o cavaleiro ou cavalo no mapa, abra R e escolha Cavalaria e heráldica. F5 grava contratos, pelagem, cor, barda, estandarte e ritmo. Escape fecha a companhia antes de pausar.

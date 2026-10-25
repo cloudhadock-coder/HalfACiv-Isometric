@@ -70,6 +70,13 @@ class Assets(unittest.TestCase):
    generate_atlas.build(scratch,docs=False);first=(scratch/'assets/portraits/generated/portrait_atlas.png').read_bytes()
    generate_atlas.build(scratch,docs=False);self.assertEqual(first,(scratch/'assets/portraits/generated/portrait_atlas.png').read_bytes())
    self.assertEqual(first,(ROOT/'assets/portraits/generated/portrait_atlas.png').read_bytes(),'committed atlas is stale')
+ def test_portrait_prompts_current(self):
+  sys.path.insert(0,str(ROOT/'tools/portrait_pipeline'))
+  import prompts,common
+  text=prompts.render(common.load_manifest())
+  self.assertEqual(text,(ROOT/'docs/PORTRAIT_PROMPTS.md').read_text(encoding='utf-8'),'run tools/portrait_pipeline/prompts.py')
+  self.assertEqual(text.count('```text'),25,'24 NPC prompts plus the shared negative')
+  self.assertNotIn('art_reference',text.split('## Negativo comum')[1],'prompts never point at the official references')
  def test_portrait_export_gate(self):
   sys.path.insert(0,str(ROOT/'tools/portrait_pipeline'))
   import validate,export,common
@@ -86,7 +93,8 @@ class Assets(unittest.TestCase):
    entry=common.load_manifest(scratch)['portraits'][3];self.assertEqual(entry['status'],'in_review')
    self.assertEqual(common.resolved(entry,scratch),scratch/'assets/portraits/3.png','in review still shows fallback')
    with self.assertRaises(ValueError):export.promote(3,'','',root=scratch)
-   export.promote(3,'Diretor de arte','Comparado às referências',root=scratch,date='2026-10-25')
+   export.promote(3,'Diretor de arte','Comparado às referências',root=scratch,date='2026-10-25',ai_tool='PixelLab')
+   self.assertEqual(common.load_manifest(scratch)['portraits'][3]['review']['ai_draft'],'PixelLab')
    self.assertEqual(validate.validate(scratch)[0],[])
    self.assertEqual(common.resolved(common.load_manifest(scratch)['portraits'][3],scratch),scratch/'assets/portraits/approved/3.png')
    for bad in [fixture.resize((100,100),Image.NEAREST),fixture.resize((128,128),Image.BILINEAR)]:
@@ -95,6 +103,39 @@ class Assets(unittest.TestCase):
    with self.assertRaises(ValueError):export.to_native(soft)
    with self.assertRaises(FileExistsError):export.stage(3,drawing,root=scratch)
    self.assertTrue(common.final_image_errors(fixture.resize((128,128),Image.NEAREST)),'upscaled art must not pass')
+ def test_portrait_kit(self):
+  sys.path.insert(0,str(ROOT/'tools/portrait_pipeline'))
+  import kit,common,hashlib as h
+  errors,pending=kit.validate();self.assertEqual(errors,[])
+  doc=kit.load_kit()
+  probe={'head':'head_02','clothing':'clothing_jerkin','beard':'beard_full','hair':'hair_short','hat':'','skin':'#87563e','hair_color':'#29252b','cloth':'#536e97'}
+  face=kit.compose(doc,probe,approved_only=False)
+  # Pinned in tests/test_runner.gd too: Python and GDScript composers must agree byte for byte.
+  self.assertEqual(h.sha256(face.tobytes()).hexdigest(),'b246898b2d41ea72a07d425760c8212519e1f898012d8a1862b0d4acb2f15cb7')
+  self.assertEqual(common.final_image_errors(face),[],'a full combination meets the final portrait gate')
+  # Unreviewed parts never compose for the game; layers only ever hold kit or ramp colours.
+  if not any(p['status']=='approved' for p in doc['parts']):self.assertIsNone(kit.compose(doc,probe))
+  self.assertIsNone(kit.compose(doc,{**probe,'head':'head_13'},approved_only=False),'clothing not drawn for that head')
+  allowed={kit.hexc(c) for p in doc['parts'] for c in common.opaque_colors(common.read(ROOT/p['file']))}
+  allowed|={c for p in doc['parts'] for m in p['recolor'].values() for tones in m.values() for c in tones}
+  self.assertLessEqual({kit.hexc(c) for c in common.opaque_colors(face)},allowed)
+  import tempfile,shutil
+  with tempfile.TemporaryDirectory(prefix='halfaciv-art-',dir=ROOT/'tests') as temp:
+   scratch=Path(temp);shutil.copytree(ROOT/'assets/portraits/kit',scratch/'assets/portraits/kit',ignore=shutil.ignore_patterns('*.import'))
+   base=common.read(ROOT/'assets/portraits/kit/parts/head_09.png').convert('RGBA');drawn=base.copy()
+   for x in range(20,30):drawn.putpixel((x,10),(90,50,30,255))
+   art=scratch/'drawn.png';drawn.save(art)
+   out=kit.add('hat_probe','hat',art,root=scratch,base='head_09')
+   layer=common.read(out);self.assertEqual(layer.getbbox(),(20,10,30,11),'overlay keeps only what was drawn over the head')
+   with self.assertRaises(ValueError):kit.add('bad','head',art,root=scratch,base='head_09')
+   with self.assertRaises(ValueError):kit.add('bad2','hair',art,root=scratch)
+   up=scratch/'up.png';base.resize((128,128),Image.NEAREST).save(up)
+   with self.assertRaises(ValueError):kit.add('bad3','head',up,root=scratch)
+   with self.assertRaises(ValueError):kit.promote('hat_probe','','',root=scratch)
+   kit.promote('hat_probe','Diretor de arte','Conferido na galeria',root=scratch,date='2026-10-25')
+   self.assertEqual(kit.part(kit.load_kit(scratch),'hat_probe')['status'],'approved')
+   stale=kit.load_kit(scratch);stale['presets']['skin'].append('#ffffff');kit.save_kit(stale,scratch)
+   self.assertTrue(any('desatualizadas' in e for e in kit.validate(scratch)[0]),'recolour tables must be rebaked')
  def test_horse(self):
   im=Image.open(ROOT/'assets/horses/horse.png');self.assertEqual(im.size,(512,128))
   for row in range(2):

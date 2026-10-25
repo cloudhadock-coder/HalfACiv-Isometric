@@ -30,3 +30,9 @@ Profissão: acrescentar ID em `professions.gd`, receita de aparência em `villag
 A superfície nativa é centrada em (32,40), não (32,48). `visual_patch.py` gera cópias alinhadas, máscaras analíticas e frames já reduzidos por nearest-neighbor; não edita fontes anteriores. `render_policy.gd` define pivôs e desempate estável. A posição interpolada é calculada uma vez por pessoa e usada para desenhar/ordenar; a lista estática em cache é mesclada à lista móvel. Sombras são uma passagem anterior aos objetos.
 
 A posição simulada não é mais arredondada por construção/troca de ofício/load; o pathfinder continua a usar células. Nenhum custo, receita, turno, imigração ou regra de progressão mudou. Save continua no esquema 2. `window/stretch/aspect=expand` foi validado por captura real 1600×720, e HUD/rig trabalham no viewport efetivo. Regressões geométricas e oclusão GPU fazem parte do build.
+
+## Companhia v0.3.0
+
+`entities/company.gd` contém catálogo estável, pré-condições, transação de contratação e bônus. `ui/company_panel.gd` é a apresentação. Os contratos reutilizam a identidade do fundador e só criam uma pessoa se ausente e com moradia disponível. O bônus produtivo escala o delta do próprio trabalho (insumos e produção); o de cavalaria escala deslocamento. `Citizen.equipment` guarda índices normalizados e dois booleanos; `specialist` é ID estável. Save schema 2 com campos opcionais: antigos usam defaults e dados inválidos não alteram o estado vivo. Renderização compõe camadas em `world_view.gd`, mantendo a base e o sort corrigidos na v0.2.1.
+
+Gerar equipamento: `python tools/asset_pipeline/cavalry.py`; integrado ao build completo de assets. Atlas 384×96, 8 frames por linha, idle/walk, pivô 24,41; catálogo de pelagens e heráldica no Company. Arte e lógica separadas. Não espelhar unilateralmente escudos e estandartes. A biblioteca original só fornece vista lateral: não fingir oito direções.

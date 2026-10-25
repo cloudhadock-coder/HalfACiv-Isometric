@@ -82,6 +82,22 @@ Para cada um dos 24 NPCs, um retrato 64×64 desenhado à mão segundo o guia. Pe
 
 Estimativa aproximada (não medida): um artista de pixel art leva de 2 a 4 horas por busto 64×64 nesse nível, ou seja, de 50 a 100 horas para o elenco, mais revisão.
 
+## Rascunhos PixelLab (2026-10-25)
+
+Gerados no PixelLab só com prompts de texto. As referências oficiais **não** foram enviadas. O trial (40 gerações) foi gasto todo: 10 no Jonas, 1 num teste descartado do modelo barato (perfil, ruído, roupa moderna) e 29 no kit de partes.
+
+| Item | Situação | Pendência |
+|---|---|---|
+| #9 Jonas | rascunho em `generated/9.png` (`in_review`), original em `source/9_jonas.png`; o jogo continua com o fallback | limpeza da seção 13 (o rascunho tem 45 cores; meta de 30 a 44), revisão e `export.py promote 9 … --ai-tool PixelLab`. Os 15 candidatos alternativos não foram guardados no repositório (job PixelLab `69b2ef2e`) |
+| Demais 23 NPCs | `legacy_placeholder` | gerar com o modelo Pro (10 gerações por NPC, 16 candidatos), limpar e promover |
+| Kit: 16 cabeças masculinas | `in_review` | revisão e limpeza; conferir os materiais de cada cabeça no `kit.json` |
+| Kit: `hair_short`, `beard_full` | `in_review`, conferidos visualmente em todas as cabeças (`fits: *`) | revisão e limpeza |
+| Kit: `clothing_jerkin` | `in_review`, encaixa em 6 cabeças | estender a camada para cobrir a túnica das outras 10 (vazamento de 10 a 65 px) |
+| Kit: cabeça feminina, cabelos longos, chapéus, outras roupas | **não gerados**: trial esgotado (a máscara da cabeça feminina está em `kit/source/`) | gerar com inpaint sobre `head_09` (5 gerações cada) |
+| Kit: preset de cabelo branco `#d9d4cc` | puxa para o rosa e o laranja nas mechas | ajustar a rampa ou trocar o preset |
+
+Galeria do kit: [kit-preview.png](portrait-validation/kit-preview.png).
+
 ## Reavaliação
 
 Ao promover qualquer retrato, atualize as tabelas acima, regenere a galeria (`generate_atlas.py`) e registre o revisor no manifesto.

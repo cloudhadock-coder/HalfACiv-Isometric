@@ -2,10 +2,13 @@ extends RefCounted
 
 # Resolves NPC portraits through assets/portraits/portraits.json: approved 64x64 art first,
 # preserved legacy portrait otherwise. portrait_id indexes the manifest, so saves stay valid.
+# Generated villagers carry an appearance recipe for the parts kit; it shows once its parts are approved.
 const MANIFEST="res://assets/portraits/portraits.json"
+const PortraitKit=preload("res://src/ui/portrait_kit.gd")
 const LEGACY_COUNT=24
 var textures: Array=[]
 var final: Array=[]
+var kit=PortraitKit.new()
 func _init() -> void:
  var doc=JSON.parse_string(FileAccess.get_file_as_string(MANIFEST)) if FileAccess.file_exists(MANIFEST) else null
  if doc==null:
@@ -19,3 +22,8 @@ func texture(id: int) -> Texture2D:
  return textures[clampi(id,0,textures.size()-1)]
 func is_final(id: int) -> bool:
  return final[clampi(id,0,final.size()-1)]
+func for_citizen(citizen) -> Texture2D:
+ var composed=kit.texture(citizen.appearance)
+ return composed if composed!=null else texture(citizen.portrait_id)
+func citizen_is_final(citizen) -> bool:
+ return kit.texture(citizen.appearance)!=null or is_final(citizen.portrait_id)

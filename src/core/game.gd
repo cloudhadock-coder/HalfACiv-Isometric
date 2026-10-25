@@ -4,6 +4,8 @@ const World=preload("res://src/rendering/world_view.gd")
 const HUD=preload("res://src/ui/hud.gd")
 const CameraRig=preload("res://src/rendering/camera_controller.gd")
 const Backdrop=preload("res://src/rendering/table_backdrop.gd")
+const CompanyPanel=preload("res://src/ui/company_panel.gd")
+var company_panel
 var camera_rig
 const Store=preload("res://src/persistence/save_store.gd")
 const Iso=preload("res://src/world/iso.gd")
@@ -29,11 +31,21 @@ func _ready() -> void:
  hud.pause_requested.connect(toggle_pause);hud.save_requested.connect(save_game);hud.load_requested.connect(load_game);hud.new_requested.connect(new_game)
  hud.speed_changed.connect(set_speed);hud.profession_changed.connect(change_profession);hud.citizen_selected.connect(select_person)
  get_window().focus_exited.connect(func():dragging=false)
+ company_panel=CompanyPanel.new();company_panel.game=self;hud.add_child(company_panel)
  hud.update_resources(sim);world.animate=false
  camera_rig=CameraRig.new(camera);hud.layout_changed.connect(update_camera_layout);update_camera_layout()
+ if "--company-smoke" in OS.get_cmdline_user_args():
+  paused=false;autosave_clock=-100000;hud.menu.hide();select_person(7);company_panel.open()
+  var signed=load("res://src/entities/company.gd").recruit(sim,"hector")
+  people[7].equipment={"coat":2,"color":4,"armor":true,"banner":true,"gait":2}
+  get_tree().create_timer(2.0).timeout.connect(func():
+   var ok=signed and world.cavalry.coat.size()==5 and world.cavalry.banner.size()==6 and FileAccess.file_exists("res://assets/portraits/kit/kit.json")
+   var error=get_viewport().get_texture().get_image().save_png("user://v0.3.0-export-company.png")
+   print("EXPORTED_COMPANY_OK=",ok," capture=",error)
+   get_tree().quit(0 if ok and error==OK else 1))
  if "--smoke" in OS.get_cmdline_user_args():
   paused=false;hud.menu.hide()
-  get_tree().create_timer(5.0).timeout.connect(func():print("SMOKE_OK version=0.2.2 ticks=",sim.tick_count," people=",sim.people.size()," buildings=",sim.buildings.size());get_tree().quit())
+  get_tree().create_timer(5.0).timeout.connect(func():print("SMOKE_OK version=0.3.0 ticks=",sim.tick_count," people=",sim.people.size()," buildings=",sim.buildings.size());get_tree().quit())
  if "--capture" in OS.get_cmdline_user_args():
   paused=false;hud.menu.hide();sim.tick(18);select_person(16);get_tree().create_timer(2.0).timeout.connect(capture)
  if "--capture-night" in OS.get_cmdline_user_args():
@@ -45,8 +57,9 @@ func capture() -> void:
  if "--capture-night" in OS.get_cmdline_user_args():path="res://docs/visual-validation/v0.2.1/Night.png"
  var error=get_viewport().get_texture().get_image().save_png(path);print("CAPTURE_RESULT ",error," ",path);get_tree().quit()
 func new_game() -> void:
- sim=Sim.new();people=sim.people;world.sim=sim;world.people=people;world.refresh();camera_rig.move_to(Iso.project(Vector2(15.5,15.5)));selected=-1;selected_building=-1;world.selected_person=-1;world.selected_building=-1;hud.selection_kind="overview";autosave_clock=0;paused=false;hud.menu.hide();hud.roster_panel.hide();hud.notify("Uma nova aldeia nasceu")
+ sim=Sim.new();people=sim.people;world.sim=sim;world.people=people;world.refresh();camera_rig.move_to(Iso.project(Vector2(15.5,15.5)));selected=-1;selected_building=-1;world.selected_person=-1;world.selected_building=-1;hud.selection_kind="overview";company_panel.hide();autosave_clock=0;paused=false;hud.menu.hide();hud.roster_panel.hide();hud.notify("Uma nova aldeia nasceu")
 func toggle_pause() -> void:
+ if company_panel.visible:company_panel.hide();return
  if hud.roster_panel.visible:hud.roster_panel.hide();return
  if not world.build_kind.is_empty():world.build_kind="";return
  paused=not paused;hud.menu.visible=paused
@@ -63,6 +76,7 @@ func load_game() -> void:
  var data=Store.load_game(sim)
  if data.is_empty():hud.notify("Save ausente ou inválido");return
  people=sim.people;world.sim=sim;world.people=people;world.refresh();camera_rig.move_to(Iso.project(Vector2(15.5,15.5)));selected=-1;selected_building=-1;world.selected_person=-1;world.selected_building=-1;hud.selection_kind="overview"
+ company_panel.hide()
  paused=false;hud.menu.hide();hud.notify(("Save v0.1 migrado · " if data.migrated else "Domínio carregado · ")+"Offline: %ds"%sim.offline_seconds)
 func _process(delta: float) -> void:
  world.animate=not paused
@@ -87,6 +101,7 @@ func _unhandled_input(event: InputEvent) -> void:
  if event is InputEventKey and event.pressed and not event.echo:
   if event.keycode in [KEY_ESCAPE,KEY_SPACE]:toggle_pause()
   elif event.keycode==KEY_F5:save_game()
+  elif event.keycode==KEY_R:company_panel.open()
   elif event.keycode==KEY_B:hud.toggle_build()
   elif event.keycode==KEY_I:hud.toggle_details()
   elif event.keycode in [KEY_1,KEY_2,KEY_4]:set_speed(float(event.keycode-KEY_0))

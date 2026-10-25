@@ -1,13 +1,15 @@
 extends RefCounted
+const Company=preload("res://src/entities/company.gd")
 const Sim=preload("res://src/economy/simulation.gd")
 const Citizen=preload("res://src/entities/citizen.gd")
+const PortraitKit=preload("res://src/ui/portrait_kit.gd")
 static var PATH: String="user://realm.json"
 static func save_game(sim,citizens: Array=[]) -> Error:
  var entries=[]
  var source=sim.people if citizens.is_empty() else citizens
  for c in source:
-  entries.append({"x":c.position.x,"y":c.position.y,"kind":c.kind,"portrait":c.portrait_id,"name":c.citizen_name,"horse_only":c.horse_only,"cargo":c.cargo,"stamina":c.stamina,"work_elapsed":c.work_elapsed,"delivered":c.delivered})
- var data={"schema":2,"version":ProjectSettings.get_setting("application/config/version","0.2.2"),"saved_at":int(Time.get_unix_time_from_system()),"resources":sim.resources,"buildings":sim.buildings,"people":entries,"seconds":sim.seconds,"tick":sim.tick_count,"immigration_elapsed":sim.immigration_elapsed}
+  entries.append({"x":c.position.x,"y":c.position.y,"kind":c.kind,"portrait":c.portrait_id,"name":c.citizen_name,"horse_only":c.horse_only,"cargo":c.cargo,"stamina":c.stamina,"work_elapsed":c.work_elapsed,"delivered":c.delivered,"appearance":c.appearance,"specialist":c.specialist,"equipment":c.equipment})
+ var data={"schema":2,"version":ProjectSettings.get_setting("application/config/version","0.3.0"),"saved_at":int(Time.get_unix_time_from_system()),"resources":sim.resources,"buildings":sim.buildings,"people":entries,"seconds":sim.seconds,"tick":sim.tick_count,"immigration_elapsed":sim.immigration_elapsed}
  var file=FileAccess.open(PATH+".tmp",FileAccess.WRITE)
  if file==null:return FileAccess.get_open_error()
  file.store_string(JSON.stringify(data));file.close()
@@ -73,12 +75,20 @@ static func load_game(sim) -> Dictionary:
   if person.get("stamina",100)<0 or person.get("stamina",100)>100 or person.get("work_elapsed",0)<0:return {}
   if person.get("portrait",kind)<0 or person.get("portrait",kind)>=24 or person.get("delivered",0)<0:return {}
   if not person.get("name","") is String or person.get("name","").length()>80:return {}
+  if not PortraitKit.valid_recipe(person.get("appearance",{})):return {}
+  if not Company.valid_equipment(person.get("equipment",{})):return {}
+  var contract=person.get("specialist","")
+  if not contract is String or (not contract.is_empty() and Company.offer(contract).is_empty()):return {}
+  if not contract.is_empty() and restored.any(func(c):return c.specialist==contract):return {}
   var citizen=Citizen.new(int(kind),Vector2i(point.round()))
   citizen.horse_only=person.get("horse_only",false);citizen.position=point;citizen.previous=citizen.position
   if citizen.horse_only:horses+=1
   if horses>1:return {}
   if not person.get("name","").is_empty():citizen.citizen_name=person.name
-  citizen.cargo=cargo.duplicate(true);citizen.stamina=float(person.get("stamina",100));citizen.work_elapsed=float(person.get("work_elapsed",0));citizen.delivered=int(person.get("delivered",0));citizen.portrait_id=int(person.get("portrait",kind))
+  citizen.cargo=cargo.duplicate(true);citizen.stamina=float(person.get("stamina",100));citizen.work_elapsed=float(person.get("work_elapsed",0));citizen.delivered=int(person.get("delivered",0));citizen.portrait_id=int(person.get("portrait",kind));citizen.appearance=person.get("appearance",{}).duplicate()
+  citizen.specialist=contract
+  citizen.equipment.merge(person.get("equipment",{}),true)
+  for key in ["coat","color","gait"]:citizen.equipment[key]=int(citizen.equipment[key])
   restored.append(citizen)
  for key in ["saved_at","tick","seconds","immigration_elapsed"]:
   if data.has(key) and not numeric(data[key]):return {}

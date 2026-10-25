@@ -109,6 +109,7 @@ Quando o primeiro retrato for promovido, acrescente-o aqui com o nome do revisor
 
 - **Retratos v0.2 (`assets/portraits/0.png` a `23.png`)**: o mesmo rosto geométrico em todos, sombras em polígonos chapados, cabelo em retângulos, orelhas retangulares que parecem fones, moldura e insígnia embutidas no PNG, 96×112 opaco. Ficam como fallback até serem substituídos.
 - Fotos, renders 3D ou ilustrações reduzidas e quantizadas.
+- Imagem de IA gerada em alta resolução e reduzida para 64×64, ou rascunho de IA promovido sem limpeza manual (veja a seção 13).
 - Arte ampliada de forma bilinear ou fracionária, ou pixels de tamanhos diferentes no mesmo retrato.
 - Ruído aleatório simulando textura; dithering sem regularidade.
 - Filtros de pintura, blur, brilho difuso, gradientes suaves e antialiasing (alfa parcial).
@@ -117,11 +118,11 @@ Quando o primeiro retrato for promovido, acrescente-o aqui com o nome do revisor
 
 ## 11. Regras de exportação
 
-1. Desenhe em 64×64 (Aseprite ou similar), com grade de 1 px e paleta indexada se quiser.
+1. Desenhe em 64×64 (Aseprite ou similar), com grade de 1 px e paleta indexada se quiser. Um rascunho de IA pode ser o ponto de partida, desde que siga a seção 13.
 2. Exporte em PNG RGBA, na escala 1× ou numa escala inteira (2×, 3×, …), sem fundo.
 3. Faça o stage: `python tools/portrait_pipeline/export.py stage <id> desenho.png`. O original é copiado intacto para `assets/portraits/source/`. A versão nativa vai para `assets/portraits/generated/<id>.png` e o status passa a `in_review`. Escala não inteira, tamanho errado, alfa parcial ou excesso de cores são **rejeitados**, nunca redimensionados.
 4. Faça a revisão visual: rode `python tools/portrait_pipeline/generate_atlas.py` e compare a galeria e a comparação local com as referências, usando o checklist abaixo.
-5. Promova: `python tools/portrait_pipeline/export.py promote <id> --by "Nome" --notes "o que foi comparado"`. Só então o jogo passa a usar a arte e a nota "Retrato em desenvolvimento" some.
+5. Promova: `python tools/portrait_pipeline/export.py promote <id> --by "Nome" --notes "o que foi comparado"` (acrescente `--ai-tool "Ferramenta"` se o retrato partiu de um rascunho de IA). Só então o jogo passa a usar a arte e a nota "Retrato em desenvolvimento" some.
 6. Rode `python tools/portrait_pipeline/validate.py`, os testes e reimporte no Godot (os PNGs em `approved/` ganham `.import`).
 
 No jogo, `src/ui/portrait_view.gd` desenha o retrato com nearest-neighbor, na **maior escala inteira de pixels de tela** que cabe na área (compensando o stretch da janela), centralizado e alinhado ao grid da tela. Não existe escala fracionária nem recorte. O painel de detalhes tem 128×128 lógicos, ou seja, 2× para 64×64 em 1280×720 e 3× em 1920×1080.
@@ -139,3 +140,47 @@ No jogo, `src/ui/portrait_view.gd` desenha o retrato com nearest-neighbor, na **
 - [ ] Topo livre, busto centralizado, ombros na base, escala facial igual à do elenco?
 - [ ] Legível a 1× sobre `#17252b` e a 2× no painel?
 - [ ] `validate.py` sem erros e galeria regenerada?
+- [ ] Se partiu de IA: a limpeza da seção 13 foi feita e a ferramenta foi registrada com `--ai-tool`?
+
+## 13. Rascunhos gerados por IA
+
+Ferramentas de pixel art com IA (por exemplo, PixelLab) podem gerar o **rascunho** de um retrato. O retrato final continua sendo responsabilidade de quem limpa e aprova, e precisa cumprir todo este guia. Prompts por NPC: [PORTRAIT_PROMPTS.md](PORTRAIT_PROMPTS.md), gerados do manifesto por `tools/portrait_pipeline/prompts.py`.
+
+**Permitido**
+- Gerar diretamente na grade nativa de 64×64, com fundo transparente.
+- Usar como referência de estilo/imagem inicial **retratos do jogo já aprovados**, para manter o elenco consistente.
+- Descrever o estilo em texto (prompts derivados deste guia).
+
+**Proibido**
+- Enviar, carregar ou treinar (LoRA, fine-tune, "style model") com as **referências oficiais** ou qualquer arquivo de `assets/original/`. A licença do pacote proíbe o uso para IA.
+- Gerar em alta resolução e reduzir, converter ou quantizar para 64×64.
+- Promover um rascunho sem a limpeza abaixo. Saída de IA intocada nunca é arte final.
+- Usar uma ferramenta cujos termos não permitam uso comercial do resultado.
+
+**Limpeza manual obrigatória (no Aseprite ou similar)**
+1. Conferir a grade: nenhum pixel de tamanho diferente, nenhum alfa parcial; o validador rejeita os dois.
+2. Refazer as rampas com deslocamento de matiz (seção 3) e unificar a paleta. Remover tons quase duplicados até ficar entre 30 e 44 cores.
+3. Remover pixels órfãos e ruído; transformar sombras em blocos (clusters).
+4. Corrigir o contorno para que seja seletivo (seção 5) e eliminar jaggies.
+5. Conferir a anatomia: olhos simétricos na perspectiva, orelhas, mãos fora do quadro, acessórios inteiros e topo livre.
+6. Conferir a identidade com o manifesto: sexo, idade, pele, cabelo, roupa e acessório. Corrigir as cores-base.
+7. Comparar na galeria com os retratos já aprovados e com as referências locais. Ajustar a escala facial e a luz para ficarem iguais.
+
+Registre a origem na promoção: `--ai-tool "PixelLab"` grava `review.ai_draft` no manifesto, e `--notes` descreve o que foi corrigido.
+
+## 14. Kit de partes (gerador de personagens)
+
+Exceção controlada à regra "não gerar rostos proceduralmente", aprovada pelo diretor do projeto em 2026-10-25. Os 24 NPCs nomeados continuam com retrato único (seções 1 a 13). Moradores gerados durante o jogo, como os imigrantes além dos 24 fundadores, recebem um retrato **montado em tempo real a partir de partes desenhadas e aprovadas uma a uma**.
+
+**O que o kit é**
+- Camadas 64×64 RGBA alinhadas no mesmo enquadramento: `head` (busto completo: rosto, pescoço e túnica crua), `clothing`, `beard`, `hair` e `hat`, desenhadas nessa ordem. Manifesto: `assets/portraits/kit/kit.json`. Arquivos: `assets/portraits/kit/parts/`.
+- Cada parte é arte e passa por este guia inteiro: limpeza da seção 13, revisão humana e `kit.py promote`. O jogo só combina partes `approved`. Sem elas, o morador mostra o retrato de fallback.
+- **Recoloração por rampas fixas:** pele (7 tons), cabelo (5) e tecido (4). As cores-alvo são as cores de identidade do manifesto de retratos (`presets`). Cada rampa é derivada da parte de origem (`ramp_source`) mantendo o deslocamento de matiz que o artista desenhou, e as tabelas ficam gravadas no `kit.json` por `kit.py bake`. O jogo só consulta tabelas: não inventa pixels, não filtra, não interpola. O tecido só é recolorido da linha 36 para baixo (`TUNIC_TOP`), para que os olhos nunca peguem a cor da roupa.
+- `fits` diz em quais cabeças uma sobreposição foi conferida. Uma roupa que deixa a túnica vazar numa cabeça não é declarada para ela.
+
+**Regras**
+- Toda combinação possível de partes aprovadas precisa passar no mesmo portão técnico de um retrato final (64×64, alfa binário, topo livre, 12–48 cores). O `kit.py validate` compõe 64 receitas e falha se alguma não passar.
+- Sobreposições nascem desenhadas sobre uma cabeça do kit (inpaint com máscara ou à mão). O `kit.py add --base` guarda só os pixels que mudaram, então a camada encaixa pixel a pixel.
+- Cabeças entram só deslocadas por pixels inteiros (`--dx/--dy`) para o enquadramento comum. Nunca redimensione.
+- Para mudar uma rampa ou um preset, edite o `kit.json` e rode `kit.py bake`. O validador acusa tabelas desatualizadas.
+- Os compositores em Python (`kit.py compose`) e GDScript (`src/ui/portrait_kit.gd`) precisam produzir os mesmos bytes. Os testes fixam o hash de uma combinação.

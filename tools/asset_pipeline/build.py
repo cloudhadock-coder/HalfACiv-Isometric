@@ -65,3 +65,5 @@ if __name__=='__main__':
 
  from visual_patch import build as visual_patch
  visual_patch(ROOT)
+ from cavalry import build as cavalry
+ cavalry()

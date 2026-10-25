@@ -84,14 +84,15 @@ func _ready() -> void:
  profession.item_selected.connect(func(index):profession_changed.emit(index));dv.add_child(profession)
  details=RichTextLabel.new();details.custom_minimum_size=Vector2(232,150);details.size_flags_vertical=Control.SIZE_EXPAND_FILL;details.bbcode_enabled=true;dv.add_child(details)
  button("Habitantes e retratos",toggle_roster,dv)
+ button("Companhia e cavalaria [R]",func():get_parent().company_panel.open(),dv)
  bottom_panel=panel(Vector2(12,658),Vector2(1256,50));var bottom=bottom_panel;var bh=HBoxContainer.new();bh.add_theme_constant_override("separation",12);bottom.add_child(bh)
  status=label("",bh,14);status.size_flags_horizontal=Control.SIZE_EXPAND_FILL;status.clip_text=true
  for value in [1,2,4]:
   var speed=value;speed_buttons[value]=button(str(value)+"×",func():speed_changed.emit(float(speed)),bh)
- label("WASD · Roda · Arrastar · F5 salvar | v0.2.2",bh,12)
+ label("WASD · Roda · Arrastar · F5 salvar | v0.3.0",bh,12)
  menu=panel(Vector2(416,152),Vector2(448,416));var mv=VBoxContainer.new();mv.add_theme_constant_override("separation",15);menu.add_child(mv)
  var logo=label("HALFACIV\nISOMETRIC",mv,32);logo.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;logo.add_theme_color_override("font_color",Color("dfbd72"))
- var subtitle=label("v0.2.2 — Padrão de retratos\nCada habitante tem uma história e um ofício.",mv,15);subtitle.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+ var subtitle=label("v0.3.0 — Cavalaria e personagens\nCada habitante tem uma história e um ofício.",mv,15);subtitle.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
  button("Continuar no vale",func():pause_requested.emit(),mv);button("Carregar domínio",func():load_requested.emit(),mv);button("Nova aldeia",func():new_requested.emit(),mv);button("Sair",func():get_tree().quit(),mv)
  roster_panel=panel(Vector2(262,90),Vector2(728,544));var rv=VBoxContainer.new();roster_panel.add_child(rv)
  var rh=HBoxContainer.new();rv.add_child(rh);label("OS ROSTOS DA ALDEIA",rh,20).size_flags_horizontal=Control.SIZE_EXPAND_FILL;button("Fechar",func():roster_panel.hide(),rh)
@@ -175,11 +176,13 @@ func show_overview(sim) -> void:
   if c.employer<0 and not Professions.patrol(c.kind) and c.kind not in [4,22]:vacant+=1
  details.text="[color=#dfbd72]Uma aldeia em movimento[/color]\n\nNo trabalho: %d\nTransportando: %d\nRefeição / descanso: %d\nSem posto: %d\n\n06h–12h / 13h–20h: trabalho\n12h–13h: refeição\n20h–06h: descanso\n\nConstrua casas para receber moradores. Troque os ofícios ao selecionar uma pessoa."%[working,carrying,resting,vacant]
 func show_person(c) -> void:
- selection_kind="person";title.text=c.citizen_name;portrait.texture=portraits[c.portrait_id];portrait_note.visible=not registry.is_final(c.portrait_id);profession.visible=not c.horse_only
+ selection_kind="person";title.text=c.citizen_name;portrait.texture=registry.for_citizen(c);portrait_note.visible=not registry.citizen_is_final(c);profession.visible=not c.horse_only
  if last_person_kind!=c.kind:profession.select(c.kind);last_person_kind=c.kind
  var workplace="Sem posto"
  if _sim!=null and c.employer>=0:workplace=Catalog.DATA[_sim.buildings[c.employer].kind].name
  details.text="[b]"+("Cavalo" if c.horse_only else Professions.name_for(c.kind))+"[/b]\n[color=#dfbd72]"+c.state+"[/color]\n\nPosto: "+workplace+"\nVigor: %d%%\nEntregas: %d\nCarga: %s\n\n"%[c.stamina,c.delivered,resource_text(c.cargo)]+("Descansa no estábulo." if c.horse_only else "Escolha outro ofício acima para redistribuir o trabalho.")
+ if not c.specialist.is_empty():details.text+="\n\nContrato: "+c.specialist+" · bônus ativo no ofício de origem"
+ if c.mounted or c.horse_only:details.text+="\n\nEquipar montaria: Companhia [R]"
 func show_building(b,index: int=-1) -> void:
  selection_kind="building";var data=Catalog.DATA[b.kind];title.text=data.name;portrait.texture=load("res://assets/tilesets/"+b.kind+".png");portrait_note.hide();profession.hide()
  var workers=0;var active=0;var names=PackedStringArray()
@@ -197,5 +200,5 @@ func toggle_roster() -> void:
   var c=_sim.people[i]
   if c.horse_only:continue
   var index=i;var box=VBoxContainer.new();roster_grid.add_child(box)
-  var b=Button.new();b.custom_minimum_size=Vector2(130,130);var face=PortraitView.new();face.texture=portraits[c.portrait_id];face.set_anchors_preset(Control.PRESET_FULL_RECT);b.add_child(face);b.tooltip_text=c.citizen_name+" · "+Professions.name_for(c.kind)+"\n"+c.state;b.pressed.connect(func():roster_panel.hide();citizen_selected.emit(index));box.add_child(b)
+  var b=Button.new();b.custom_minimum_size=Vector2(130,130);var face=PortraitView.new();face.texture=registry.for_citizen(c);face.set_anchors_preset(Control.PRESET_FULL_RECT);b.add_child(face);b.tooltip_text=c.citizen_name+" · "+Professions.name_for(c.kind)+"\n"+c.state;b.pressed.connect(func():roster_panel.hide();citizen_selected.emit(index));box.add_child(b)
   var l=label(c.citizen_name,box,12);l.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER

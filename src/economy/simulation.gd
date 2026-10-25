@@ -1,9 +1,11 @@
 extends RefCounted
 const Catalog=preload("res://src/construction/catalog.gd")
+const Company=preload("res://src/entities/company.gd")
 const Iso=preload("res://src/world/iso.gd")
 const Citizen=preload("res://src/entities/citizen.gd")
 const Professions=preload("res://src/entities/professions.gd")
 const Navigation=preload("res://src/world/navigation.gd")
+const PortraitKit=preload("res://src/ui/portrait_kit.gd")
 const STEP=0.1
 const DAY_SECONDS=240.0
 var resources: Dictionary={"food":160.0,"wood":180.0,"stone":120.0,"gold":90.0,"influence":10.0}
@@ -205,7 +207,7 @@ func tick(delta: float=1.0) -> void:
    if population<housing_capacity() and population<64 and resources.food>=30:
     var cell=dropoff(Vector2(15,15),nav)
     var newcomer=Citizen.new(population,cell)
-    if population>=24:newcomer.citizen_name+=" "+str(1+population/24)
+    if population>=24:newcomer.citizen_name+=" "+str(1+population/24);newcomer.appearance=PortraitKit.recipe(population)
     people.insert(people.size()-1,newcomer);reassign_jobs();population+=1
  tick_count=int(seconds+0.0001)
 func advance(delta: float) -> void:
@@ -227,7 +229,10 @@ func apply_offline(duration: int) -> void:
    for index in jobs:
     var b=buildings[index]
     if b.remaining>0:continue
-    var data=Catalog.DATA[b.kind];var factor=float(jobs[index])/float(maxi(1,data.slots))*0.55
+    var data=Catalog.DATA[b.kind];var weight=0.0
+    for c in people:
+     if c.employer==index:weight+=1.0+(Company.bonus(c) if c.kind!=7 else 0.0)
+    var factor=weight/float(maxi(1,data.slots))*0.55
     var enough=true
     for key in data.get("inputs",{}):
      if resources[key]<data.inputs[key]*factor:enough=false

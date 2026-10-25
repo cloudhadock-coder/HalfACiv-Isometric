@@ -1,0 +1,29 @@
+{
+  "frame": [
+    48,
+    48
+  ],
+  "pivot": [
+    24,
+    41
+  ],
+  "layers": [
+    "coat",
+    "cloth",
+    "armor",
+    "rider",
+    "rider_armor",
+    "banner"
+  ],
+  "directions": [
+    "lateral original"
+  ],
+  "animation_rows": [
+    "idle",
+    "walk"
+  ],
+  "gaits": "walk cycle at 7/10/14 fps; no new anatomical gait frames",
+  "coats": 5,
+  "heraldry": 6,
+  "source": "../horse_native_v021.png"
+}

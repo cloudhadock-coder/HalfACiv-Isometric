@@ -1,0 +1,11 @@
+{
+  "adapter": "AMD Radeon RX 580 2048SP",
+  "average_fps": 114.323168733376,
+  "draw_calls": 1400.0,
+  "engine": "4.7.2-stable (official)",
+  "frame_ms_p95": 9.89,
+  "frames": 360,
+  "mounted_with_layers": 64,
+  "static_memory_bytes": 42751291.0,
+  "villagers": 64
+}

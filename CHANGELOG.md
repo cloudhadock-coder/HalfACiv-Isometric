@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.3.0 — Cavalaria e personagens
+
+- Companhia do Vale [R]: quatro contratos únicos para especialistas, com custo, condições e bônus funcionais.
+- Cavalo: cinco pelagens, seis mantas heráldicas, barda, capacete/escudo do cavaleiro e estandarte em camadas nativas.
+- Seletor de ritmo montado e sincronização com o cavaleiro; os três ritmos reutilizam a animação lateral existente.
+- Contratos e equipamentos persistem no schema 2, com valores padrão para saves anteriores e validação atômica.
+- Integrado o trabalho local prévio do kit de retratos: receitas persistentes e fallback até a aprovação humana das partes.
+- Testes de contratação, custo, bônus, navegação, UI, equipamentos, compatibilidade e assets determinísticos; capturas reais em 720p e 540p.
+- Mantidas as correções visuais de câmera, profundidade e tiles da v0.2.1.
+
+Limitações: sem combate, oito direções ou ciclos anatômicos independentes de trote/galope. Retratos finais e partes do kit continuam em revisão; nenhuma arte foi promovida automaticamente.
+
 ## [0.2.2] - 2026-10-25 — Padrão de retratos
 ### Adicionado
 - Direção artística oficial dos retratos (`docs/PORTRAIT_ART_STYLE_GUIDE.md`), baseada em duas folhas de referência analisadas na resolução nativa de 64×64. Referências são locais e ficam fora do Git por licença.

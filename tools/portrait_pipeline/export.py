@@ -1,13 +1,14 @@
 """Bring hand-drawn portrait art into the game without altering a single pixel.
 
 Stage:   python tools/portrait_pipeline/export.py stage <id> <drawing.png> [--force]
-Promote: python tools/portrait_pipeline/export.py promote <id> --by NAME --notes "visual review"
+Promote: python tools/portrait_pipeline/export.py promote <id> --by NAME --notes "visual review" [--ai-tool TOOL]
 
 stage keeps an untouched copy in assets/portraits/source/, reduces an integer upscale (e.g. an
 Aseprite 3× export) back to native pixels by sampling whole blocks, and writes
 assets/portraits/generated/<id>.png with status in_review. Non-integer scales, wrong canvas,
 partial alpha or excess colours are rejected, never resized or filtered.
-promote requires a named human visual review against the references and the style guide.
+promote requires a named human visual review against the references and the style guide;
+--ai-tool records the AI pixel-art tool when the drawing started as an AI draft.
 """
 from pathlib import Path
 import sys,shutil,datetime,argparse
@@ -32,7 +33,7 @@ def stage(index,drawing,root=ROOT,force=False):
  native.save(out,optimize=False)
  if entry['status']!='approved':entry['status']='in_review';entry['approved']=out.relative_to(root).as_posix();entry['review']=None
  save_manifest(doc,root);return out
-def promote(index,by,notes,root=ROOT,date=None):
+def promote(index,by,notes,root=ROOT,date=None,ai_tool=None):
  root=Path(root);doc=load_manifest(root);entry=doc['portraits'][index]
  generated=root/'assets/portraits/generated'/f'{index}.png'
  if not generated.exists():raise FileNotFoundError(f'{generated}: execute stage primeiro')
@@ -40,14 +41,17 @@ def promote(index,by,notes,root=ROOT,date=None):
  if errors:raise ValueError('; '.join(errors))
  if not by.strip() or not notes.strip():raise ValueError('aprovação exige revisor e notas da revisão visual')
  approved=root/'assets/portraits/approved'/f'{index}.png';shutil.copy2(generated,approved)
- entry.update(status='approved',approved=approved.relative_to(root).as_posix(),review={'by':by,'date':date or datetime.date.today().isoformat(),'notes':notes})
+ review={'by':by,'date':date or datetime.date.today().isoformat(),'notes':notes}
+ # Provenance: drafts from AI pixel-art tools are recorded, never hidden (style guide section 13).
+ if ai_tool:review['ai_draft']=ai_tool
+ entry.update(status='approved',approved=approved.relative_to(root).as_posix(),review=review)
  save_manifest(doc,root);return approved
 def main():
  p=argparse.ArgumentParser();sub=p.add_subparsers(dest='cmd',required=True)
  s=sub.add_parser('stage');s.add_argument('id',type=int);s.add_argument('drawing');s.add_argument('--force',action='store_true')
- a=sub.add_parser('promote');a.add_argument('id',type=int);a.add_argument('--by',required=True);a.add_argument('--notes',required=True)
+ a=sub.add_parser('promote');a.add_argument('id',type=int);a.add_argument('--by',required=True);a.add_argument('--notes',required=True);a.add_argument('--ai-tool',default=None)
  args=p.parse_args()
- try:out=stage(args.id,args.drawing,force=args.force) if args.cmd=='stage' else promote(args.id,args.by,args.notes)
+ try:out=stage(args.id,args.drawing,force=args.force) if args.cmd=='stage' else promote(args.id,args.by,args.notes,ai_tool=args.ai_tool)
  except (ValueError,FileExistsError,FileNotFoundError) as exc:raise SystemExit('REJEITADO: '+str(exc))
  print('OK',out.relative_to(ROOT).as_posix())
 if __name__=='__main__':main()

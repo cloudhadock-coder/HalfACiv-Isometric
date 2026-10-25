@@ -1,10 +1,14 @@
 extends RefCounted
+const Company=preload("res://src/entities/company.gd")
 const Professions=preload("res://src/entities/professions.gd")
+var specialist: String=""
+var equipment: Dictionary={"coat":0,"color":0,"armor":false,"banner":false,"gait":0}
 var position: Vector2
 var previous: Vector2
 var route: Array[Vector2i]=[]
 var kind: int=0
 var portrait_id: int=0
+var appearance: Dictionary={}  # parts-kit recipe (src/ui/portrait_kit.gd); empty for the 24 founders
 var citizen_name: String
 var state: String="Descansando"
 var task: String="rest"
@@ -41,7 +45,7 @@ func update(delta: float,nav,sim=null) -> void:
  if sim==null:return
  if not route.is_empty():
   state="Transportando recursos" if not cargo.is_empty() else ("Patrulhando" if Professions.patrol(kind) else "A caminho")
-  var target=Vector2(route[0]);position=position.move_toward(target,delta*(1.65 if mounted else 1.15))
+  var target=Vector2(route[0]);position=position.move_toward(target,delta*(1.65*[1.0,1.3,1.65][equipment.gait] if mounted or horse_only else 1.15)*(1.0+Company.bonus(self) if mounted else 1.0))
   if position.distance_to(target)<0.001:route.pop_front()
   if route.is_empty():task=arriving;wait=0
   stamina=maxf(0,stamina-delta*0.12)
@@ -102,7 +106,7 @@ func update(delta: float,nav,sim=null) -> void:
   if wait<=0:travel(entrance,"work",nav)
   return
  task="work";state="Trabalhando";stamina=maxf(0,stamina-delta*0.22)
- if not sim.work(employer,delta):state="Aguardando insumos"
+ if not sim.work(employer,delta*(1.0+Company.bonus(self))):state="Aguardando insumos"
  work_elapsed+=delta
  if work_elapsed>=6:
   work_elapsed=0;cargo=sim.take_cargo(employer)

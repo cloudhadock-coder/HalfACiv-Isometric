@@ -9,6 +9,7 @@ var people: Array=[]
 var tiles: Dictionary={}
 var characters: Array=[]
 var animated: Dictionary={}
+var cavalry: Dictionary={}
 var horse: Texture2D
 var hovered: Vector2i=Vector2i(-1,-1)
 var build_kind: String=""
@@ -28,6 +29,9 @@ func _ready() -> void:
  for i in range(24):characters.append(load("res://assets/characters/native/"+str(i)+".png"))
  for kind in ["mill","tower","tree"]:animated[kind]=load("res://assets/buildings/visual_v021/"+kind+"_animation.png")
  horse=load("res://assets/horses/horse_native_v021.png")
+ for family in ["coat","cloth","armor","banner","rider_armor"]:
+  cavalry[family]=[]
+  for n in range(5 if family=="coat" else (1 if family in ["armor","rider_armor"] else 6)):cavalry[family].append(load("res://assets/horses/cavalry/"+family+"_"+str(n)+".png"))
  ground=Ground.new();ground.sim=sim;ground.tiles=tiles;ground.show_behind_parent=true;add_child(ground)
  refresh()
 func refresh() -> void:
@@ -110,13 +114,17 @@ func _draw() -> void:
    var row=1 if moving else (2 if working and c.kind==c.portrait_id else 0)
    var frame=int(c.clock*(7 if c.mounted else (8 if moving else 5)))%(8 if moving or working else 5)
    if c.mounted or c.horse_only:
-    draw_texture_rect_region(horse,Rect2(p-Policy.HORSE_PIVOT,Policy.HORSE_FRAME),Rect2(int(c.clock*7)%8*48,48 if moving else 0,48,48))
+    draw_mount(c,p,moving)
    if not c.horse_only:
     if c.mounted:
-     var bob=[0,0,-1,-1,0,0,1,1][int(c.clock*7)%8]*0.75
+     var rate=[7,10,14][c.equipment.gait] if moving else 7
+     var bob=([0,0,-1,-1,0,0,1,1] if moving else [0,0,0,-1,-1,0,0,0])[int(c.clock*rate)%8]
+     frame=int(c.clock*rate)%(8 if moving else 5)
      draw_texture_rect_region(characters[c.portrait_id],Rect2(p-Vector2(13,45-round(bob)),Vector2(30,25)),Rect2(frame*30,35 if moving else 0,30,25))
      draw_line(p+Vector2(5,-18+bob),p+Vector2(10,-12+bob),Color("535e75"),3);draw_line(p+Vector2(10,-12+bob),p+Vector2(8,-4+bob),Color("302d32"),3)
     else:draw_texture_rect_region(characters[c.portrait_id],Rect2(p-Policy.CHARACTER_PIVOT,Policy.CHARACTER_FRAME),Rect2(frame*30,row*35,30,35))
+    if c.mounted and c.equipment.armor:draw_mount_layer(cavalry.rider_armor[0],c,p,moving)
+    if c.mounted and c.equipment.banner:draw_mount_layer(cavalry.banner[c.equipment.color],c,p,moving)
     if working:
      FX.work_effect(self,p,phase,Professions.DATA[c.kind].tool)
      if c.kind!=c.portrait_id:FX.held_tool(self,p,phase,Professions.DATA[c.kind].tool)
@@ -128,3 +136,13 @@ func _draw() -> void:
   if not build_kind.is_empty():draw_tile(build_kind,hovered,Color(1,1,1,0.55))
 func draw_ellipse_shadow(p: Vector2) -> void:
  draw_colored_polygon(PackedVector2Array([p+Vector2(-7,0),p+Vector2(-3,-2),p+Vector2(5,-2),p+Vector2(8,0),p+Vector2(4,2),p+Vector2(-4,2)]),Color(0.07,0.13,0.13,0.23))
+
+func draw_mount_layer(texture: Texture2D,c,p: Vector2,moving: bool) -> void:
+ var rate=[7,10,14][c.equipment.gait] if moving else 7
+ draw_texture_rect_region(texture,Rect2(p-Policy.HORSE_PIVOT,Policy.HORSE_FRAME),Rect2(int(c.clock*rate)%8*48,48 if moving else 0,48,48))
+func draw_mount(c,p: Vector2,moving: bool) -> void:
+ draw_mount_layer(cavalry.coat[c.equipment.coat],c,p,moving)
+ if c.mounted:
+  draw_mount_layer(cavalry.cloth[c.equipment.color],c,p,moving)
+  if c.equipment.armor:draw_mount_layer(cavalry.armor[0],c,p,moving)
+ elif c.equipment.banner:draw_mount_layer(cavalry.banner[c.equipment.color],c,p,moving)

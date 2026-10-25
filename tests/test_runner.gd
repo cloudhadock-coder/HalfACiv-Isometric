@@ -4,11 +4,14 @@ const Iso=preload("res://src/world/iso.gd")
 const Store=preload("res://src/persistence/save_store.gd")
 const Citizen=preload("res://src/entities/citizen.gd")
 const Professions=preload("res://src/entities/professions.gd")
+const PortraitKit=preload("res://src/ui/portrait_kit.gd")
 var checks: int=0
 var failures: int=0
 func check(value: bool,label: String) -> void:
  checks+=1
  if not value:failures+=1;push_error("FAIL: "+label)
+func sha(bytes: PackedByteArray) -> String:
+ var ctx=HashingContext.new();ctx.start(HashingContext.HASH_SHA256);ctx.update(bytes);return ctx.finish().hex_encode()
 func file_json(value) -> void:
  var f=FileAccess.open(Store.PATH,FileAccess.WRITE);f.store_string(JSON.stringify(value));f.close()
 func _init() -> void:
@@ -91,7 +94,7 @@ func _init() -> void:
  for key in offline.resources:check(offline.resources[key]>=0,"resource nonnegative "+key)
  # Save schema 2 preserves stocks, identities, delivery cargo and clock.
  Store.PATH="res://tests/realm-test.json"
- var saved=Sim.new();saved.people[2].cargo={"wood":6.0};saved.people[2].stamina=57;saved.people[2].delivered=9;saved.seconds=42;saved.people[2].position=Vector2(15.25,8.125)
+ var saved=Sim.new();saved.people[2].cargo={"wood":6.0};saved.people[2].stamina=57;saved.people[2].delivered=9;saved.seconds=42;saved.people[2].position=Vector2(15.25,8.125);saved.people[3].appearance=PortraitKit.recipe(99)
  check(Store.save_game(saved)==OK,"save schema 2")
  var original_food=saved.resources.food;saved.resources.food+=3
  check(Store.save_game(saved)==OK,"replace existing save atomically")
@@ -103,6 +106,21 @@ func _init() -> void:
  check(loaded.people[2].cargo==saved.people[2].cargo and loaded.people[2].delivered==9,"cargo and delivery counters persist")
  check(loaded.people[2].stamina==57 and loaded.seconds==42,"stamina and time persist")
  check(loaded.people[2].position.distance_to(saved.people[2].position)<0.001,"save load preserves fractional feet position")
+ check(not loaded.people[3].appearance.is_empty() and loaded.people[3].appearance==saved.people[3].appearance,"generated appearance persists")
+ data.people[3].appearance={"head":42};file_json(data);var tampered=Sim.new();check(Store.load_game(tampered).is_empty(),"malformed appearance rejected")
+ # Parts kit: same seed, same villager; layers combine exactly as tools/portrait_pipeline/kit.py does.
+ check(PortraitKit.recipe(31)==PortraitKit.recipe(31) and PortraitKit.recipe(31)!=PortraitKit.recipe(32),"kit recipe deterministic per seed")
+ var probe={"head":"head_02","clothing":"clothing_jerkin","beard":"beard_full","hair":"hair_short","hat":"","skin":"#87563e","hair_color":"#29252b","cloth":"#536e97"}
+ var drafts=PortraitKit.new(false);var face=drafts.compose(probe)
+ check(face!=null and face.get_size()==Vector2i(64,64),"kit composes 64x64 portrait")
+ # Pinned in tests/test_assets.py too: GDScript and Python composers must agree byte for byte.
+ check(face!=null and sha(face.get_data())=="b246898b2d41ea72a07d425760c8212519e1f898012d8a1862b0d4acb2f15cb7","kit composition matches Python baker")
+ var approved_count=0
+ for part in PortraitKit.kit().parts:approved_count+=int(part.status=="approved")
+ if approved_count==0:check(PortraitKit.new().compose(probe)==null,"unreviewed kit parts never reach the game")
+ var newcomer=Sim.new();newcomer.immigration_elapsed=19.95;newcomer.resources.food=999
+ for i in range(2):newcomer.build("house",Vector2i(19+i*3,14))
+ newcomer.tick(30);check(newcomer.people[newcomer.people.size()-2].appearance.has("head"),"immigrant beyond founders gets a kit appearance")
  # v0.1 migration retains the original community and bank, without granting 12 extra villagers.
  var legacy_people=[]
  for i in range(13):legacy_people.append({"x":14,"y":10+i,"kind":i%12,"horse_only":i==12})
