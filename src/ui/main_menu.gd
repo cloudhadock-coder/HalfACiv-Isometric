@@ -17,6 +17,7 @@ var shortcuts: Dictionary={}
 var name_edit: LineEdit
 var seed_edit: LineEdit
 var landscape: OptionButton
+var map_size: OptionButton
 var bounty: OptionButton
 var preview
 var preview_note: Label
@@ -87,10 +88,13 @@ func build_setup() -> void:
  landscape=OptionButton.new();landscape.add_item("Pela semente")
  for key in WorldGen.LANDSCAPES:landscape.add_item(WorldGen.LANDSCAPE_NAMES[key])
  landscape.item_selected.connect(func(_index):schedule());row(grid,"Paisagem",landscape)
+ map_size=OptionButton.new()
+ for side in WorldGen.SIZES:map_size.add_item("%d × %d"%[side,side])
+ map_size.select(1);map_size.item_selected.connect(func(_index):schedule());row(grid,"Tamanho",map_size)
  bounty=OptionButton.new()
  for key in WorldGen.BOUNTIES:bounty.add_item(WorldGen.BOUNTY_NAMES[key])
  bounty.select(1);bounty.item_selected.connect(func(_index):schedule());row(grid,"Recursos",bounty)
- preview=Minimap.new();preview.interactive=false;preview.mouse_default_cursor_shape=Control.CURSOR_ARROW;preview.custom_minimum_size=Vector2(500,250);setup_page.add_child(preview)
+ preview=Minimap.new();preview.interactive=false;preview.mouse_default_cursor_shape=Control.CURSOR_ARROW;preview.custom_minimum_size=Vector2(500,210);setup_page.add_child(preview)
  preview_note=Label.new();preview_note.theme_type_variation="MutedLabel";preview_note.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;setup_page.add_child(preview_note)
  var buttons=HBoxContainer.new();buttons.add_theme_constant_override("separation",8);setup_page.add_child(buttons)
  var back=Button.new();back.text="Voltar  [Esc]";back.pressed.connect(show_main);back.size_flags_horizontal=Control.SIZE_EXPAND_FILL;buttons.add_child(back)
@@ -100,7 +104,7 @@ func show_setup() -> void:
  seed_edit.text=str(WorldGen.random_settings().seed);landscape.select(0);bounty.select(1);name_follows_seed=true;sync_name();refresh_preview()
 func settings() -> Dictionary:
  var chosen=WorldGen.LANDSCAPES[landscape.selected-1] if landscape.selected>0 else ""
- return WorldGen.normalize({"seed":WorldGen.seed_from_text(seed_edit.text),"landscape":chosen,"bounty":WorldGen.BOUNTIES[bounty.selected],"name":name_edit.text})
+ return WorldGen.normalize({"seed":WorldGen.seed_from_text(seed_edit.text),"landscape":chosen,"bounty":WorldGen.BOUNTIES[bounty.selected],"name":name_edit.text,"size":WorldGen.SIZES[map_size.selected]})
 func sync_name() -> void:
  if name_follows_seed:name_edit.set_block_signals(true);name_edit.text=WorldGen.name_for(WorldGen.seed_from_text(seed_edit.text));name_edit.set_block_signals(false)
 func schedule() -> void:

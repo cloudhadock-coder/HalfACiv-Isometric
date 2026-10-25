@@ -44,3 +44,9 @@ Gerar equipamento: `python tools/asset_pipeline/cavalry.py`; integrado ao build 
 ## Política e progressão v0.4.1
 
 `src/politics/realm.gd` é o estado e domínio das regras: custos, efeitos, facções, legitimidade, reformas, promoção e restauração validada. `Simulation.politics` nasce neutro e fornece multiplicadores de produção/tributos. Os ticks não decidem, promulgam ou promovem; o progresso offline mantém esse contrato. `council_panel.gd` apresenta as ações e atualiza prontidão/pendências uma vez por segundo; é integrado ao menu existente, sem substituir HUD, mundos, economia ou navegação. O save schema 2 recebe `politics` opcional e só aplica o candidato após validação completa; saves prévios recebem defaults. Ver regras, limiares e limitações em POLITICS.md.
+
+## Expansão territorial v0.5.0
+
+`Simulation.map_size()/centre()` substituem constantes globais de domínio. O núcleo gerado de 32×32 permanece estável; `WorldGen.large_world` adiciona a região externa em coordenadas relativas para preservar consistência ao ampliar. `Simulation.expand` translada estado e compensa a câmera; os IDs são preservados. Edições são gravadas separadamente da geração. O save aplica/valida tamanho e edições em candidato antes da troca atômica.
+
+AStar ponderado tem heurística admissível e cache limitado. Obras/estradas atualizam um ponto e invalidam cache; expansão refaz a grade inteira uma vez. O renderer usa blocos 8×8 com culling e o minimapa cacheia por revisão. As funções de projeção e o tamanho dos sprites permanecem iguais. Detalhes: EXPANSION.md.

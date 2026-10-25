@@ -1,26 +1,23 @@
-# HalfACiv Isometric v0.4.2 — Sprites e animações
+# HalfACiv Isometric v0.5.0 — Expansão territorial
 
-Atualiza o uso da folha de construções fornecida, preservando a política/progressão da v0.4.1 e todos os sistemas anteriores.
-
-## Implementado
-- 18 tipos com sprites derivados da folha nativa, incluindo igreja para a capela, acampamento para a serraria e posto fortificado com bandeira azul para a torre.
-- Nove sequências: moinho com 4 frames, bandeiras com 14, fumaça de casas e trigo com 16; FPS e contagens explícitos.
-- A torre não alterna mais entre estruturas diferentes.
-- Cercas e solo fixos no trigo; fumaça nativa sem camada procedural duplicada nas casas.
-- Previews do inspector, da construção e do mapa consistentes; obras e ghosts ficam no frame 0; pausa congela as animações.
-- Pipeline isolado e determinístico, sem alterar personagens/retratos nem restaurar os atlas removidos localmente.
-- Pivô, bordas, nearest-neighbor, transparência nativa e ordenação preservados. Testes de profundidade com a máscara do frame efetivamente desenhado.
+## Incluído
+- Escolha de mapas 32×32,48×48 e64×64; novos mundos aleatórios usam48 e o clássico continua32.
+- Ampliação32→48→64 de domínio existente por 150 ouro+25 influência por etapa, mantendo terreno conhecido, moradores, edifícios, equipamentos, cargas, política e edições. Câmera compensa a translação da aldeia.
+- T constrói estrada por clique (1 pedra/tile); Y remove (terra batida, sem reembolso). Água, árvores e prédios são protegidos. Esc cancela.
+- Terra, areia e solo pedregoso com custos próprios; estradas mais rápidas. AStar ponderado com atualização incremental de tiles, cache de caminhos e cópias por consumidor.
+- Terreno em blocos 8×8 com culling; minimapa, limites da câmera e nova prévia respeitam a dimensão efetiva.
+- Saves antigos são lidos; novos campos opcionais guardam tamanho/base e edições com validação antes de alterar o estado vivo.
 
 ## Executar
-Extraia o ZIP e execute HalfACiv-Isometric.exe no Windows 10/11 x64. Salve/feche a versão antiga e use Carregar domínio. Saves mantêm o schema 2; não há mudança das regras de política, produção, recrutamento, progressão ou mundos por semente. Controles anteriores preservados: WASD, roda, meio, minimapa, B/I/H/R/P, F5.
+Extraia o ZIP e abra HalfACiv-Isometric.exe no Windows10/11 x64. Salve e feche a versão antiga e use Carregar domínio. Para ampliar um save, menu Aldeia→Ampliar mapa. Para um mundo novo, Personalizar mundo→Tamanho. WASD, roda, meio, minimapa, B/I/H/R/P e F5 continuam disponíveis; T/Y são as ferramentas novas.
 
 ## Validação
-Testes e verificações reais em BUILD_INFO.json e docs/VALIDATION_V0.4.2.md. Capturas reais em docs/visual-validation/v0.4.2/. O EXE exportado é executado em headless/OpenGL, com verificação do catálogo de animações embarcado. A folha original completa não acompanha o ZIP como asset solto.
+Testes no commit marcado, inclusive expansão/persistência, input real, câmera em vários zooms, solos e navegação. Capturas em docs/visual-validation/v0.5.0 e regras em EXPANSION.md. BUILD_INFO.json registra commit, hashes, suítes e benchmark64×64 com 64 cavaleiros. O EXE é executado em headless/OpenGL e confirma mapa, grade e recursos de expansão incorporados.
 
-## Limitações
-Nem toda célula da folha é animação; variantes estáticas não são reproduzidas como ciclos. Os nove tipos sem sequência continuam com sprite estático e efeitos ambientais aplicáveis. A torre usa o posto fortificado animado da folha. Cavalaria lateral e aprovação dos retratos continuam pendentes, sem alterações nesta versão.
+## Compatibilidade e limites
+Máximo64×64,64 moradores e1024 construções. Estradas por clique, sem arrasto, pontes ou derrubada de mata. Novos solos afetam deslocamento; produção segue os postos existentes. Sem guerra, descoberta ou fronteiras de facções. Versões antigas não compreendem edições/mapas ampliados: a compatibilidade é de leitura de saves anteriores pela nova versão. Retratos e cavalaria mantêm as pendências artísticas documentadas.
 
 ## Créditos
-Isometric Strategy - Medieval Pixel Art Tiles, crabcrabcrabs, CC BY 4.0: https://crabcrabcrabs.itch.io/isometric-strategy-medieval-pixel-art-tiles . Recortes, paleta de solo, detalhes ocupacionais e estabilização das hortas descritos em CREDITS.md. GandalfHardcore Character Asset Pack incorporado conforme licença, sem sprites soltos. Godot 4.7.2/MIT. Nenhuma referência licenciada foi enviada a IA.
+Terrenos novos: arte nativa determinística do projeto. Tiles originais crabcrabcrabs/CC BY4.0: https://crabcrabcrabs.itch.io/isometric-strategy-medieval-pixel-art-tiles . GandalfHardcore incorporado conforme licença, sem assets soltos; Godot 4.7.2/MIT. Licenças e créditos anexados. Nenhuma referência licenciada foi enviada a IA.
 
 Commit testado: `{{COMMIT}}`.

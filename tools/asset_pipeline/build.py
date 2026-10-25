@@ -70,3 +70,6 @@ if __name__=='__main__':
 
  from buildings import build as buildings
  buildings(ROOT)
+
+ from terrain import build as terrain
+ terrain(ROOT)

@@ -26,34 +26,29 @@ var nav=Navigation.new()
 var jobs: Dictionary={}
 # Seeded world settings (see world_gen.gd); empty for the classic map.
 var world: Dictionary={}
+var terrain_edits: Dictionary={}
 func _init(settings: Dictionary={}) -> void:
  if not settings.is_empty():
   var made=WorldGen.generate(settings);world=made.world;terrain=made.terrain
   for entry in made.buildings:buildings.append(Catalog.make(entry[0],Vector2i(entry[1],entry[2])))
   for key in ["food","wood","stone","gold"]:resources[key]=round(resources[key]*WorldGen.BOUNTY_FACTOR[world.bounty])
   populate(made.horse);return
- for x in range(32):
-  for y in range(32):
-   var t="grass"
-   if x>=25 and y>6:t="water"
-   elif (x<6 and y>13) or (y<4 and x>6):t="tree"
-   elif (x in [8,9] and y in [8,9]) or (x in [21,22] and y in [22,23]):t="tree"
-   elif x==15 or y==15 or (y in [11,19] and x>=10 and x<=23) or (x==10 and y>=11 and y<=19):t="road"
-   terrain[Vector2i(x,y)]=t
- var entries=[["house",11,12],["house",13,12],["house",17,12],["house",19,12],["house",11,17],["farm",12,18],["farm",13,18],["lumber",7,17],["quarry",20,18],["market",16,14],["warehouse",16,16],["mill",12,14],["bakery",13,16],["forge",18,16],["workshop",20,16],["fishery",24,13],["herbalist",18,10],["tavern",18,14],["chapel",13,10],["stable",10,20],["pasture",12,20],["tower",21,14]]
- for entry in entries:buildings.append(Catalog.make(entry[0],Vector2i(entry[1],entry[2])))
- populate(Vector2i(11,20))
+ var classic=WorldGen.classic_data();terrain=classic.terrain
+ for entry in classic.buildings:buildings.append(Catalog.make(entry[0],Vector2i(entry[1],entry[2])))
+ populate(classic.horse)
+func map_size() -> int:return int(world.get("size",32))
+func centre() -> Vector2i:return Vector2i.ONE*(map_size()/2-1)
 func populate(horse_cell: Vector2i) -> void:
  nav.rebuild(self)
  for i in range(24):
-  var cell=Vector2i(15,6+i%18)
+  var cell=Vector2i(15,6+i%18)+centre()-Vector2i(15,15)
   people.append(Citizen.new(i,cell))
  var horse=Citizen.new(0,horse_cell);horse.horse_only=true;horse.citizen_name="Castanha";people.append(horse)
  reassign_jobs()
 func realm_name() -> String:
  return world.get("name","Vale da Aurora")
 func valid(cell: Vector2i) -> bool:
- return cell.x>=0 and cell.y>=0 and cell.x<32 and cell.y<32
+ return cell.x>=0 and cell.y>=0 and cell.x<map_size() and cell.y<map_size()
 func building_at(cell: Vector2i) -> int:
  for i in range(buildings.size()):
   if Vector2i(int(buildings[i].x),int(buildings[i].y))==cell:return i
@@ -61,6 +56,7 @@ func building_at(cell: Vector2i) -> int:
 func blocked(cell: Vector2i) -> bool:
  return not valid(cell) or terrain.get(cell,"water") in ["water","tree"] or building_at(cell)>=0
 func placement_reason(kind: String,cell: Vector2i) -> String:
+ if buildings.size()>=1024:return "Limite de 1024 construções atingido"
  if not Catalog.DATA.has(kind):return "Construção desconhecida"
  if blocked(cell):return "Terreno ocupado ou impróprio"
  if cell==village_anchor():return "Preserve o acesso à praça"
@@ -87,7 +83,7 @@ func build(kind: String,cell: Vector2i) -> bool:
  for i in range(buildings.size()):
   if entrance(i,Vector2(anchor),nav).x>=0:previous_access.append(i)
  var probe=Catalog.make(kind,cell,float(Catalog.DATA[kind].time))
- buildings.append(probe);nav.rebuild(self)
+ buildings.append(probe);nav.change_cell(self,cell)
  var reachable=true
  previous_access.append(buildings.size()-1)
  for i in previous_access:
@@ -96,7 +92,7 @@ func build(kind: String,cell: Vector2i) -> bool:
   for person in people:
    var start=Vector2i(person.position.round())
    if start!=anchor and nav.path(start,anchor).is_empty():reachable=false;break
- if not reachable:buildings.pop_back();nav.rebuild(self);return false
+ if not reachable:buildings.pop_back();nav.change_cell(self,cell);return false
  for key in Catalog.DATA[kind].cost:resources[key]-=Catalog.DATA[kind].cost[key]
  for person in people:
   person.previous=person.position;person.route.clear();person.task="rest"
@@ -112,9 +108,9 @@ func entrance(index: int,from: Vector2,navigation) -> Vector2i:
   if Vector2i(from.round())==c or not navigation.path(Vector2i(from.round()),c).is_empty():return c
  return Vector2i(-1,-1)
 func village_anchor() -> Vector2i:
- var centre=Vector2i(15,15)
+ var centre=centre()
  if not blocked(centre):return centre
- for radius in range(1,32):
+ for radius in range(1,map_size()):
   for x in range(-radius,radius+1):
    for y in [-radius,radius]:
     if not blocked(centre+Vector2i(x,y)):return centre+Vector2i(x,y)
@@ -143,7 +139,7 @@ func nearest_stash(from: Vector2,navigation) -> int:
   if amount>=2 and d<distance and entrance(i,from,navigation).x>=0:best=i;distance=d
  return best
 func destination_for(kinds: Array,from: Vector2,navigation) -> Vector2i:
- var best=-1;var distance=INF;var target=Vector2i(15,15)
+ var best=-1;var distance=INF;var target=centre()
  for i in range(buildings.size()):
   if buildings[i].kind in kinds and buildings[i].remaining<=0:
    var e=entrance(i,from,navigation)
@@ -152,8 +148,8 @@ func destination_for(kinds: Array,from: Vector2,navigation) -> Vector2i:
   if blocked(target):return village_anchor()
  return target
 func dropoff(from: Vector2,navigation) -> Vector2i:return destination_for(["warehouse","market"],from,navigation)
-func stable_entrance(navigation) -> Vector2i:return destination_for(["stable"],Vector2(15,15),navigation)
-func meeting_entrance(navigation) -> Vector2i:return destination_for(["tavern","market"],Vector2(15,15),navigation)
+func stable_entrance(navigation) -> Vector2i:return destination_for(["stable"],Vector2(centre()),navigation)
+func meeting_entrance(navigation) -> Vector2i:return destination_for(["tavern","market"],Vector2(centre()),navigation)
 func reassign_jobs() -> void:
  jobs.clear()
  for person in people:
@@ -219,7 +215,7 @@ func tick(delta: float=1.0) -> void:
   if immigration_elapsed>=20:
    immigration_elapsed=0
    if population<housing_capacity() and population<64 and resources.food>=30:
-    var cell=dropoff(Vector2(15,15),nav)
+    var cell=dropoff(Vector2(centre()),nav)
     var newcomer=Citizen.new(population,cell)
     if population>=24:newcomer.citizen_name+=" "+str(1+population/24);newcomer.appearance=PortraitKit.recipe(population)
     people.insert(people.size()-1,newcomer);reassign_jobs();population+=1
@@ -255,3 +251,38 @@ func apply_offline(duration: int) -> void:
      for key in data.production:resources[key]+=data.production[key]*factor*politics.production_multiplier(key)
   resources.food=maxf(0,resources.food-population*0.035);resources.gold+=population*0.006*politics.tax_multiplier()
  tick_count=int(seconds);reassign_jobs()
+
+func road_reason(cell: Vector2i,erase: bool=false) -> String:
+ if not valid(cell) or building_at(cell)>=0:return "Terreno ocupado ou fora do mapa"
+ if terrain[cell] in ["tree","water"]:return "Estradas exigem solo livre; não atravessam água ou floresta"
+ if erase and terrain[cell]!="road":return "Não há estrada neste tile"
+ if not erase and terrain[cell]=="road":return "Estrada já existente"
+ if not erase and resources.stone<1:return "Falta 1 pedra"
+ return ""
+func edit_road(cell: Vector2i,erase: bool=false) -> bool:
+ if not road_reason(cell,erase).is_empty():return false
+ if not erase:resources.stone-=1
+ terrain[cell]="dirt" if erase else "road";terrain_edits[cell]=terrain[cell]
+ nav.change_cell(self,cell);revision+=1
+ for c in people:c.route.clear();c.previous=c.position;c.task="rest"
+ return true
+func expansion_reason() -> String:
+ if map_size()>=64:return "O domínio já tem 64×64 tiles"
+ if resources.gold<150 or resources.influence<25:return "Ampliar exige 150 ouro e 25 influência"
+ return ""
+func expand() -> bool:
+ if not expansion_reason().is_empty():return false
+ var old_size=map_size();var settings=world.duplicate()
+ if settings.is_empty():settings={"seed":1,"landscape":"lagos","bounty":"normal","name":realm_name(),"base":"classic"}
+ settings["size"]=old_size+16
+ var made=WorldGen.generate(settings);var offset=Vector2i(8,8);var shifted={}
+ for cell in terrain:
+  var dest=cell+offset
+  if made.terrain[dest]!=terrain[cell]:shifted[dest]=terrain[cell]
+ for cell in shifted:made.terrain[cell]=shifted[cell]
+ terrain=made.terrain;terrain_edits=shifted;world=made.world
+ for b in buildings:b.x+=8;b.y+=8
+ for c in people:
+  c.position+=Vector2(offset);c.previous+=Vector2(offset);c.route.clear();c.home+=offset;c.workplace+=offset;c.destination+=offset;c.task="rest"
+ resources.gold-=150;resources.influence-=25
+ nav.rebuild(self);reassign_jobs();revision+=1;return true

@@ -3,6 +3,7 @@ extends RefCounted
 # The plaza stays at (15,15) and a Chebyshev radius of SAFE around it never floods, so roads, the
 # founders' spawn column and every starting building remain reachable on any seed.
 const SIZE=32
+const SIZES=[32,48,64]
 const CENTRE=Vector2i(15,15)
 const SAFE=9
 const LANDSCAPES=["lagos","rio","costa"]
@@ -25,7 +26,7 @@ static func name_for(seed: int) -> String:
 static func random_settings() -> Dictionary:
  var rng=RandomNumberGenerator.new();rng.randomize()
  var seed=rng.randi_range(1,MAX_SEED)
- return normalize({"seed":seed})
+ return normalize({"seed":seed,"size":48})
 # Fills defaults; landscape "" is derived from the seed so a bare seed always means the same world.
 static func normalize(settings: Dictionary) -> Dictionary:
  var seed=clampi(int(settings.get("seed",1)),1,MAX_SEED)
@@ -34,10 +35,16 @@ static func normalize(settings: Dictionary) -> Dictionary:
  var bounty=str(settings.get("bounty","normal"))
  if bounty not in BOUNTIES:bounty="normal"
  var name=str(settings.get("name","")).strip_edges().left(40)
- return {"seed":seed,"landscape":landscape,"bounty":bounty,"name":name if not name.is_empty() else name_for(seed)}
+ var result={"seed":seed,"landscape":landscape,"bounty":bounty,"name":name if not name.is_empty() else name_for(seed)}
+ if settings.has("size"):result["size"]=int(settings.size) if int(settings.size) in SIZES else 32
+ if settings.get("base","")=="classic":result["base"]="classic"
+ return result
 static func valid(settings) -> bool:
  if not settings is Dictionary or not settings.has_all(["seed","landscape","bounty","name"]):return false
  var seed=settings.seed
+ if settings.has("size"):
+  if not (settings.size is int or settings.size is float) or not is_finite(float(settings.size)) or settings.size!=int(settings.size) or int(settings.size) not in SIZES:return false
+ if settings.has("base") and settings.base!="classic":return false
  if not (seed is int or seed is float) or not is_finite(float(seed)) or float(seed)!=floor(float(seed)) or seed<1 or seed>MAX_SEED:return false
  return settings.landscape in LANDSCAPES and settings.bounty in BOUNTIES and settings.name is String and not settings.name.strip_edges().is_empty() and settings.name.length()<=40
 static func seed_from_text(text: String) -> int:
@@ -58,7 +65,45 @@ static func generate(settings: Dictionary) -> Dictionary:
  var horse=CENTRE+Vector2i(0,2)
  for entry in buildings:
   if entry[0]=="stable":horse=road_next_to(terrain,Vector2i(entry[1],entry[2]))
- return {"world":world,"terrain":terrain,"buildings":buildings,"horse":horse}
+ var made={"world":world,"terrain":terrain,"buildings":buildings,"horse":horse}
+ if world.get("base","")=="classic":
+  made=classic_data();made.world=world
+ if world.get("size",32)>32:made=large_world(made)
+ return made
+static func classic_data() -> Dictionary:
+ var terrain={}
+ for x in range(32):
+  for y in range(32):
+   var kind="grass"
+   if x>=25 and y>6:kind="water"
+   elif (x<6 and y>13) or (y<4 and x>6):kind="tree"
+   elif (x in [8,9] and y in [8,9]) or (x in [21,22] and y in [22,23]):kind="tree"
+   elif x==15 or y==15 or (y in [11,19] and x>=10 and x<=23) or (x==10 and y>=11 and y<=19):kind="road"
+   terrain[Vector2i(x,y)]=kind
+ return {"terrain":terrain,"buildings":[["house",11,12],["house",13,12],["house",17,12],["house",19,12],["house",11,17],["farm",12,18],["farm",13,18],["lumber",7,17],["quarry",20,18],["market",16,14],["warehouse",16,16],["mill",12,14],["bakery",13,16],["forge",18,16],["workshop",20,16],["fishery",24,13],["herbalist",18,10],["tavern",18,14],["chapel",13,10],["stable",10,20],["pasture",12,20],["tower",21,14]],"horse":Vector2i(11,20)}
+static func large_world(made: Dictionary) -> Dictionary:
+ var side=int(made.world.size);var offset=Vector2i.ONE*((side-32)/2)
+ var core=made.terrain;var terrain={}
+ var noise=FastNoiseLite.new();noise.seed=made.world.seed+413;noise.frequency=0.09
+ for x in range(side):
+  for y in range(side):
+   var logical=Vector2i(x,y)-offset
+   var kind=outer_kind(logical,core,noise)
+   if kind in ["grass","dirt","stone"]:
+    for delta in [Vector2i.LEFT,Vector2i.RIGHT,Vector2i.UP,Vector2i.DOWN]:
+     if not core.has(logical) and outer_kind(logical+delta,core,noise)=="water":kind="sand";break
+   terrain[Vector2i(x,y)]=kind
+ var buildings=[]
+ for entry in made.buildings:buildings.append([entry[0],entry[1]+offset.x,entry[2]+offset.y])
+ return {"world":made.world,"terrain":terrain,"buildings":buildings,"horse":made.horse+offset}
+static func outer_kind(cell: Vector2i,core: Dictionary,noise: FastNoiseLite) -> String:
+ if core.has(cell):return core[cell]
+ var value=noise.get_noise_2d(cell.x,cell.y)
+ if value>0.52:return "water"
+ if value>0.22:return "tree"
+ if value< -0.36:return "stone"
+ if value< -0.12:return "dirt"
+ return "grass"
 static func flood(terrain: Dictionary,world: Dictionary,rng: RandomNumberGenerator) -> void:
  var noise=FastNoiseLite.new();noise.seed=world.seed;noise.noise_type=FastNoiseLite.TYPE_SIMPLEX_SMOOTH;noise.frequency=0.11
  match world.landscape:

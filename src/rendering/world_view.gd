@@ -15,6 +15,7 @@ var cavalry: Dictionary={}
 var horse: Texture2D
 var hovered: Vector2i=Vector2i(-1,-1)
 var build_kind: String=""
+var terrain_tool: String=""
 var selected_person: int=-1
 var selected_building: int=-1
 var phase: float=0
@@ -27,7 +28,7 @@ var animate: bool=true
 var show_routes: bool=false
 func _ready() -> void:
  texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
- var names=sim.Catalog.DATA.keys()+["grass","grass_1","grass_2","grass_3","tree","water","road","plaza"]
+ var names=sim.Catalog.DATA.keys()+["grass","grass_1","grass_2","grass_3","tree","water","road","plaza","dirt","sand","stone"]
  for kind in names:tiles[kind]=load(BuildingArt.DIRECTORY+kind+".png" if kind in sim.Catalog.DATA else "res://assets/tilesets/visual_v021/"+kind+".png")
  for i in range(24):characters.append(load("res://assets/characters/native/"+str(i)+".png"))
  for kind in ["tree"]:animated[kind]=load("res://assets/buildings/visual_v021/"+kind+"_animation.png")
@@ -40,17 +41,18 @@ func _ready() -> void:
 func refresh() -> void:
  people=sim.people;static_objects.clear();water_cells.clear()
  for cell in sim.terrain:
-  if sim.terrain[cell]=="tree":static_objects.append({"y":Iso.project(Vector2(cell)).y,"type":0,"cell":cell,"order":cell.x*32+cell.y})
+  if sim.terrain[cell]=="tree":static_objects.append({"y":Iso.project(Vector2(cell)).y,"type":0,"cell":cell,"order":cell.x*sim.map_size()+cell.y})
   elif sim.terrain[cell]=="water":water_cells.append(cell)
  for i in range(sim.buildings.size()):
   var b=sim.buildings[i];static_objects.append({"y":Iso.project(Vector2(b.x,b.y)).y,"type":1,"index":i,"order":i})
  static_objects.sort_custom(Policy.before)
- seen_revision=sim.revision;ground.sim=sim;ground.queue_redraw()
+ seen_revision=sim.revision;ground.sim=sim;ground.refresh()
 func _process(delta: float) -> void:
  if animate:phase+=delta
  if seen_revision!=sim.revision or people!=sim.people:refresh()
  var daylight=clampf((sim.hour()-5.0)/2.0,0,1)*clampf((22.0-sim.hour())/3.0,0,1)
  modulate=Color("8e9ab2").lerp(Color.WHITE,daylight)
+ ground.update_visible(camera)
  queue_redraw()
 func visible_point(p: Vector2) -> bool:
  if camera==null:return true
@@ -99,7 +101,8 @@ func _draw() -> void:
  if selected_building>=0 and selected_building<sim.buildings.size():
   var selected=sim.buildings[selected_building];diamond(Vector2i(selected.x,selected.y),Color("e5c582"),1.5)
  if show_routes:draw_routes()
- if sim.valid(hovered):diamond(hovered,Color("e7ca88") if build_kind.is_empty() or sim.can_build(build_kind,hovered) else Color("d57d69"),1.5)
+ if sim.valid(hovered) and not terrain_tool.is_empty():diamond(hovered,Color("a3cc88") if sim.road_reason(hovered,terrain_tool=="erase_road").is_empty() else Color("d57d69"),1.5)
+ elif sim.valid(hovered):diamond(hovered,Color("e7ca88") if build_kind.is_empty() or sim.can_build(build_kind,hovered) else Color("d57d69"),1.5)
  for obj in objects:
   if obj.type==0:
    draw_tile("tree",obj.cell)
@@ -142,6 +145,7 @@ func _draw() -> void:
      draw_rect(Rect2(p+Vector2(5,-32),Vector2(3,1)),Color("b7c3d0"))
      draw_rect(Rect2(p+Vector2(7,-35),Vector2(2,1)),Color("b7c3d0"))
  if sim.valid(hovered):
+  if terrain_tool=="roads":draw_tile("road",hovered,Color(1,1,1,0.55))
   if not build_kind.is_empty():draw_tile(build_kind,hovered,Color(1,1,1,0.55),false)
 # Shift overlay: the selected villager's path, a building's staff links, or every cargo route.
 func draw_routes() -> void:

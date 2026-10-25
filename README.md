@@ -1,4 +1,8 @@
-# HalfACiv Isometric v0.4.2 — Sprites e animações
+# HalfACiv Isometric v0.5.0 — Expansão territorial
+
+**Mapas maiores e estradas editáveis:** escolha 32×32, 48×48 ou 64×64 ao criar um mundo. Para ampliar seu domínio salvo, use Aldeia → Ampliar mapa (150 ouro + 25 influência). T cria estrada por clique por 1 pedra; Y remove sem reembolso, deixando terra batida; Esc cancela.
+
+Aldeia, construções, moradores, equipamentos, cargas, política e estradas são preservados na ampliação. Câmera/minimapa são adaptados à dimensão real; a navegação usa custos de terreno e atualização incremental. [Regras e limites](docs/EXPANSION.md) · [Validação](docs/VALIDATION_V0.5.0.md).
 
 Construções atualizadas com a folha fornecida: 18 tipos, nove ciclos nativos, moinho com 4 frames, bandeiras com 14, fumaça e trigo com 16. Ícones e seleção usam os mesmos sprites do mapa. Política, economia, mapas e saves continuam compatíveis.
 
@@ -10,7 +14,7 @@ Pressione **P** durante a campanha ou use **Conselheiros → Conselho do domíni
 
 Saves anteriores continuam compatíveis: começam com política neutra, sem inventar decisões. A aproximação offline respeita reformas aprovadas e não toma decisões políticas.
 
-[Regras e balanceamento](docs/POLITICS.md) · [Validação](docs/VALIDATION_V0.4.1.md) · [Release](https://github.com/cloudhadock-coder/HalfACiv-Isometric/releases/tag/v0.4.2)
+[Regras e balanceamento](docs/POLITICS.md) · [Validação](docs/VALIDATION_V0.4.1.md) · [Release](https://github.com/cloudhadock-coder/HalfACiv-Isometric/releases/tag/v0.5.0)
 
 Para executar no Windows 10/11 x64, extraia o ZIP da Release e abra `HalfACiv-Isometric.exe`. Salve e feche a versão antiga antes de abrir a nova; escolha Carregar domínio. Para desenvolver, abra `project.godot` no Godot 4.7.2; os comandos de build/testes existentes estão abaixo. Testes novos: `tests/politics_tests.gd` (janela gráfica) e `tests/realm_campaign.gd` (headless).
 

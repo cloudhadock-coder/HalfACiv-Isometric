@@ -11,6 +11,9 @@ static func save_game(sim,citizens: Array=[]) -> Error:
  for c in source:
   entries.append({"x":c.position.x,"y":c.position.y,"kind":c.kind,"portrait":c.portrait_id,"name":c.citizen_name,"horse_only":c.horse_only,"cargo":c.cargo,"stamina":c.stamina,"work_elapsed":c.work_elapsed,"delivered":c.delivered,"appearance":c.appearance,"specialist":c.specialist,"equipment":c.equipment})
  var data={"schema":2,"version":ProjectSettings.get_setting("application/config/version","0.3.0"),"saved_at":int(Time.get_unix_time_from_system()),"resources":sim.resources,"buildings":sim.buildings,"people":entries,"seconds":sim.seconds,"tick":sim.tick_count,"immigration_elapsed":sim.immigration_elapsed,"politics":sim.politics.snapshot()}
+ var edits=[]
+ for cell in sim.terrain_edits:edits.append({"x":cell.x,"y":cell.y,"kind":sim.terrain_edits[cell]})
+ data["terrain_edits"]=edits
  if not sim.world.is_empty():data["world"]=sim.world
  var file=FileAccess.open(PATH+".tmp",FileAccess.WRITE)
  if file==null:return FileAccess.get_open_error()
@@ -50,6 +53,15 @@ static func load_game(sim) -> Dictionary:
  var world=data.get("world",{})
  if not world is Dictionary or (not world.is_empty() and not WorldGen.valid(world)):return {}
  var candidate=Sim.new(WorldGen.normalize(world) if not world.is_empty() else {})
+ var edits=data.get("terrain_edits",[])
+ if not edits is Array or edits.size()>candidate.map_size()*candidate.map_size():return {}
+ for entry in edits:
+  if not entry is Dictionary or not entry.has_all(["x","y","kind"]):return {}
+  if not numeric(entry.x) or not numeric(entry.y) or entry.x!=int(entry.x) or entry.y!=int(entry.y):return {}
+  var cell=Vector2i(entry.x,entry.y)
+  if not candidate.valid(cell) or candidate.terrain_edits.has(cell) or entry.kind not in ["road","dirt","grass","stone","sand"] or candidate.terrain[cell]=="water":return {}
+  if candidate.terrain[cell]=="tree" and entry.kind!="grass":return {}
+  candidate.terrain[cell]=entry.kind;candidate.terrain_edits[cell]=entry.kind
  if not amount_map(data.get("resources"),candidate.resources):return {}
  for key in candidate.resources:
   if not data.resources.has(key):return {}
@@ -66,6 +78,7 @@ static func load_game(sim) -> Dictionary:
   if candidate.terrain.get(cell)=="tree":
    if not legacy:return {}
    candidate.terrain[cell]="grass"
+   candidate.terrain_edits[cell]="grass"
   var stored=b.get("stored",{})
   if not amount_map(stored,candidate.resources):return {}
   var copy=candidate.Catalog.make(b.kind,cell,float(b.remaining));copy.level=int(b.level);copy.stored=stored.duplicate(true)
@@ -78,7 +91,7 @@ static func load_game(sim) -> Dictionary:
   if not person is Dictionary or not person.has_all(["x","y"]):return {}
   if not numeric(person.x) or not numeric(person.y):return {}
   var point=Vector2(float(person.x),float(person.y))
-  if point.x<0 or point.y<0 or point.x>31 or point.y>31:return {}
+  if point.x<0 or point.y<0 or point.x>candidate.map_size()-1 or point.y>candidate.map_size()-1:return {}
   var kind=person.get("kind",i%24)
   if not numeric(kind) or kind<0 or kind>=24 or kind!=int(kind):return {}
   if not person.get("horse_only",false) is bool:return {}
@@ -117,7 +130,7 @@ static func load_game(sim) -> Dictionary:
   if citizen.horse_only:ordered.append(citizen)
  candidate.people=ordered
  if not candidate.people.any(func(c):return c.horse_only):
-  var horse=Citizen.new(0,Vector2i(15,15));horse.horse_only=true;horse.citizen_name="Castanha";candidate.people.append(horse)
+  var horse=Citizen.new(0,candidate.centre());horse.horse_only=true;horse.citizen_name="Castanha";candidate.people.append(horse)
  for person in candidate.people:
   var anchor=candidate.village_anchor()
   if anchor.x<0:return {}
@@ -132,7 +145,7 @@ static func load_game(sim) -> Dictionary:
  candidate.reassign_jobs()
  candidate.apply_offline(int(Time.get_unix_time_from_system())-int(data.get("saved_at",Time.get_unix_time_from_system())))
  # Commit only after complete validation; malformed saves leave the live game untouched.
- sim.resources=candidate.resources;sim.buildings=candidate.buildings;sim.people=candidate.people;sim.terrain=candidate.terrain;sim.world=candidate.world;sim.politics=candidate.politics;sim.seconds=candidate.seconds;sim.tick_count=candidate.tick_count;sim.elapsed=0;sim.population=candidate.population;sim.immigration_elapsed=candidate.immigration_elapsed;sim.offline_seconds=candidate.offline_seconds
+ sim.resources=candidate.resources;sim.buildings=candidate.buildings;sim.people=candidate.people;sim.terrain=candidate.terrain;sim.world=candidate.world;sim.terrain_edits=candidate.terrain_edits;sim.politics=candidate.politics;sim.seconds=candidate.seconds;sim.tick_count=candidate.tick_count;sim.elapsed=0;sim.population=candidate.population;sim.immigration_elapsed=candidate.immigration_elapsed;sim.offline_seconds=candidate.offline_seconds
  sim.nav.rebuild(sim);sim.reassign_jobs();sim.revision+=1
  data["migrated"]=legacy
  return data

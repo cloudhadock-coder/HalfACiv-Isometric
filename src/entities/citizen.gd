@@ -45,7 +45,7 @@ func update(delta: float,nav,sim=null) -> void:
  if sim==null:return
  if not route.is_empty():
   state="Transportando recursos" if not cargo.is_empty() else ("Patrulhando" if Professions.patrol(kind) else "A caminho")
-  var target=Vector2(route[0]);position=position.move_toward(target,delta*(1.65*[1.0,1.3,1.65][equipment.gait] if mounted or horse_only else 1.15)*(1.0+Company.bonus(self) if mounted else 1.0))
+  var target=Vector2(route[0]);position=position.move_toward(target,delta*nav.speed_factor(Vector2i(position.round()))*(1.65*[1.0,1.3,1.65][equipment.gait] if mounted or horse_only else 1.15)*(1.0+Company.bonus(self) if mounted else 1.0))
   if position.distance_to(target)<0.001:route.pop_front()
   if route.is_empty():task=arriving;wait=0
   stamina=maxf(0,stamina-delta*0.12)
@@ -85,7 +85,7 @@ func update(delta: float,nav,sim=null) -> void:
   var points=[Vector2i(15,10),Vector2i(21,15),Vector2i(15,22),Vector2i(10,15)]
   state="Vigiando a aldeia"
   if wait<=0:
-   travel(points[patrol_index%4],"patrol",nav);patrol_index+=1;wait=4
+   travel(points[patrol_index%4]+sim.centre()-Vector2i(15,15),"patrol",nav);patrol_index+=1;wait=4
   return
  if kind==22:
   state="Organizando o depósito"

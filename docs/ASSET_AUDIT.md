@@ -61,3 +61,7 @@ Nove tipos têm ciclos. Capela usa a igreja de pedra/vermelha da célula (15,4);
 Na linha do trigo as cercas não são consistentes em todos os recortes. A base/cerca fica no frame 0 e só cores nativas do trigo dentro de sua silhueta fixa são transferidas por frame; não se transforma nem deforma a planta. Fonte tem alfa 0, 68 e 255: o alfa parcial nativo é preservado, sem filtragem. A regra binária dos portraits não é aplicada indevidamente às construções.
 
 Fumaça de casas agora é a sequência nativa; removida a sobreposição de uma segunda fumaça procedural nesses prédios. Forja conserva seu efeito próprio. Árvores, água, trabalhadores e cavalaria continuam animados como antes. Previews de construção e de obra usam frame 0. Cada prédio pronto usa um deslocamento temporal determinístico por tile, evitando sincronização artificial e saltos ao reconstruir listas.
+
+## v0.5.0 — Solos da expansão
+
+Três superfícies originais do projeto em pixel art nativa: terra, areia e solo pedregoso. Gerador determinístico terrain.py, 64×64 RGBA, máscara isométrica64×32, pivô32,40, quatro cores opacas por textura e transparência. Nearest-neighbor, sem rotação ou filtros. Validação geométrica e regeneração byte a byte em test_terrain.py. Sem alterações de personagens/retratos; sem uso de referências em IA. Células externas recebem tipos por ruído determinístico e areia nas margens, preservando o núcleo antigo.

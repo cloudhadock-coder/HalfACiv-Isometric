@@ -1,3 +1,11 @@
+# Status — v0.5.0
+
+Expansão territorial implementada sobre a v0.4.2: mapas 32/48/64, ampliação de save existente sem trocar identidades/política, estradas editáveis, solos distintos, custos de navegação, cache e culling de terreno. Regras, custos e limites em EXPANSION.md. A confirmação de build/publicação consta no relatório final; testes detalhados em VALIDATION_V0.5.0.md.
+
+Esta entrega cobre o último bloco funcional do roadmap original de releases até v0.5.0. Permanecem as pendências artísticas de oito direções/ciclos próprios de cavalaria e revisão dos retratos/partes. Não houve produção ou promoção de portraits. Nenhuma próxima versão além da v0.5.0 foi comprometida automaticamente.
+
+---
+
 # Status do projeto — v0.4.2
 
 Atualização dos sprites e animações de construções, usando a folha fornecida. 18 tipos, nove sequências, previews unificados, base e cerca estáveis; nenhuma mudança em gameplay, saves, personagens ou retratos. Fonte e remoções locais preservadas. Validação em VALIDATION_V0.4.2.md; publicação confirmada apenas no relatório final.

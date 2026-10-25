@@ -43,3 +43,7 @@ R abre/fecha contratos e cavalaria. Para equipar, selecione o cavaleiro ou caval
 ## Conselho v0.4.1
 
 P durante a campanha ou Conselheiros → Conselho do domínio abre as abas Facções e decisões, Reformas, Evolução e Crônicas. Esc fecha primeiro o conselho. A economia continua; Espaço primeiro fecha a janela e, sem janelas abertas, alterna a pausa. No menu principal, P continua personalizando o mundo, como na v0.4.0. F5 salva também o estado político.
+
+## Expansão v0.5.0
+
+T ativa/desativa estrada: clique no solo livre (1 pedra/tile). Y ativa remoção: clique na estrada (vira terra batida, sem reembolso). Esc cancela. Menu Aldeia → Ampliar mapa: +16 tiles por lado, 150 ouro +25 influência, máximo 64×64. Personalizar mundo oferece 32/48/64; aleatório usa 48 e clássico 32. Ferramentas são por clique, sem arrasto.

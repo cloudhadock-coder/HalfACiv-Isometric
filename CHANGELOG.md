@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.5.0 — Expansão territorial
+
+- Mapas de 32×32, 48×48 e 64×64, com seleção no menu, prévia e minimapa adaptados.
+- Ampliação do domínio existente em etapas de 16 tiles por 150 ouro + 25 influência, preservando território, identidades, edifícios, estradas e política.
+- Estradas editáveis por clique: T constrói por 1 pedra; Y remove sem reembolso e deixa terra batida.
+- Terrenos de terra, areia e solo pedregoso com custos de deslocamento distintos; estradas mais rápidas e AStar ponderado.
+- Atualização incremental de obstáculos/custos, cache limitado de caminhos e arrays independentes por NPC.
+- Renderização do terreno em blocos 8×8, culling fora da câmera e atualização do minimapa por revisão.
+- Câmera e conversões do minimapa adaptadas ao tamanho real do mundo, sem mudar projeção/pivôs.
+- Saves anteriores compatíveis; tamanho/base e edições persistidos com validação atômica. Limite de construções protegido antes de criar um save incompatível.
+- Menu Novo mundo agora encerra ferramentas abertas antes de mostrar a configuração.
+- Testes de expansão, navegação, custos, persistência, dimensões e input real, além de benchmark com 64 cavaleiros num mapa 64×64.
+
+
+
 ## v0.4.2 — Sprites e animações de construções
 
 - 18 tipos de construção integrados à folha fornecida, com previews consistentes no mapa, seleção e construção.

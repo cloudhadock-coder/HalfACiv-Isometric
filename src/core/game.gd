@@ -25,13 +25,14 @@ var autosave_clock: float=0
 var hud_clock: float=0
 var speed: float=1
 var routes_pinned: bool=false
+var road_tool: String=""
 func _ready() -> void:
  people=sim.people
  add_child(Backdrop.new())
  world=World.new();world.sim=sim;world.people=people;add_child(world)
- camera=Camera2D.new();camera.position=Iso.project(Vector2(15.5,15.5));add_child(camera);world.camera=camera
+ camera=Camera2D.new();camera.position=Iso.project(Vector2(sim.centre())+Vector2(0.5,0.5));add_child(camera);world.camera=camera
  hud=HUD.new();add_child(hud)
- hud.build_selected.connect(func(kind):world.build_kind=kind)
+ hud.build_selected.connect(func(kind):road_tool="";world.terrain_tool="";world.build_kind=kind)
  hud.pause_requested.connect(toggle_pause);hud.save_requested.connect(save_game);hud.load_requested.connect(load_game);hud.new_requested.connect(new_game)
  hud.speed_changed.connect(set_speed);hud.profession_changed.connect(change_profession);hud.citizen_selected.connect(func(index):select_person(index);focus_selection())
  hud.building_selected.connect(func(index):select_building(index);focus_selection())
@@ -41,6 +42,17 @@ func _ready() -> void:
  council_panel=CouncilPanel.new();council_panel.game=self;hud.add_child(council_panel)
  hud.update_resources(sim);world.animate=false
  camera_rig=CameraRig.new(camera);hud.layout_changed.connect(update_camera_layout);update_camera_layout()
+ if "--expansion-smoke" in OS.get_cmdline_user_args():
+  new_game({"seed":17,"size":64});autosave_clock=-100000
+  var cell=Vector2i(-1,-1)
+  for candidate in sim.terrain:
+   if sim.road_reason(candidate).is_empty():cell=candidate;break
+  var road=cell.x>=0 and sim.edit_road(cell)
+  get_tree().create_timer(2.0).timeout.connect(func():
+   var ok=road and sim.map_size()==64 and camera_rig.world_size==64 and hud.minimap.map_size==64 and world.ground.chunks.size()==64
+   var error=get_viewport().get_texture().get_image().save_png("user://export-expansion.png")
+   print("EXPORTED_EXPANSION_OK=",ok," capture=",error)
+   get_tree().quit(0 if ok and error==OK else 1))
  if "--buildings-smoke" in OS.get_cmdline_user_args():
   paused=false;autosave_clock=-100000;hud.menu.hide()
   get_tree().create_timer(2.0).timeout.connect(func():
@@ -73,15 +85,17 @@ func _ready() -> void:
  if "--capture-night" in OS.get_cmdline_user_args():
   paused=false;hud.menu.hide();sim.seconds=145;sim.tick(8);get_tree().create_timer(2.0).timeout.connect(capture)
 func update_camera_layout() -> void:
- if camera_rig!=null:camera_rig.configure(get_viewport_rect().size,hud.useful_map_rect())
+ if camera_rig!=null:camera_rig.configure(get_viewport_rect().size,hud.useful_map_rect(),sim.map_size())
 func capture() -> void:
  var path="user://gameplay-v0.2.1.png" if OS.has_feature("template") else "res://docs/visual-validation/v0.2.1/Camera_Default.png"
  if "--capture-night" in OS.get_cmdline_user_args():path="res://docs/visual-validation/v0.2.1/Night.png"
  var error=get_viewport().get_texture().get_image().save_png(path);print("CAPTURE_RESULT ",error," ",path);get_tree().quit()
 func new_game(settings: Dictionary={}) -> void:
- sim=Sim.new(settings);people=sim.people;world.sim=sim;world.people=people;world.refresh();camera_rig.move_to(Iso.project(Vector2(15.5,15.5)));selected=-1;selected_building=-1;world.selected_person=-1;world.selected_building=-1;hud.selection_kind="overview";company_panel.hide();council_panel.hide();autosave_clock=0;paused=false;hud.menu.hide();hud.roster_panel.hide();hud.update_resources(sim)
+ road_tool="";world.terrain_tool=""
+ sim=Sim.new(settings);people=sim.people;world.sim=sim;world.people=people;world.refresh();update_camera_layout();camera_rig.move_to(Iso.project(Vector2(sim.centre())+Vector2(0.5,0.5)));selected=-1;selected_building=-1;world.selected_person=-1;world.selected_building=-1;hud.selection_kind="overview";company_panel.hide();council_panel.hide();autosave_clock=0;paused=false;hud.menu.hide();hud.roster_panel.hide();hud.update_resources(sim)
  hud.notify(sim.realm_name()+" foi fundada"+(" · semente %d"%sim.world.seed if not sim.world.is_empty() else " · mapa clássico"))
 func toggle_pause() -> void:
+ if not road_tool.is_empty():road_tool="";world.terrain_tool="";return
  if council_panel.visible:council_panel.hide();return
  if company_panel.visible:company_panel.hide();return
  if hud.roster_panel.visible:hud.roster_panel.hide();return
@@ -93,22 +107,33 @@ func toggle_pause() -> void:
 # Menu-bar commands from the HUD.
 func run_command(name: String) -> void:
  match name:
+  "roads","erase_road":
+   road_tool="" if road_tool==name else name;world.terrain_tool=road_tool;world.build_kind=""
+   hud.notify("Estradas: clique no solo livre · 1 pedra por tile · Esc cancela" if road_tool=="roads" else ("Remover estrada: clique · sem reembolso · Esc cancela" if road_tool=="erase_road" else "Ferramenta cancelada"))
+  "expand":
+   var desired=camera_rig.focus+Iso.project(Vector2(8,8))
+   if sim.expand():
+    world.refresh();update_camera_layout();camera_rig.move_to(desired);hud.update_resources(sim);hud.notify("Domínio ampliado para %d×%d"%[sim.map_size(),sim.map_size()])
+   else:hud.notify(sim.expansion_reason())
   "save":save_game()
   "load":load_game()
   "new_world":
-   if not paused:toggle_pause()
+   close_actions();paused=true;hud.menu.open("pause")
    hud.menu.show_setup()
   "main_menu":
-   if not paused:toggle_pause()
+   close_actions();paused=true;hud.menu.open("pause")
   "quit":get_tree().quit()
   "council":
    company_panel.hide();hud.roster_panel.hide();council_panel.open()
   "company":
    council_panel.hide();company_panel.open()
   "speed1","speed2","speed4":set_speed(float(name.right(1)))
-  "center":camera_rig.move_to(Iso.project(Vector2(15.5,15.5)))
+  "center":camera_rig.move_to(Iso.project(Vector2(sim.centre())+Vector2(0.5,0.5)))
   "zoom":camera_rig.set_step(2)
   "routes":routes_pinned=not routes_pinned;hud.notify("Rotas fixadas no mapa" if routes_pinned else "Rotas só com Shift")
+func close_actions() -> void:
+ road_tool="";world.terrain_tool="";world.build_kind=""
+ company_panel.hide();council_panel.hide();hud.roster_panel.hide();hud.help_panel.hide()
 func set_speed(value: float) -> void:
  speed=value;hud.set_speed(int(value))
 func change_profession(kind: int) -> void:
@@ -133,7 +158,8 @@ func save_game() -> void:
 func load_game() -> void:
  var data=Store.load_game(sim)
  if data.is_empty():hud.notify("Save ausente ou inválido");return
- people=sim.people;world.sim=sim;world.people=people;world.refresh();camera_rig.move_to(Iso.project(Vector2(15.5,15.5)));selected=-1;selected_building=-1;world.selected_person=-1;world.selected_building=-1;hud.selection_kind="overview"
+ road_tool="";world.terrain_tool=""
+ people=sim.people;world.sim=sim;world.people=people;world.refresh();update_camera_layout();camera_rig.move_to(Iso.project(Vector2(sim.centre())+Vector2(0.5,0.5)));selected=-1;selected_building=-1;world.selected_person=-1;world.selected_building=-1;hud.selection_kind="overview"
  company_panel.hide();council_panel.hide()
  paused=false;hud.menu.hide();hud.notify(("Save v0.1 migrado · " if data.migrated else "Domínio carregado · ")+"Offline: %ds"%sim.offline_seconds)
 func _process(delta: float) -> void:
@@ -176,6 +202,8 @@ func _unhandled_input(event: InputEvent) -> void:
   elif event.keycode==KEY_H:hud.toggle_roster()
   elif event.keycode==KEY_B:hud.toggle_build()
   elif event.keycode==KEY_I:hud.toggle_details()
+  elif event.keycode==KEY_T and not paused:run_command("roads")
+  elif event.keycode==KEY_Y and not paused:run_command("erase_road")
   elif event.keycode==KEY_C:run_command("center")
   elif event.keycode in [KEY_1,KEY_2,KEY_4]:set_speed(float(event.keycode-KEY_0))
  if event is InputEventMouseButton:
@@ -187,6 +215,11 @@ func _unhandled_input(event: InputEvent) -> void:
  if event is InputEventMouseMotion and dragging and not paused:camera_rig.pan_screen(-event.relative)
 func click_map() -> void:
  var cell=Iso.tile(get_global_mouse_position())
+ if not road_tool.is_empty():
+  var reason=sim.road_reason(cell,road_tool=="erase_road")
+  if sim.edit_road(cell,road_tool=="erase_road"):world.refresh();hud.notify("Estrada removida" if road_tool=="erase_road" else "Estrada construída")
+  else:hud.notify(reason)
+  return
  if not world.build_kind.is_empty():
   var reason=sim.placement_reason(world.build_kind,cell)
   if sim.build(world.build_kind,cell):world.refresh();hud.notify("Obra iniciada")

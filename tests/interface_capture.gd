@@ -27,7 +27,7 @@ func run() -> void:
  check(game.paused and game.hud.menu.visible,"starts on the main menu")
  await shot("Menu_Start")
  game.hud.menu.show_setup();game.hud.menu.seed_edit.text="2026";game.hud.menu.refresh_preview()
- check(game.hud.menu.preview.terrain.size()==1024,"setup preview shows a generated world")
+ check(game.hud.menu.preview.terrain.size()==int(game.hud.menu.settings().get("size",32))*int(game.hud.menu.settings().get("size",32)),"setup preview shows a generated world")
  await shot("Menu_World_Setup")
  var settings=game.hud.menu.settings()
  game.hud.menu.world_requested.emit(settings)

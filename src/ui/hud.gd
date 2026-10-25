@@ -96,7 +96,7 @@ func _ready() -> void:
  menu_bar=panel(Vector2.ZERO,Vector2(1280,0));menu_bar.theme_type_variation="BarPanel"
  var bar=HBoxContainer.new();bar.add_theme_constant_override("separation",2);menu_bar.add_child(bar)
  menu_entry(bar,"Jogo",[["Salvar  (F5)","save"],["Carregar","load"],[],["Novo mundo…","new_world"],["Menu principal  (Esc)","main_menu"],[],["Sair","quit"]])
- menu_entry(bar,"Aldeia",[["Construir  (B)","build"],["Companhia e cavalaria  (R)","company"],[],["Velocidade 1×  (1)","speed1"],["Velocidade 2×  (2)","speed2"],["Velocidade 4×  (4)","speed4"]])
+ menu_entry(bar,"Aldeia",[["Estrada · 1 pedra/tile  (T)","roads"],["Remover estrada  (Y)","erase_road"],["Ampliar mapa · 150 ouro + 25 influência","expand"],[],["Construir  (B)","build"],["Companhia e cavalaria  (R)","company"],[],["Velocidade 1×  (1)","speed1"],["Velocidade 2×  (2)","speed2"],["Velocidade 4×  (4)","speed4"]])
  menu_entry(bar,"Ver",[["Painel lateral  (I)","details"],["Centralizar a praça  (C)","center"],["Zoom normal  (Ctrl+meio)","zoom"],["Fixar rotas  (Shift)","routes"]])
  menu_entry(bar,"Conselheiros",[["Conselho do domínio  (P)","council"],[],["Moradores  (H)","registry1"],["Edifícios","registry2"],["Retratos","registry0"],["Mensagens","registry3"]])
  menu_entry(bar,"Ajuda",[["Controles","help"]])
@@ -156,7 +156,7 @@ func _ready() -> void:
  help_panel=panel(Vector2.ZERO,Vector2(560,0));var hv=VBoxContainer.new();hv.add_theme_constant_override("separation",8);help_panel.add_child(hv)
  var hh=HBoxContainer.new();hv.add_child(hh);heading("CONTROLES",hh).size_flags_horizontal=Control.SIZE_EXPAND_FILL;button("Fechar [Esc]",func():help_panel.hide(),hh)
  var help=RichTextLabel.new();help.bbcode_enabled=true;help.fit_content=true;help.custom_minimum_size.x=530;help.add_theme_font_size_override("normal_font_size",14);hv.add_child(help)
- help.text="[color=#dfbd72]Mapa[/color]\nWASD move · Roda: zoom no cursor · Meio: arrastar ou, num clique, centralizar · Ctrl+meio: zoom normal · C: centralizar a praça\n\n[color=#dfbd72]Seleção[/color]\nClique: morador ou prédio · Ctrl sobre o mapa: ficha rápida · Shift: rotas · Minimapa: clique ou arraste\n\n[color=#dfbd72]Janelas[/color]\nB construção · I coluna lateral · H registro · R companhia · P conselho · Esc fecha a janela aberta ou abre o menu\n\n[color=#dfbd72]Jogo[/color]\nEspaço pausa · 1/2/4 velocidade · F5 salvar"
+ help.text="[color=#dfbd72]Mapa[/color]\nWASD move · Roda: zoom no cursor · Meio: arrastar ou, num clique, centralizar · Ctrl+meio: zoom normal · C: centralizar a praça\n\n[color=#dfbd72]Seleção[/color]\nClique: morador ou prédio · Ctrl sobre o mapa: ficha rápida · Shift: rotas · Minimapa: clique ou arraste\n\n[color=#dfbd72]Janelas[/color]\nT estrada · Y remover estrada · B construção · I coluna lateral · H registro · R companhia · P conselho · Esc fecha a janela aberta ou abre o menu\n\n[color=#dfbd72]Jogo[/color]\nEspaço pausa · 1/2/4 velocidade · F5 salvar"
  help_panel.hide()
  left_tab=button("Construir ▶",toggle_build,self);left_tab.theme=theme;left_tab.hide()
  right_tab=button("◀ Painel",toggle_details,self);right_tab.theme=theme;right_tab.hide()
@@ -276,7 +276,7 @@ func update_resources(sim,_delta: float=0.0) -> void:
  if sim.population>=sim.housing_capacity():warnings.append("Sem casas livres para imigrantes.")
  status.text=" ".join(warnings)
  if status.visible==warnings.is_empty():status.visible=not warnings.is_empty();call_deferred("resize")
- minimap.show_world(sim.terrain,sim.buildings,sim.people,camera_view)
+ minimap.show_world(sim.terrain,sim.buildings,sim.people,camera_view,sim.revision)
  if selection_kind=="overview":show_overview(sim)
 func show_overview(sim) -> void:
  if sim==null:return

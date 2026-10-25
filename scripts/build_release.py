@@ -20,6 +20,8 @@ def main():
  if git('rev-list','-n','1',tag)!=commit:raise SystemExit('Tag must match HEAD')
  output=ROOT/'dist'/tag;output.mkdir(parents=True,exist_ok=True)
  engine=next((ROOT/'tools/godot').glob('Godot*_win64_console.exe'))
+ expansion=run([engine,'--path',ROOT,'--script','tests/expansion_tests.gd','--','--no-save'],output/'expansion-test.log')
+ terrain=run([sys.executable,ROOT/'tests/test_terrain.py'],output/'terrain-test.log')
  assets=run([sys.executable,ROOT/'tests/test_assets.py'],output/'assets-test.log')
  building_assets=run([sys.executable,ROOT/'tests/test_buildings.py'],output/'building-assets-test.log')
  building_animation=run([engine,'--path',ROOT,'--script','tests/building_animation_tests.gd','--','--no-save'],output/'building-animation-test.log')
@@ -36,7 +38,7 @@ def main():
  gpu=run([engine,'--path',ROOT,'--script','tests/visual_validation.gd','--','--no-save'],output/'gpu-visual-test.log')
  portraits=run([sys.executable,ROOT/'tools/portrait_pipeline/validate.py'],output/'portrait-validate.log')
  portrait_ui=run([engine,'--path',ROOT,'--script','tests/portrait_ui_capture.gd','--','--no-save'],output/'portrait-ui-test.log')
- counts={'building_asset_tests':int(re.search(r'Ran (\d+) tests',building_assets).group(1)),'building_animation_checks':int(re.search(r'BUILDING_ANIMATION_RESULT checks=(\d+)',building_animation).group(1)),'politics_checks':int(re.search(r'POLITICS_RESULT checks=(\d+)',politics).group(1)),'realm_campaign': 'passed=true' in campaign,'interface_regression': 'INTERFACE_CAPTURE failures=0' in interface,'ui_additions_regression':'UI_ADDITIONS_CAPTURE failures=0' in additions,'company_checks':int(re.search(r'COMPANY_RESULT checks=(\d+)',company).group(1)),'cavalry_asset_tests':3,'asset_tests':int(re.search(r'Ran (\d+) tests',assets).group(1)),'logic_assertions':int(re.search(r'assertions=(\d+)',logic).group(1)),'visual_assertions':int(re.search(r'assertions=(\d+)',visual).group(1)),'integration_assertions':int(re.search(r'assertions=(\d+)',integration).group(1)),'gpu_checks':int(re.search(r'checks=(\d+)',gpu).group(1)),'portrait_ui_pixel_checks':int(re.search(r'PORTRAIT_UI_RESULT checks=(\d+) failures=0',portrait_ui).group(1)),'portraits_pending_art':int(re.search(r'pending=(\d+)',portraits).group(1))}
+ counts={'expansion_checks':int(re.search(r'EXPANSION_RESULT checks=(\d+)',expansion).group(1)),'terrain_tests':2,'building_asset_tests':int(re.search(r'Ran (\d+) tests',building_assets).group(1)),'building_animation_checks':int(re.search(r'BUILDING_ANIMATION_RESULT checks=(\d+)',building_animation).group(1)),'politics_checks':int(re.search(r'POLITICS_RESULT checks=(\d+)',politics).group(1)),'realm_campaign': 'passed=true' in campaign,'interface_regression': 'INTERFACE_CAPTURE failures=0' in interface,'ui_additions_regression':'UI_ADDITIONS_CAPTURE failures=0' in additions,'company_checks':int(re.search(r'COMPANY_RESULT checks=(\d+)',company).group(1)),'cavalry_asset_tests':3,'asset_tests':int(re.search(r'Ran (\d+) tests',assets).group(1)),'logic_assertions':int(re.search(r'assertions=(\d+)',logic).group(1)),'visual_assertions':int(re.search(r'assertions=(\d+)',visual).group(1)),'integration_assertions':int(re.search(r'assertions=(\d+)',integration).group(1)),'gpu_checks':int(re.search(r'checks=(\d+)',gpu).group(1)),'portrait_ui_pixel_checks':int(re.search(r'PORTRAIT_UI_RESULT checks=(\d+) failures=0',portrait_ui).group(1)),'portraits_pending_art':int(re.search(r'pending=(\d+)',portraits).group(1))}
  run([engine,'--headless','--path',ROOT,'--export-release','Windows Desktop',output/'HalfACiv-Isometric.exe'],output/'export.log')
  smoke=run([output/'HalfACiv-Isometric.exe','--headless','--','--smoke'],output/'smoke.log')
  if 'SMOKE_OK version='+version not in smoke:raise SystemExit('Exported executable did not confirm version')
@@ -46,6 +48,8 @@ def main():
  if 'EXPORTED_COUNCIL_OK=true capture=0' not in council_smoke:raise SystemExit('Exported political simulation failed')
  building_smoke=run([output/'HalfACiv-Isometric.exe','--','--buildings-smoke'],output/'buildings-windows-smoke.log')
  if 'EXPORTED_BUILDINGS_OK=true capture=0' not in building_smoke:raise SystemExit('Exported building atlas verification failed')
+ expansion_smoke=run([output/'HalfACiv-Isometric.exe','--','--expansion-smoke'],output/'expansion-windows-smoke.log')
+ if 'EXPORTED_EXPANSION_OK=true capture=0' not in expansion_smoke:raise SystemExit('Exported expansion verification failed')
  if git('status','--porcelain'):raise SystemExit('Build changed tracked or unignored files: review before release')
  exe=output/'HalfACiv-Isometric.exe'
  report={'version':version,'commit':commit,'engine':'4.7.2-stable','platform':'Windows x64','exe_sha256':hashlib.sha256(exe.read_bytes()).hexdigest(),'checks':counts,'windows_smoke':'passed','benchmark':json.loads((ROOT/f'docs/visual-validation/{tag}/benchmark.json').read_text())}
@@ -53,7 +57,7 @@ def main():
  notes=(ROOT/'docs/RELEASE_NOTES.md').read_text(encoding='utf-8').replace('{{COMMIT}}',commit)
  (output/'RELEASE_NOTES.md').write_text(notes,encoding='utf-8')
  title=notes.splitlines()[0].lstrip('# ').strip()
- (output/'README.txt').write_text(title+'\n\nExtraia o ZIP e execute HalfACiv-Isometric.exe no Windows 10/11 x64.\nMenu principal: Enter continua, N cria um mundo aleatório, P personaliza (nome, semente, paisagem, recursos).\nWASD: câmera; roda: zoom; botão do meio: arrastar ou centralizar; minimapa: clique para mover a vista.\nB/I: recolher construção e coluna lateral. H: registro da aldeia. R: companhia e cavalaria. P: conselho, reformas e evolução.\nCtrl sobre o mapa: ficha rápida; Shift: rotas. 1 / 2 / 4: velocidade; Esc: menu; F5: salvar.\n\nSaves da v0.1.0 são migrados. A primeira gravação mantém realm.json.v0.1.bak.\nSave: %APPDATA%/Godot/app_userdata/HalfACiv Isometric/realm.json\n\nConsulte RELEASE_NOTES.md para recursos, limites e créditos.\n',encoding='utf-8')
+ (output/'README.txt').write_text(title+'\n\nExtraia o ZIP e execute HalfACiv-Isometric.exe no Windows 10/11 x64.\nMenu principal: Enter continua, N cria um mundo aleatório, P personaliza (nome, semente, paisagem, recursos).\nWASD: câmera; roda: zoom; botão do meio: arrastar ou centralizar; minimapa: clique para mover a vista.\nB/I: recolher construção e coluna lateral. H: registro da aldeia. R: companhia e cavalaria. P: conselho, reformas e evolução. T/Y: criar/remover estrada. Aldeia: ampliar mapa (150 ouro +25 influência).\nCtrl sobre o mapa: ficha rápida; Shift: rotas. 1 / 2 / 4: velocidade; Esc: menu; F5: salvar.\n\nSaves da v0.1.0 são migrados. A primeira gravação mantém realm.json.v0.1.bak.\nSave: %APPDATA%/Godot/app_userdata/HalfACiv Isometric/realm.json\n\nConsulte RELEASE_NOTES.md para recursos, limites e créditos.\n',encoding='utf-8')
  shutil.copy2(ROOT/'LICENSE',output/'LICENSE.txt')
  shutil.copy2(ROOT/'assets/tilesets/ATTRIBUTION.md',output/'CREDITS.md')
  shutil.copy2(ROOT/'assets/original/GandalfHardcore/READ ME.txt',output/'GandalfHardcore-LICENSE.txt')
